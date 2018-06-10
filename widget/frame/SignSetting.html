@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>签到设置</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        body,
+        html {
+            background: #eee
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .csBox {
+            background: #fff;
+            padding: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='main'>
+        <div class="aui-content aui-font-size-12 aui-content-padded">签到成功</div>
+        <div class="aui-list csBox">
+            <h4>变量（生成模板是替换这些参数）</h4>
+            <div class="aui-list-item-inner">
+                <div class="aui-btn aui-btn-success  aui-btn-outlined" @click="addKey($event.currentTarget)">[本次获得金额]</div>
+                <div class="aui-btn aui-btn-success  aui-btn-outlined" @click="addKey($event.currentTarget)">[当前余额]</div>
+                <div class="aui-btn aui-btn-success  aui-btn-outlined" @click="addKey($event.currentTarget)">[本月获得全额]</div>
+            </div>
+        </div>
+        <div class="aui-content csBox">
+            <textarea name="name" rows="8" cols="80" v-model='CheckoutCg'></textarea>
+        </div>
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">签到指令</div>
+                    <div class="aui-list-item-right"><input class="right" type="text" v-model="UserCheckOrder"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">签到失败</div>
+                    <div class="aui-list-item-right"><input class="right" type="text" v-model="CheckoutSb"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">签到最小金额</div>
+                    <div class="aui-list-item-right"><input type="text" v-model="CheckOutMoney" class="right"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">签到最大金额</div>
+                    <div class="aui-list-item-right"><input type="text" class="right" v-model="CheckOutMoneyMax"></div>
+                </div>
+            </li>
+        </ul>
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="update();" tapmode="tapmode">保存</div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+
+<script>
+    apiready = function() {
+        sign.getData();
+        // alert(api.winName+api.frameName)
+    }
+    var sign = new Vue({
+        el: '#main',
+        data: {
+            CheckoutCg: '',
+            CheckOutMoneyMax: '',
+            CheckOutMoney: '',
+            UserCheckOrder: '',
+            CheckoutSb: '',
+        },
+        methods: {
+            addKey: function(el) {
+                sign.CheckoutCg = sign.CheckoutCg + $(el).html()
+            },
+            update: function(index) {
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            checkoutCg: sign.CheckoutCg, ///签到成功模板
+                            checkoutSb: sign.CheckoutSb, ///签到失败
+                            userCheckOrder: sign.UserCheckOrder,
+                            checkOutMoneyMax: sign.CheckOutMoneyMax, ///签到最大金额
+                            checkOutMoney: sign.CheckOutMoney, ///签到最小金额
+                            ApiType: "jifenConfig"
+                        }
+                    }
+                }, function(ret) {
+                    if (ret.error == 1) {
+                        api.execScript({
+                            name: 'root',
+                            script: 'SendConfigFun();'
+                        });
+                        $common.toast('操作成功');
+                    } else {
+                         alert(ret.msg)
+                    }
+                });
+            },
+            getData: function(index) {
+                if ($api.getStorage("sendconfig") != undefined) {
+                    var b = $api.getStorage("sendconfig");
+                    // alert(JSON.stringify(b.Table[0]))
+                    sign.CheckOutMoneyMax = b.Table[0].CheckOutMoneyMax;
+                    sign.CheckOutMoney = b.Table[0].CheckOutMoney;
+                    sign.UserCheckOrder = b.Table[0].UserCheckOrder;
+                    sign.CheckoutSb = b.Table[0].CheckoutSb;
+                    sign.CheckoutCg = b.Table[0].CheckoutCg;
+                } else {
+                    $api.toast("提示", ret.error, 1000);
+                }
+            },
+        }
+    })
+</script>

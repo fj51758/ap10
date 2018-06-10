@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>提交反馈</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <style>
+        body,
+        html {
+            background: #eee
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .white {
+            background: #fff;
+        }
+
+        .aui-popup-bottom {
+            width: 100%;
+            left: 0;
+            margin-left: 0;
+            bottom: 0;
+        }
+
+        .aui-checkbox {
+            border-radius: 100%;
+        }
+    </style>
+</head>
+
+<body id='main'>
+    <div>
+        <div class="aui-content aui-font-size-12 aui-content-padded"><span class="aui-text-danger aui-font-size-14">*</span>反馈内容</div>
+        <div class="white aui-padded-l-10"><input type="text" placeholder="请选择内容类型" readonly='' v-model="QuestType.text" aui-popup-for="bottom"></div>
+        <div class="aui-content aui-font-size-12 aui-content-padded"><span class="aui-text-danger aui-font-size-14">*</span>联系邮箱</div>
+        <div class="white aui-padded-l-10"><input type="text" placeholder="请输入联系邮箱" v-model="Email"></div>
+        <div class="aui-content aui-font-size-12 aui-content-padded">相关群名称</div>
+        <div class="white aui-padded-l-10"><input type="text" placeholder="输入其中一个即可" v-model="GroupName"></div>
+        <div class="aui-content aui-font-size-12 aui-content-padded">相关机器人微信号</div>
+        <div class="white aui-padded-l-10"><input type="text" placeholder="输入其中一个即可" v-model="RobotWechat"></div>
+        <div class="aui-content aui-font-size-12 aui-content-padded"><span class="aui-text-danger aui-font-size-14">*</span>问题描述</div>
+        <div class="white aui-padded-l-10  aui-padded-t-10"><textarea name="" cols="30" rows="5" placeholder='请输入问题描述' v-model="Question"></textarea></div>
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block" style="padding:0.3rem" @click="subit">保存</div>
+        </div>
+
+    </div>
+
+    <!-- 导购关键词弹框 -->
+    <div class="aui-popup aui-popup-bottom" id="bottom">
+        <div class="aui-popup-content">
+            <header class="aui-bar aui-bar-nav aui-bar-light">
+                <div class="aui-title">导购关键词</div>
+                <a class="aui-pull-right aui-btn aui-btn-outlined aui-text-info " v-on:click="closePopup">确定</a>
+            </header>
+            <ul class="aui-list aui-list-in">
+                <li class="aui-list-item" v-on:click="addGuideKey(0)">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title aui-font-size-14" theIndex="0">机器人不同意好友</div>
+                        <div class="aui-list-item-right"><input type="radio" class="aui-radio" name="1"></div>
+                    </div>
+                </li>
+                <li class="aui-list-item" v-on:click="addGuideKey(1)">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title aui-font-size-14" theIndex="1">机器人没进群</div>
+                        <div class="aui-list-item-right"><input type="radio" class="aui-radio" name="1"></div>
+                    </div>
+                </li>
+                <li class="aui-list-item" v-on:click="addGuideKey(2)">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title aui-font-size-14" theIndex="2">机器人不自动拉发单号</div>
+                        <div class="aui-list-item-right"><input type="radio" class="aui-radio" name="1"></div>
+                    </div>
+                </li>
+                <li class="aui-list-item" v-on:click="addGuideKey(3)">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title aui-font-size-14" theIndex="3">其他</div>
+                        <div class="aui-list-item-right"><input type="radio" class="aui-radio" name="1"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+
+<script>
+    var popup = new auiPopup();
+    var main = new Vue({
+        el: '#main',
+        data: {
+            QuestType: {
+                text: "",
+                val: ""
+            },
+            Email: '',
+            GroupName: '',
+            RobotWechat: '',
+            Question: ''
+        },
+        methods: {
+            closePopup: function() {
+                var obj = $("#bottom").find(".aui-list-item");
+                obj.each(function() {
+                    var checkbox = $(this).find('.aui-radio');
+                    if (checkbox.prop('checked')) {
+                        main.QuestType.text = $(this).find(".aui-list-item-title").html();
+                        main.QuestType.val = $(this).find(".aui-list-item-title").attr("theIndex");
+                    }
+                })
+                popup.hide($("#bottom"));
+            },
+            addGuideKey: function(index) {
+              $('.aui-radio').eq(index).prop('checked', true).siblings().prop('checked', false);
+
+            },
+           subit: function(index) {
+             if((!main.QuestType.val) || (!main.Question) || (!main.Email)){
+               $common.toast("请输入完整内容");
+               return false;
+             }
+
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            feeBackType:main.QuestType.val,
+                            cloudAccount: $api.getStorage("UserName"), ///签到成功模板
+                            groupName: main.GroupName, ///签到失败
+                            robots: main.RobotWechat,
+                            remark: main.Question, ///签到最大金额
+                            email: main.Email, ///签到最小金额
+                            ApiType: "InsertUserFeeback",
+                            ToKen: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret) {
+                  //alert(JSON.stringify(ret))
+                    if (ret.error == 1) {
+                        // api.execScript({
+                        //     name: 'root',
+                        //     script: 'SendConfigFun();'
+                        // });
+                        $common.toast('操作成功');
+                        // api.closeWin();
+                    } else {
+                        alert(ret.msg)
+                    }
+                });
+            },
+            getData: function(index) {
+                if ($api.getStorage("sendconfig") != undefined) {
+                    var b = $api.getStorage("sendconfig");
+                    // alert(JSON.stringify(b.Table[0]))
+                    sign.CheckOutMoneyMax = b.Table[0].CheckOutMoneyMax;
+                    sign.CheckOutMoney = b.Table[0].CheckOutMoney;
+                    sign.UserCheckOrder = b.Table[0].UserCheckOrder;
+                    sign.CheckoutSb = b.Table[0].CheckoutSb;
+                    sign.CheckoutCg = b.Table[0].CheckoutCg;
+                } else {
+                    $api.toast("提示", ret.error, 1000);
+                }
+            },
+        }
+    })
+</script>

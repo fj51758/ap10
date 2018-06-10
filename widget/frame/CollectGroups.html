@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>端API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content" id="main">
+      <!-- <ul class="aui-list aui-select-list">
+          <li class="aui-list-item">
+              <div class="aui-list-item-label">
+                  <input class="aui-checkbox" type="checkbox" name="demo1" @change="OpenServer(OpenServerGoods)" v-model="OpenServerGoods">
+              </div>
+              <div class="aui-list-item-inner">
+                  爆款推送
+                  <div class="aui-list-item-text">
+                      实时销量检测爆款
+                  </div>
+              </div>
+          </li>
+      </ul> -->
+        <ul class="aui-list aui-select-list">
+            <li class="aui-list-header">请选择你要采集的QQ群</li>
+            <template v-for="val in list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <label><input class="aui-radio" type="checkbox" v-model="val.IsCheck" name="{{val.GoodsSourceMainId}}" v-on:change="ChooseGroup(val)"> {{val.SourcesName}}</label>
+                </div>
+            </li>
+            </template>
+        </ul>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script>
+    apiready = function() {
+        main.getdata();
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: [],
+            OpenServerGoods:false
+        },
+        methods: {
+          OpenServer: function(OpenServerGoods) {
+            //alert(OpenServerGoods)
+
+              $common.progress("操作中");
+              $common.request('0x0001', {
+                  data: {
+                      values: {
+                          ApiType: 'IsStartOpenServerGoods',
+                          OpenServerGoodStart:OpenServerGoods,
+                          uxxx1__1: $api.getStorage('iii')
+                      }
+                  }
+              }, function(ret, err) {
+                //alert(JSON.stringify(ret))
+                  if (ret.error == 1) {
+                      $common.toast('操作成功');
+                      //更新本地缓存
+                      var sendconfig = $api.getStorage("sendconfig");
+                      sendconfig.Table[0].OpenServerGoods = OpenServerGoods;
+                      $api.setStorage("sendconfig",sendconfig);
+                  } else {
+                    OpenServerGoods =!OpenServerGoods
+                      $api.toast("提示", ret.msg, 1000);
+                  }
+                    api.hideProgress();
+              });
+          },
+          ChooseGroup: function(val) {
+              $common.progress("操作中");
+              var aa = val.IsCheck==false?0:1;
+              $common.request('0x0001', {
+                  data: {
+                      values: {
+                          apitype: 'SetUserGoodsSources',
+                          check:aa,
+                          goodsSourceMainId:val.GoodsSourceMainId,
+                          uxxx1__1: $api.getStorage('iii')
+                      }
+                  }
+              }, function(ret, err) {
+                // alert(aa)
+                // alert(JSON.stringify(ret))
+                  if (ret.error == 1) {
+                      $common.toast('操作成功');
+                  } else {
+                     val.IsCheck=!val.IsCheck;
+                     $common.toast(ret.msg)
+                      // $api.toast("提示", ret.msg, 2000);
+                  }
+                    api.hideProgress();
+              });
+          },
+            getdata: function() {
+              var sendconfig = $api.getStorage("sendconfig");
+              if (sendconfig != undefined) {
+                  main.OpenServerGoods = sendconfig.Table[0].OpenServerGoods;
+              }
+              $common.progress();
+              $common.request('0x0001', {
+                  data: {
+                      values: {
+                          ApiType: 'GetUserGoodsSources',
+                          uxxx1__1: $api.getStorage('iii')
+                      }
+                  }
+              }, function(ret, err) {
+                  console.log(JSON.stringify(ret));
+                    var tdata = JSON.parse(ret.data).Table;
+                    if (ret.error == 1) {
+                        main.list = tdata;
+                            api.hideProgress();
+                    } else {
+                        $common.toast("暂无数据")
+                    }
+                })
+            }
+        }
+    });
+</script>

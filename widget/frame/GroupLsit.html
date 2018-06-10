@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .aui-list-item-label-icon-diy {
+            width: 1.5rem !important;
+            padding-right: 0.25rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 80%;
+        }
+
+        .aui-popup-top-right .aui-list-item {
+            display: flex;
+        }
+
+        .aui-info {
+            padding: 0.2rem 0 0 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-searchbar" id="search">
+        <div class="aui-searchbar-input aui-border-radius" tapmode>
+            <i class="aui-iconfont aui-icon-search"></i>
+            <form action="javascript:0;">
+                <input type="search" placeholder="请输入搜索内容" id="search-input" onkeydown="if(event.keyCode==13) { eventsearch();return false};">
+                <!-- <div id="cancel" @click="cancel" v-show="cancel_show"></div> -->
+            </form>
+        </div>
+        <div class="search-btn" onclick="eventsearch()">
+            搜索
+        </div>
+    </div>
+    <section class="aui-grid" style="margin-top:44px;">
+
+      <div class="aui-tips  aui-font-size-12" style="height: auto;  line-height: initial;  padding-top: 5px;  padding-bottom: 5px;">
+          <i class="aui-iconfont aui-icon-info aui-font-size-16" style='font-weight:bloder'></i>
+          <div class="aui-tips-title aui-font-size-12"></div>
+          <div class="aui-tips-title aui-font-size-12">群人数要大于40人才能正常发单<br>如群内长时间不发单，请点击群列表前面的机器人图标更换机器人，一个群一天只能换3次!</div>
+            <i class="aui-iconfont aui-icon-close1"></i>
+      </div>
+        <div class="aui-content">
+            <ul class="aui-list aui-list-in">
+                <li class="aui-list-header">
+                    机器人状态说明
+                </li>
+
+                <li class="aui-list-item ">
+                    <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                        <img src="../image/ok.png">
+                    </div>
+                    <div class="aui-list-item-inner" style="font-size: 0.7rem;">
+                        当前发单情况良好
+                    </div>
+                </li>
+                <li class="aui-list-item ">
+                    <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                        <img src="../image/minierror.png">
+                    </div>
+                    <div class="aui-list-item-inner" style="font-size: 0.7rem;">
+                        当前发单有少许延迟，稍后会恢复
+                    </div>
+                </li>
+                <li class="aui-list-item ">
+                    <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                        <img src="../image/bigerror.png">
+                    </div>
+                    <div class="aui-list-item-inner" style="font-size: 0.7rem;">
+                        当前发单有延迟，稍后会恢复，如长时间保持此状态请联系客服
+                    </div>
+                </li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                        <img src="../image/forbid.png">
+                    </div>
+                    <div class="aui-list-item-inner" style="font-size: 0.7rem;">
+                        发单号已经被封
+                    </div>
+                </li>
+            </ul>
+            <ul class="aui-list aui-media-list" id="ListContent">
+                <li class="aui-list-header" style="position:relative;height: 40px;  line-height: 25px;">
+                    当前群数量
+                    <div style="text-align: right;position: absolute;right: 5px;top: 5px;line-height: 20px;">
+                        <div class="aui-btn aui-btn-info" aui-popup-for="top-right1">批量操作</div>
+                        <div class="aui-btn aui-btn-warning" aui-popup-for="top-right">筛选群状态</div>
+                    </div>
+                    <div class="aui-popup aui-popup-top-right" id="top-right1" style="top: 2.5rem;display: block;  position: absolute;right:5.5rem;display:none;">
+                        <div class="aui-popup-arrow"></div>
+                        <div class="aui-popup-content">
+                            <ul class="aui-list aui-list-noborder">
+                                <li class="aui-list-item" onclick="UsersPostUpdateGroups();">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-icon-menu aui-text-info"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-list-item-middle">
+                                        更新群信息
+                                    </div>
+                                </li>
+                                <li class="aui-list-item" onclick="OpeAllGroupsForCheck(1);">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-icon-correct aui-text-warning"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-list-item-middle">
+                                        开启所有群发单
+                                    </div>
+                                </li>
+                                <li class="aui-list-item" onclick="OpeAllGroupsForCheck(0);">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-icon-close aui-text-danger"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-list-item-middle">
+                                        关闭所有群发单
+                                    </div>
+                                </li>
+                                <li class="aui-list-item" onclick="OpeAllAppGroupsForIsSee(1);">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-icon-correct aui-text-warning"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-list-item-middle">
+                                        开启所有群监控
+                                    </div>
+                                </li>
+                                <li class="aui-list-item" onclick="OpeAllAppGroupsForIsSee(0);">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-icon-close aui-text-danger"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-list-item-middle">
+                                        关闭所有群监控
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="aui-popup aui-popup-top-right" id="top-right" style="top: 2.5rem;display: block;position:absolute;display:none;">
+                        <div class="aui-popup-arrow"></div>
+                        <div class="aui-popup-content">
+                            <ul class="aui-list aui-list-noborder">
+                                <li class="aui-list-item" onclick="GroupState(-1);">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-icon-menu aui-text-info" style="padding-left: 0.2rem;"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-list-item-middle">
+                                        全部
+                                    </div>
+                                </li>
+                                <li class="aui-list-item" onclick="GroupState(2);">
+                                    <div class="aui-list-item-label-icon">
+                                        <img src="../image/ok.png" style="width:1.2rem;">
+                                    </div>
+                                    <div class="aui-list-item-inner">
+                                        正常
+                                    </div>
+                                </li>
+                                <li class="aui-list-item" onclick="GroupState(3);">
+                                    <div class="aui-list-item-label-icon">
+                                        <img src="../image/minierror.png" style="width:1.2rem;">
+                                    </div>
+                                    <div class="aui-list-item-inner">
+                                        小异常
+                                    </div>
+                                </li>
+                                <li class="aui-list-item" onclick="GroupState(4);">
+                                    <div class="aui-list-item-label-icon">
+                                        <img src="../image/bigerror.png" style="width:1.2rem;">
+                                    </div>
+                                    <div class="aui-list-item-inner">
+                                        严重异常
+                                    </div>
+                                </li>
+                                <li class="aui-list-item" onclick="GroupState(1);">
+                                    <div class="aui-list-item-label-icon">
+                                        <img src="../image/forbid.png" style="width:1.2rem;">
+                                    </div>
+                                    <div class="aui-list-item-inner">
+                                        被封号
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </li>
+                <template v-for="val in list">
+                <li class="aui-list-item aui-list-item-middle">
+                  <div class="aui-media-list-item-inner">
+                      <div class="aui-list-item-media" style="width:2.8rem;">
+                            <img v-on:click="ChangeRobot(val)" src="../image/{{val.RobotState1==1?'forbid':(val.RobotState1==2?'ok':(val.RobotState1==3?'minierror':'bigerror'))}}.png" class="aui-img-round aui-list-img-sm" style="width: 2rem;vertical-align: bottom;"/>
+                        <!-- <img src="../image/forbid.png" style="width:2rem;"> -->
+                      </div>
+                      <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title aui-font-size-16">
+                            {{val.GroupName}}
+                          </div>
+                        <div class="aui-list-item-text aui-font-size-14">
+                            最后发送：{{val.GroupLastSend}}
+                        </div>
+                        <div class="aui-list-item-text aui-font-size-14">
+                            分群推广位：{{val.IsPID==1?"已设置":"未设置"}}
+                        </div>
+                      </div>
+                      <div class="aui-list-item-inner" style="width: 4rem;  padding-right: 0.25rem;">
+                          <div class="aui-btn aui-btn-info  aui-font-size-12" v-on:click="OpenGroup(val)" tapmode="tapmode">查看详情</div>
+                      </div>
+                  </div>
+                    <div class="aui-media-list-item-inner">
+                      <!-- <div class="aui-list-item-media">
+                          <img  src="../image/head.png" id="LogoUrl" style="width:80%;border-radius:50px;">
+                      </div> -->
+                        <div class="aui-list-item-inner" style="padding: 0.2rem;border-top: 1px dashed #dddddd;" >
+                            <!-- <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">
+                                  <img v-on:click="ChangeRobot(val)" src="../image/{{val.RobotState1==1?'forbid':(val.RobotState1==2?'ok':(val.RobotState1==3?'minierror':'bigerror'))}}.png" class="aui-img-round aui-list-img-sm" style="width: 1.2rem;vertical-align: bottom;"/>
+                                    {{val.GroupName}}当前状态{{val.RobotState1}}
+                                  </div>
+                            </div> -->
+                            <!-- <div class="aui-list-item-label-icon">
+                                <img src="../image/forbid.png" style="width:1.2rem;">
+                            </div>
+                            <div class="aui-list-item-title aui-font-size-16">
+                                {{val.GroupName}}dsdsdsds
+                              </div>
+                            <div class="aui-list-item-text aui-font-size-12">
+                                最后发送：{{val.GroupLastSend}}
+                            </div>
+                            <div class="aui-list-item-text aui-font-size-12">
+                                分群推广位：{{val.IsPID==1?"已设置":"未设置"}}
+                            </div> -->
+                            <div class="aui-list-item-text aui-font-size-12">
+                              <div class="aui-info">
+                                  <div class="aui-list-item-input">
+                                      <label><input class="aui-checkbox aui-checkbox-diy aui-font-size-14" type="checkbox" name="demo1"  v-model="val.CHECK" v-on:change="IsChecks(val)">&nbsp;群发开关</label>
+                                  </div>
+                              </div>
+                              <div class="aui-info">
+                                  <div class="aui-list-item-input">
+                                      <label><input class="aui-checkbox aui-checkbox-diy aui-font-size-14" type="checkbox" v-model="val.IsSee" v-on:change="IsSee(val)">&nbsp;导购开关</label>
+                                  </div>
+                              </div>
+                              <div class="aui-info">
+                                <!-- <div class="aui-btn aui-btn-info  aui-font-size-12" v-on:click="OpenGroup(val)" tapmode="tapmode">更多操作</div> -->
+                            <div class="aui-btn aui-btn-default aui-font-size-12" v-on:click="deleteGroup(val,$index)"><span class="aui-iconfont aui-icon-trash aui-font-size-14" style="line-height: 0.9rem; height: 0.9rem;"></span>删除群</div>
+                              </div>
+                            </div>
+                            <!-- <div class="aui-list-item-text aui-font-size-12" style="text-decoration:underline;color: #e51c23;" v-on:click="ChangeRobot(val)">
+                                超过1小时不发单点这里....
+                            </div> -->
+                        </div>
+                        <!-- <div class="aui-list-item-inner aui-list-item-arrow" style="width: 46%;  padding-right: 0;">
+
+                            <div class="aui-info" style="padding-top:0">
+                                <div class="aui-list-item-input">
+                                    <label><input class="aui-checkbox aui-checkbox-diy aui-font-size-14" type="checkbox" name="demo1"  v-model="val.CHECK" v-on:click="IsChecks(val)">群发</label>
+                                </div>
+                            </div>
+                            <div class="aui-info" style="padding:0">
+                                <div class="aui-list-item-input">
+                                    <label><input class="aui-checkbox aui-checkbox-diy aui-font-size-14" type="checkbox" v-model="val.IsSee" v-on:click="IsSee(val)">导购</label>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                </li>
+              </template>
+            </ul>
+            <!-- </div> -->
+        </div>
+    </section>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script>
+    var lock = false;
+    var arr = [];
+    var init = {
+        pageIndex: 0,
+        pageSize: 15,
+        key: "",
+        robotState: -1
+    }
+    var dialog = new auiDialog({})
+    var popup = new auiPopup();
+
+    apiready = function() {
+      api.setCustomRefreshHeaderInfo({
+          bgColor: '#ffffff',
+          images: ['widget://image/refresh1.png', 'widget://image/refresh2.png', 'widget://image/refresh1.png'],
+          tips: { //（可选项）JSON 对象；整个下拉及加载过程的文字提示；不传则不显示文字区域
+              pull: '下拉刷新', //（可选项）字符串类型；下拉过程（下拉高度未达到阈值前）的文字提示；不传则不显示该时段的文字提示
+              threshold: '松开立即刷新', //（可选项）字符串类型；下拉过程（下拉高度达到或超过阈值）的文字提示；不传则不显示该时段的文字提示
+              load: '正在刷新' //（可选项）字符串类型；加载状态的文字提示；不传则不显示该时段的文字提示
+          }
+      }, function(ret, err) {
+          //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+          init.pageIndex = 0;
+          init.key = "";
+          lock = false;
+          arr = [];
+          init.robotState = -1;
+          ListContent.getData();
+          api.refreshHeaderLoadDone()
+      });
+            ListContent.getData();
+            api.addEventListener({
+                name: 'scrolltobottom',
+                extra: {
+                    threshold: 200 //设置距离底部多少距离时触发，默认值为0，数字类型
+                }
+            }, function(ret, err) {
+                if (!lock) {
+                    ListContent.getData();
+                }
+            });
+        }
+        //开启/关闭群发单
+    function OpeAllGroupsForCheck(key) {
+        //oEvent.cancelBubble = true;
+        //oEvent.stopPropagation();
+        $common.request('0x0001', {
+            data: {
+                values: {
+                    ApiType: 'OpeAllGroupsForCheck',
+                    iiiKey: $api.getStorage('iii'),
+                    ope: key
+                }
+            }
+        }, function(ret, err) {
+          popup.hide($api.dom("#top-right1"))
+
+            // alert(JSON.stringify(ret));
+            if (ret.error != 2) {
+                init.pageIndex = 0;
+                init.key = "";
+                lock = false;
+                arr = [];
+                init.robotState = -1;
+                ListContent.getData();
+            } else {
+                $common.alert(ret.msg);
+            }
+        });
+    }
+    //开启/关闭群监控
+    function OpeAllAppGroupsForIsSee(key) {
+        $common.request('0x0001', {
+            data: {
+                values: {
+                    ApiType: 'OpeAllAppGroupsForIsSee',
+                    iiiKey: $api.getStorage('iii'),
+                    ope: key
+                }
+            }
+        }, function(ret, err) {
+            if (ret.error != 2) {
+              popup.hide($api.dom("#top-right1"))
+
+                // alert(JSON.stringify(ret));
+                init.pageIndex = 0;
+                init.key = "";
+                lock = false;
+                arr = [];
+                init.robotState = -1;
+                ListContent.getData();
+            } else {
+                $common.alert(ret.msg);
+            }
+        });
+    }
+    //更新所有群
+    function UsersPostUpdateGroups() {
+        $common.request('0x0001', {
+            data: {
+                values: {
+                    ApiType: 'UsersPostUpdateGroups',
+                    iiiKey: $api.getStorage('iii')
+                }
+            }
+        }, function(ret, err) {
+          popup.hide($api.dom("#top-right1"))
+
+            if (ret.error != 2) {
+                init.pageIndex = 0;
+                init.key = "";
+                lock = false;
+                arr = [];
+                init.robotState = -1;
+                ListContent.getData();
+            } else {
+                $common.alert(ret.msg);
+            }
+        });
+    }
+    //筛选群状态
+    function GroupState(key, e) {
+        e = e || window.event;
+        e.stopPropagation();
+        init.pageIndex = 0;
+        init.key = "";
+        lock = false;
+        arr = [];
+        popup.hide($api.dom("#top-right"))
+        init.robotState = key;
+        ListContent.getData();
+    }
+    //搜索群
+    function eventsearch() {
+        init.pageIndex = 0;
+        lock = false;
+        arr = [];
+        init.key = $api.val($api.dom("#search-input"));
+        $common.progress();
+        ListContent.getData();
+    }
+
+    var ListContent = new Vue({
+        el: '#ListContent',
+        data: {
+            list: [],
+            gsid: '',
+            show: 1,
+            goodstype: 2
+        },
+        methods: {
+            deleteGroup: function(val,index) {
+                dialog.alert({
+                    title: "确定要删除群吗",
+                    msg: "群删除后，需重新获取机器人进群才可发单",
+                    buttons: ['取消', '确定']
+                }, function(ret) {
+                    if (ret.buttonIndex == 2) {
+                        $common.request('0x0001', {
+                            data: {
+                                values: {
+                                    ApiType: 'DeleteUserGroup',
+                                    GroupKey: val.GroupId,
+                                    uxxx1__1: $api.getStorage('iii')
+                                }
+                            }
+                        }, function(ret, err) {
+                            if (ret.error == 1) {
+                              $common.toast("操作成功")
+                                ListContent.list.splice(index, 1);
+                            }else {
+                                alert(ret.msg);
+                            }
+                        });
+                    }
+
+                })
+
+            },
+            OpenGroup: function(val) {
+                $common.openWin('thirdHead', {
+                    title: '更多操作',
+                    key: 3,
+                    FrameName: 'GroupDetail',
+                    GroupId: val.GroupId,
+                    pageParam:{GroupId:val.GroupId}
+                });
+            },
+            IsChecks: function(index) {
+              var isCHECK = !index.CHECK
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'UpdateGroupIsCheck',
+                            check:index.CHECK,
+                            groupId: index.GroupId,
+                            type: 1,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error != 2) {
+                        $common.toast(ret.msg);
+                    }
+
+
+                });
+            },
+            IsSee: function(index) {
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'UpdateGroupIsSee',
+                            check: index.IsSee==true?"1":"0",
+                            groupId: index.GroupId,
+                            type: 1,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error != 2) {
+                      $common.toast(ret.msg);
+                    }
+                });
+            },
+            ChangeRobot: function(index) {
+                dialog.alert({
+                    title: "确定要更换机器人吗",
+                    msg: "一个群当天只能更换3次机器人",
+                    buttons: ['取消', '确定']
+                }, function(ret) {
+                    if (ret.buttonIndex == 2) {
+                        $common.request('0x0001', {
+                            data: {
+                                values: {
+                                    ApiType: 'ChangedWxid',
+                                    GroupKey: index.GroupId,
+                                    uxxx1__1: $api.getStorage('iii')
+                                }
+                            }
+                        }, function(ret, err) {
+                          if (ret.error == 1) {
+                              alert(ret.msg);
+                            // $common.toast("操作成功:"+ret.msg)
+                          }else {
+                              alert(ret.msg);
+                          }
+                        });
+                    }
+
+                })
+
+
+            },
+            //获取群
+            getData: function() {
+                $common.progress();
+                init.pageIndex++;
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'GetUserGroupListForDaiFa2',
+                            pageIndex: init.pageIndex,
+                            pageSize: init.pageSize,
+                            key: init.key,
+                            robotState: init.robotState,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+
+                    // alert(JSON.stringify(ret))
+                    if (ret.error != 2) {
+                        var tdata = JSON.parse(ret.data).Table;
+                        // alert(JSON.stringify(ret))
+
+                        if (tdata.length > 0) {
+                            for (var i = 0; i < tdata.length; i++) {
+                                arr.push(tdata[i]);
+                            }
+                            ListContent.list = arr;
+                            //console.log(JSON.stringify(goods.list ));
+                            lock = false;
+
+                        } else {
+                            lock = true;
+                            $common.toast('暂无数据');
+                        }
+                        api.hideProgress();
+                    } else {
+                        {
+                            $api.toast("提示", ret.error, 1000);
+                        }
+                    }
+                });
+            },
+            more: function() {
+
+                $("#modal").addClass('show_column').css('top', $("#head").height());
+                $("body").addClass('overflow');
+            }
+        },
+        watch: {
+            'list': function(n) {
+                try {
+                    var width = $(".aui-tab-item").last().offset().left + $(".aui-tab-item").last().width() + $(".more").width();
+                    if (this.list.length >= 8) {
+                        $common.swipe.ev($(".aui-tab"), width);
+                    }
+                } catch (err) {
+                    console.log(err);
+                }
+
+            }
+        }
+    })
+</script>

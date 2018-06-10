@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .aui-grid .aui-grid-label {
+            display: block;
+            font-size: 0.7rem;
+            position: relative;
+            margin-top: 0.25rem;
+            /*border: 1px solid;*/
+            line-height: 3.5rem;
+            margin: auto 1rem;
+            /*border-radius: 5px;
+            border: 1px solid #ccc;
+            background: #fff;*/
+        }
+
+        .selected {
+            border: 1px solid #e51c23 !important;
+        }
+
+        .aui-col-xs-grid-label {
+            border: 1px solid #ccc;
+            padding: 0 !important;
+            margin: 1rem 5%;
+            border-radius: 5px;
+            width: 40%;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="aui-grid aui-margin-b-15" id='ListContent'>
+        <div class="aui-row">
+            <template v-for="val in list">
+        <div class="aui-col-xs-6 aui-col-xs-grid-label">
+            <div class="aui-grid-label" @click="choose($event.currentTarget,val.val,$index)" tapmode="tapmode">{{val.text}}元</div>
+        </div>
+      </template>
+            <div class="aui-col-xs-6 aui-col-xs-grid-label">
+                <!-- <div class="aui-badge">88</div> -->
+                <!-- <i class="aui-iconfont aui-icon-home"></i> -->
+                <div class="aui-grid-label" @click="choose($event.currentTarget,7,7)" tapmode="tapmode">其他</div>
+            </div>
+
+        </div>
+        <section class="aui-content-padded">
+            <h4>充值说明:</h4>
+            <p>1.云发单目前只支持支付宝充值，即冲即用暂时无需审核。</p>
+            <p>2.云发单充值成功后无法退款，不可提现。</p>
+        </section>
+        <!-- <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block" v-on:click="sure();" tapmode="tapmode">确认充值</div>
+        </div> -->
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="sure();" tapmode="tapmode">确认充值</div>
+        </div>
+    </section>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script>
+    var dialog = new auiDialog();
+    var ListContent = new Vue({
+        el: '#ListContent',
+        data: {
+            list: [{
+                text: 6,
+                val: 6
+            }, {
+                text: 26,
+                val: 26
+            }, {
+                text: 52,
+                val: 52
+            }, {
+                text: 116,
+                val: 116
+            }, {
+                text: 196,
+                val: 196
+            }, {
+                text: 412,
+                val: 412
+            }, {
+                text: 618,
+                val: 618
+            }],
+            ReChargeAmount: 0
+        },
+        methods: {
+            choose: function(index, val, i) {
+                $(".aui-col-xs-grid-label").eq(i).addClass('selected').siblings().removeClass('selected');
+                if (val == 7) {
+                    dialog.prompt({
+                        title: "充值金额",
+                        text: '请输入充值金额',
+                        buttons: ['取消', '确定']
+                    }, function(ret) {
+
+                        var Amount = ret.text
+
+
+                        if (ret.buttonIndex == 2) {
+                          if (Amount <= 0) {
+                              $common.toast("金额不能小于0");
+                              return;
+                          }
+                            dialog.alert({
+                                title: "请确认充值金额是否正确",
+                                msg: "您输入的充值金额是：" + ret.text + "",
+                                buttons: ['取消', '确定']
+                            }, function(ret) {
+                                if (ret.buttonIndex == 2) {
+                                    ListContent.ReChargeAmount = Amount;
+                                    ListContent.sure();
+                                }
+                            });
+                        }else {
+                          $(".aui-col-xs-grid-label").eq(i).removeClass('selected');
+                        }
+                    })
+                }
+                ListContent.ReChargeAmount = val;
+
+                // $(".aui-grid-label").removeClass("selected");
+                // if ($(index).hasClass("selected")) {
+                //     $(index).removeClass("selected")
+                // } else {
+                //     $(index).addClass("selected")
+                // }
+            },
+            sure: function() {
+                $common.progress();
+                var aliPayTradePlus = api.require('aliPayTradePlus');
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'App_M_Alipay',
+                            OldUrl: $common.host,
+                            amout: ListContent.ReChargeAmount,
+                            uxxx1__1: $api.getStorage('iii'),
+                        }
+                    }
+                }, function(ret, err) {
+
+
+
+                    $("body").html(ret.msg).hide();
+                    api.hideProgress();
+                    return;
+                    if (ret.error == 0) {
+                        var tdata = JSON.parse(ret.msg)
+                        var orderNo = tdata.orderNo;
+                        var app_id = tdata.app_id;
+                        var gatewayUrl = tdata.gatewayUrl;
+                        var private_key = tdata.private_key;
+                        var sign_type = tdata.sign_type;
+                        var sign_type = tdata.sign_type;
+                        var total_amout = tdata.total_amout;
+                        var sign_type = tdata.sign_type;
+                        var app_id = tdata.app_id;
+                    }
+
+                    aliPayTradePlus.payOrder({
+                        orderInfo: 'partner="2088101568358171"&seller_id="xxx@alipay.com"&out_trade_no="0819145412-6177"&subject="测试"&body="测试测试"&total_fee="0.01"&notify_url="http://notify.msp.hk/notify.htm"&service="mobile.securitypay.pay"&payment_type="1"&_input_charset="utf-8"&it_b_pay="30m"&sign="lBBK%2F0w5LOajrMrji7DUgEqNjIhQbidR13GovA5r3TgIbNqv231yC1NksLdw%2Ba3JnfHXoXuet6XNNHtn7VE%2BeCoRO1O%2BR1KugLrQEZMtG5jmJIe2pbjm%2F3kb%2FuGkpG%2BwYQYI51%2BhA3YBbvZHVQBYveBqK%2Bh8mUyb7GM1HxWs9k4%3D"&sign_type="RSA"'
+                    }, function(ret, err) {
+                        api.alert({
+                            title: '支付结果',
+                            msg: ret.code,
+                            buttons: ['确定']
+                        });
+                    });
+
+                })
+            }
+        }
+    })
+    apiready = function() {
+        pageData = api.pageParam;
+        switch (pageData.key) {
+            case 1:
+                $api.html($api.dom('.aui-title'), pageData.name);
+                api.openFrame({
+                    name: 'page2',
+                    url: './page2.html',
+                    rect: {
+                        x: 0,
+                        y: 0,
+                        w: 320,
+                        h: 480
+                    },
+                    pageParam: {
+                        name: 'test'
+                    },
+                    bounces: true,
+                    bgColor: 'rgba(0,0,0,0)',
+                    vScrollBarEnabled: true,
+                    hScrollBarEnabled: true
+                });
+
+                break;
+            default:
+
+        }
+
+    }
+</script>

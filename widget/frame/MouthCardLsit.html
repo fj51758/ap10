@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .aui-grid .aui-grid-label {
+            display: block;
+            font-size: 0.7rem;
+            position: relative;
+            margin-top: 0.25rem;
+            /*border: 1px solid;*/
+            line-height: 3.5rem;
+            margin: auto 1rem;
+            /*border-radius: 5px;
+            border: 1px solid #ccc;
+            background: #fff;*/
+        }
+
+        .selected {
+            border: 1px solid #e51c23 !important;
+        }
+
+        .aui-col-xs-grid-label {
+            border: 1px solid #ccc;
+            padding: 0 !important;
+            margin: 1rem 5%;
+            border-radius: 5px;
+            width: 40%;
+        }
+
+        .aui-grid .aui-iconfont {
+            font-size: 0.8rem;
+        }
+
+        .aui-dialog-body {
+            text-align: left;
+        }
+
+        .aui-list-header {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: block;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            background-color: #e0e0e0;
+            color: #212121;
+            line-height: 1;
+            padding: 0.4rem;
+            font-size: 0.6rem;
+        }
+    </style>
+</head>
+<body>
+    <section class="aui-grid aui-margin-b-15" id='ListContent'>
+        <ul class="aui-form-list">
+          <li class=" aui-list-header">当前使用月卡</li>
+            <template v-for="val in MonthCardList">
+            <template v-if="val.type==1">
+            <li class="aui-list-item" style="background: url('../image/MouthCardBg.png') no-repeat center center;  height: 10rem;  background-size: cover;margin: 0.7rem;border-radius: 8px;">
+                <div class="aui-list-item-inner aui-padded-l-15 aui-padded-r-15 aui-padded-t-15">
+                    <div class="aui-list-item-label aui-text-white aui-text-white aui-font-lsize-20" style="text-align: center;">
+                      <b class="aui-font-lsize-20" style="font-size: 1.2rem;">云发单·月卡</b>
+                        <b style="color: #ff6600; line-height: 1.5rem;"><span style="font-size: 1.6rem;">&nbsp;{{val.DisCounts*10}}</span> 折</b>
+                    </div>
+                </div>
+                <div class="aui-list-item-inner aui-margin-l-15 aui-margin-t-15 aui-margin-r-15 aui-font-size-18" style="text-align: center;background: rgba(255,255,255,0.5);border-radius: 4px;padding: 0.8rem;">
+                    <div class="aui-list-item-label aui-text-default  aui-padded-b-10">
+                        每天抵消群数量：{{val.GroupCount}} 个
+                    </div>
+                    <div class="aui-list-item-label aui-text-default aui-font-size-14">
+                        月卡有效期：{{val.BeginDateTimeStr}}</br> 至 {{val.EndDateTimeStr}}
+                    </div>
+                </div>
+            </li>
+          </template>
+
+          </template>
+          <li class=" aui-list-header">未使用月卡</li>
+            <template v-for="val in MonthCardList">
+              <template v-if="val.type==2">
+            <li class="aui-list-item" style="background: url('../image/MouthCardBg.png') no-repeat center center;  height: 10rem;  background-size: cover;margin: 0.7rem;border-radius: 8px;">
+                <div class="aui-list-item-inner aui-padded-l-15 aui-padded-r-15 aui-padded-t-15">
+                    <div class="aui-list-item-label aui-text-white aui-text-white aui-font-lsize-20" style="text-align: center;">
+                      <b class="aui-font-lsize-20" style="font-size: 1.2rem;">云发单·月卡</b>
+                        <b style="color: #ff6600; line-height: 1.5rem;"><span style="font-size: 1.6rem;">&nbsp;{{val.DisCounts*10}}</span> 折</b>
+                    </div>
+                </div>
+                <div class="aui-list-item-inner aui-margin-l-15 aui-margin-t-15 aui-margin-r-15 aui-font-size-18" style="text-align: center;background: rgba(255,255,255,0.5);border-radius: 4px;padding: 0.8rem;">
+                    <div class="aui-list-item-label aui-text-default  aui-padded-b-10">
+                        每天抵消群数量：{{val.GroupCount}} 个
+                    </div>
+                    <div class="aui-list-item-label aui-text-default aui-font-size-14">
+                        月卡有效期：{{val.BeginDateTimeStr}}</br> 至 {{val.EndDateTimeStr}}
+                    </div>
+                </div>
+            </li>
+          </template>
+
+          </template>
+          <li class=" aui-list-header">失效月卡</li>
+            <template v-for="val in MonthCardList">
+            <template v-if="val.type==3">
+            <li class="aui-list-item" style="background: url('../image/MouthCardBg.png') no-repeat center center;  height: 10rem;  background-size: cover;margin: 0.7rem;border-radius: 8px;">
+                <div class="aui-list-item-inner aui-padded-l-15 aui-padded-r-15 aui-padded-t-15">
+                    <div class="aui-list-item-label aui-text-white aui-text-white aui-font-lsize-20" style="text-align: center;">
+                      <b class="aui-font-lsize-20" style="font-size: 1.2rem;">云发单·月卡</b>
+                        <b style="color: #ff6600; line-height: 1.5rem;"><span style="font-size: 1.6rem;">&nbsp;{{val.DisCounts*10}}</span> 折</b>
+                    </div>
+                </div>
+                <div class="aui-list-item-inner aui-margin-l-15 aui-margin-t-15 aui-margin-r-15 aui-font-size-18" style="text-align: center;background: rgba(255,255,255,0.5);border-radius: 4px;padding: 0.8rem;">
+                    <div class="aui-list-item-label aui-text-default  aui-padded-b-10">
+                        每天抵消群数量：{{val.GroupCount}} 个
+                    </div>
+                    <div class="aui-list-item-label aui-text-default aui-font-size-14">
+                        月卡有效期：{{val.BeginDateTimeStr}}</br> 至 {{val.EndDateTimeStr}}
+                    </div>
+                </div>
+            </li>
+          </template>
+
+          </template>
+        </ul>
+    </section>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script>
+    apiready = function() {
+        main.getdata();
+    }
+    var dialog = new auiDialog();
+    var main = new Vue({
+        el: '#ListContent',
+        data: {
+            GroupCount: 10,
+            MonthCardList: []
+        },
+        methods: {
+            getdata: function() {
+                $common.progress();
+                $common.request('GetNowMonthCardInfo', {
+                    data: {
+                        values: {
+                            ToKen: $api.getStorage('iii'),
+                            ope: 1
+                        }
+                    }
+                }, function(ret, err) {
+                    api.hideProgress();
+                    if (ret.StateCode == 1) {
+                        if (ret.list != null) {
+                            main.MonthCardList = ret.list;
+                        }else {
+                          $common.toast("暂无数据")
+                        }
+                    }
+                })
+            }
+        }
+    })
+</script>

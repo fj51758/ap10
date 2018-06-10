@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>端API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .aui-list-item-title-goods {
+            width: auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            font-size: 0.7rem !important;
+            height: 45px;
+        }
+
+        .aui-list-item-inner-goods {
+            width: 70% !important;
+        }
+
+        img.aui-img-round {
+            border-radius: 0;
+        }
+
+        .aui-list .aui-list-item-media-goods {
+            width: 5rem;
+        }
+
+        .Rbtn {
+            width: 100%;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            line-height: 2rem;
+            background: #03a9f4;
+            color: #fff;
+        }
+
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body id="main" style="margin-top:0.1rem;" >
+    <div class="aui-bar aui-bar-btn aui-bar-btn-full " id='btn-full'>
+        <div class="aui-bar-btn-item aui-active" v-on:click="changeState(0)" tapmode="tapmode">待发商品</div>
+        <!-- <div class="aui-bar-btn-item" v-on:click="changeState(1)" tapmode="tapmode">已发商品</div> -->
+        <div class="aui-bar-btn-item" v-on:click="changeState(1)" tapmode="tapmode">已发商品</div>
+    </div>
+    <div class="aui-list">
+        <div class=" aui-list-item">
+            <div class="aui-list-item-inner" style="width: 60%;  margin: 0 auto;">
+                <label><input class="aui-radio" type="radio" name="radio2" checked v-on:click="changeType(0)" tapmode="tapmode"> 淘宝</label>
+                <label><input class="aui-radio" type="radio" name="radio2"  v-on:click="changeType(1)" tapmode="tapmode"> 京东</label>
+            </div>
+        </div>
+    </div>
+    <ul class="aui-list aui-media-list">
+        <template v-for="val in list">
+        <li class="aui-list-item">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media aui-list-item-media-goods">
+                    <img src="{{val.ImgUrl}}">
+                </div>
+                <div class="aui-list-item-inner aui-list-item-inner-goods">
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-title aui-list-item-title-goods">{{val.GoodsName}}</div>
+                        <!-- <div class="aui-list-item-right">08:00</div> -->
+                    </div>
+                    <div class="aui-list-item-text aui-list-item-text-goods">
+                      <div class="aui-list-item-right">现价 ￥<span>{{val.GoodsPrice}}</span></div>
+                      <div class="aui-list-item-right">月销 <span>1000</span>件</div>
+                    </div>
+                    <div class="aui-list-item-text aui-list-item-text-goods">
+                      <div class="aui-list-item-right" style="font-size:0.65rem;">券后价
+                        <b style="color:#000;font-size:0.9rem;">￥<span>{{val.LastPrice}}</span></b></div>
+                    </div>
+                    <!-- <div class="aui-list-item-text aui-list-item-text-goods">
+                      <div class="aui-list-item-right" style="font-size:0.65rem;">佣金比例
+                        <b style="color:#ff5000;font-size:0.9rem;">￥<span>{{val.TKMoneyRate}}</span></b></div>
+                    </div> -->
+                </div>
+            </div>
+            <div class="aui-info" style="padding-top:0">
+                <!-- <div class="aui-info-item">
+                    <img src="../image/quan.png" style="width:1.5rem" class="aui-img-round" />
+                    <span class="aui-margin-l-5" style="color: #ff5000;  font-size: 0.8rem;"><b>￥<span>{{val.GoodsPrice}}</span></b>元</span>
+                    </div> -->
+                    <div class="aui-info-item">
+                        <span class="aui-margin-l-5" style="color: #ff5000;  font-size: 0.8rem;"><b>佣金比例<span>{{val.TKMoneyRate}}</span></b>%</span>
+                        </div>
+                <div class="aui-info-item">
+                  <div class="aui-btn aui-btn-info"   v-on:click="shareGoods(val,$index,val.tk_GoodsId)" tapmode="tapmode">分享赚钱</div>
+                  <div class="aui-btn aui-btn-danger" style="margin:0 10px;" v-if="iSend==0&&val.IsTop==0" v-on:click="toTop(1,val)" tapmode="tapmode">置顶</div>
+                  <div class="aui-btn aui-btn-default" style="margin:0 10px;" v-if="iSend==0&&val.IsTop==1" v-on:click="toTop(0,val)" tapmode="tapmode">取消置顶</div>
+                  <div class="aui-btn aui-btn-warning" v-on:click="delete(val,$index)" tapmode="tapmode">删除</div>
+                </div>
+            </div>
+        </li>
+</template>
+    </ul>
+    <div style="height:5em;"></div>
+
+    <div class="Rbtn aui-col-xs-12 center aui-btn-info" v-on:click="delAll();" tapmode="tapmode">一键清空待发商品</div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/aui-tab.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+
+<script type="text/javascript">
+</script>
+<script>
+    var lock = false;
+    var arr = [];
+    var init = {
+        pageNo: 0,
+        pageSize: 50,
+        keyWord: "",
+        goodsClass: 0
+    }
+    apiready = function() {
+        ListContent.getData();
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 200 //设置距离底部多少距离时触发，默认值为0，数字类型
+            }
+        }, function(ret, err) {
+            if (!lock) {
+                ListContent.getData();
+            }
+        });
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#ffffff',
+            images:['widget://image/refresh1.png','widget://image/refresh2.png','widget://image/refresh1.png'],
+            tips: { //（可选项）JSON 对象；整个下拉及加载过程的文字提示；不传则不显示文字区域
+                pull: '下拉刷新', //（可选项）字符串类型；下拉过程（下拉高度未达到阈值前）的文字提示；不传则不显示该时段的文字提示
+                threshold: '松开立即刷新', //（可选项）字符串类型；下拉过程（下拉高度达到或超过阈值）的文字提示；不传则不显示该时段的文字提示
+                load: '正在刷新' //（可选项）字符串类型；加载状态的文字提示；不传则不显示该时段的文字提示
+            }
+        }, function(ret, err) {
+            //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+            ListContent.list = [];
+            ListContent.getData();
+            api.refreshHeaderLoadDone()
+        });
+    }
+    function changeState(val) {
+        ListContent.iSend = val;
+        ListContent.list = [];
+        ListContent.getData();
+    }
+    var ListContent = new Vue({
+        el: '#main',
+        data: {
+            list: [],
+            type: 0,
+            iSend: 0,
+        },
+        methods: {
+            changeState: function(val) {
+          $('.aui-bar-btn-item').eq(val).addClass('aui-active').siblings().removeClass('aui-active');
+                ListContent.iSend = val;
+                ListContent.list = [];
+                ListContent.getData();
+            },
+            changeType: function(val) {
+                ListContent.type = val;
+                ListContent.list = [];
+                ListContent.getData();
+            },
+            delAll: function(index) {
+                api.confirm({
+                    title: '提示',
+                    msg: '确定清空所有待发商品吗',
+                    buttons: ['取消', '确定']
+                }, function(ret, err) {
+                    var index = ret.buttonIndex;
+                    if(index ==2){
+                      $common.request('0x0001', {
+                          data: {
+                              values: {
+                                  ApiType: 'ClearWaitGoods',
+                                  uxxx1__1: $api.getStorage('iii')
+                              }
+                          }
+                      }, function(ret, err) {
+                          if (ret.error == 1) {
+                              ListContent.list = [];
+                              $common.toast('操作成功');
+                          }
+                      });
+                    }
+                });
+
+            },
+            shareGoods: function(val, index, GoodsId) {
+                $common.openWin('thirdHead', {
+                    title: '分享图片',
+                    key: 3,
+                    FrameName: 'goodsShare',
+                    GoodsId: GoodsId,
+                    type:ListContent.type
+                });
+            },
+            delete: function(index,i) {
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'DelWaitSendGoods',
+                            id:index.tk_ReadyGoodsId,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error != 2) {
+                        // ListContent.list.removeAttr = [];
+                        ListContent.list.splice(i,1);
+                        $common.toast('操作成功');
+                    }
+                });
+            },
+            toTop: function(val, index) {
+                var abc = index.IsTop;
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'TopWaitGoods',
+                            id: index.tk_ReadyGoodsId,
+                            isTop: val,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error != 2) {
+                        // alert(JSON.stringify(ret))
+                        abc == 1 ? index.IsTop = 0 : index.IsTop = 1
+                        $common.toast('操作成功');
+                    }
+                });
+            },
+            getData: function() {
+                $common.progress();
+                // init.pageNo++;
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'GetWaitSendOrSentGoods',
+                            type: ListContent.type,
+                            iSend: ListContent.iSend,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error != 2) {
+                        var tdata = JSON.parse(ret.data).Table;
+
+                        if (tdata.length > 0) {
+                            ListContent.list = tdata;
+                            // for (var i = 0; i < tdata.length; i++) {
+                            //     arr.push(tdata[i]);
+                            // }
+
+                            // console.log(JSON.stringify(tdata));
+                            lock = true;
+
+                        } else {
+                            lock = true;
+                            $common.toast('暂无数据');
+                        }
+                        api.hideProgress();
+                    } else {
+                        {
+                            $api.toast("提示", ret.msg);
+                        }
+                    }
+                });
+            }
+        }
+    })
+</script>

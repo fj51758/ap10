@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>帮助中心</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        body,html{background: #eee}
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+        .center{
+          text-align: center;
+        }
+        .right{
+          text-align: right;
+        }
+        .white{
+          background: #fff
+        }
+        .vedio{
+          background: #fff;
+          padding: 0.75rem;
+        }
+        .vedio img{
+          width: 1.5rem;
+          vertical-align: middle;
+          margin: 0 0.3rem;
+        }
+    </style>
+</head>
+<body>
+  <div id='main'>
+      <div class="empty white">我是广告</div>
+      <div class="aui-margin-t-10 vedio">
+        发单助手教学视频<img src="../image/finger.png" alt="">
+        <div class="aui-btn aui-btn-outlined">教学视频</div>
+      </div>
+      <div class="aui-content aui-font-size-12 aui-content-padded">常见问题</div>
+      <ul class="aui-list aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title aui-font-size-14">登录/注册</div>
+                    <div class="aui-list-item-right">value</div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+              <div class="aui-list-item-inner aui-list-item-arrow">
+                  <div class="aui-list-item-title aui-font-size-14">不知道什么鬼</div>
+                  <div class="aui-list-item-right">value</div>
+              </div>
+            </li>
+      </ul>
+      <div class="aui-content aui-font-size-12 aui-content-padded">采集器</div>
+      <ul class="aui-list aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title aui-font-size-14">key</div>
+                    <div class="aui-list-item-right">value</div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+              <div class="aui-list-item-inner aui-list-item-arrow">
+                  <div class="aui-list-item-title aui-font-size-14">key</div>
+                  <div class="aui-list-item-right">value</div>
+              </div>
+            </li>
+      </ul>
+  </div>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/jquery.min.js"></script>
+<script type="text/javascript" src="../script/touchslider.js"></script>
+<script type="text/javascript" src="../script/tabSide.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+
+<script>
+      var sign = new Vue({
+          el: '#main',
+          data: {
+              checkoutCg:'',
+          },
+          methods:{
+            addKey:function(el){
+              sign.checkoutCg =sign.checkoutCg + $(el).html()
+            }
+          }
+        })
+
+</script>

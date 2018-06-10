@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>共享商品账号</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        body,
+        html {
+            background: #eee
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='main'>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-mobile"></i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="请输入要添加的云发单账号" v-model="UserName">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-lock"></i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="password" placeholder="请输入密码" v-model="PassWord">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <!-- <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block" style='padding:0.3rem;' v-on:click="addAccount(val)">添加</div>
+        </div> -->
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="addAccount(val)"tapmode="tapmode">添加</div>
+        </div>
+        <div class="aui-content aui-font-size-12 aui-content-padded">已添加账号</div>
+        <ul class="aui-list aui-list-in">
+            <template v-for="val in list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">{{val.UserName}}</div>
+                    <div class="aui-list-item-right"><div class="aui-label aui-label-danger aui-label-outlined" v-on:click="liftedBind(val)">解绑</div></div>
+                </div>
+            </li>
+          </template>
+        </ul>
+
+    </div>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+    apiready = function() {
+        main.getData();
+        // alert(api.winName+api.frameName)
+
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: '',
+            UserName: '',
+            PassWord:''
+        },
+        methods: {
+            addAccount: function(el) {
+              if(main.UserName==""||main.PassWord==""){
+              alert("账号或者密码不能为空!");
+              return;
+              }
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            BindUserName: main.UserName, ///
+                            BindPassWord: main.PassWord, ///
+                            ApiType: "SharedGoodUser_Bind",
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret) {
+                    if (ret.error == 1) {
+                        $common.toast('操作成功');
+                    } else {
+                        alert(ret.msg)
+                    }
+                });
+            },
+            liftedBind: function(val) {
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            liftedBindUserName: val.UserName, ///签到成功模板
+                            ApiType: "LiftedBind",
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret) {
+                    if (ret.error == 1) {
+                        $common.toast('操作成功');
+                        main.list=[];
+                        main.getData();
+                    } else {
+                        alert(ret.msg)
+                    }
+                });
+            },
+            getData: function(index) {
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: "GetSharedGoodUser",
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret) {
+                    if (ret.error == 1) {
+                        var tdata = JSON.parse(ret.data).Table;
+                        main.list = tdata;
+                    } else {
+                        alert(ret.msg)
+                    }
+                });
+            },
+        }
+    })
+</script>

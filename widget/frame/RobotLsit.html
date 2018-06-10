@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .aui-list-item-label-icon-diy {
+            width: 1.5rem !important;
+            padding-right: 0.25rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 80%;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="aui-content-padded">
+        <div class="aui-card-list">
+            <div class="aui-card-list-header">
+                <div class="aui-btn aui-btn-info" style="margin:0 auto;" onclick="abv();"><span class="aui-iconfont aui-icon-plus"></span>获取机器人</div>
+            </div>
+            <div class="aui-card-list-content-padded">
+                <p class="weui-msg__desc" style="text-align:left;color:red;">注意：</p>
+                <p class="weui-msg__desc" style="text-align:left;color:red;">1.管理员微信号是指你自己的微信号，用来拉机器人进群，管理员微信号填错机器人将无法进群</p>
+                <p class="weui-msg__desc" style="text-align:left;color:red;">2.管理员微信号填错导致无法进群，请点击下面修改按钮修改你的微信号</p>
+                <p class="weui-msg__desc" style="text-align:left;color:red;"> 3.显示订单已失效的机器人，无法拉群，请再次购买机器人进行拉群</p>
+                <p class="weui-msg__desc" style="text-align:left;color:red;"> 4.以下几种情形可能导致机器人不加好友或不进群:</p>
+                <p class="weui-msg__desc" style="text-align:left;color:red;"> &nbsp; &nbsp;1).管理员微信号被封过或者被限制过</p>
+                <p class="weui-msg__desc" style="text-align:left;color:red;">&nbsp; &nbsp;2).群邀请确认开关开启</p>
+                <p class="weui-msg__desc" style="color:red;">提示：1.点击二维码按钮，获取机器人微信二维码</p>
+                <p class="weui-msg__desc" style="color:red;">2.点击修改，修改管理员微信号</p>
+
+            </div>
+            <!-- <div class="aui-card-list-footer">
+            底部区域
+        </div> -->
+        </div>
+    </section>
+    <section class="aui-grid aui-margin-b-15">
+        <div class="aui-content aui-margin-b-15">
+            <ul class="aui-list aui-media-list" id="RobotsList">
+                <template v-for="val in list">
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <!-- <div class="aui-list-item-media" style="width: 3rem;">
+                            </div> -->
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">
+                            机器人：<span>{{val.WxNo}}</span>
+                          </div>
+
+                            </div>
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">
+                            管理员：<span>{{val.ClientWxNo}}</span>
+                          </div>
+
+                            </div>
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">
+                            状态：<span>{{val.robotState==1?'可拉群':'不可拉群'}}</span>
+                          </div>
+
+                                <!-- <div class="aui-list-item-right" style="text-decoration:underline;color: #e51c23;" v-on:click="UpdateWx(val)">修改管理员微信</div> -->
+                            </div>
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-text aui-font-size-12">
+                            创建时间：<span>{{val.cretaeDateTime.replace("T", " ").split(".")[0]}}</span>
+                          </div>
+
+                                <!-- <div class="aui-list-item-right">08:00</div> -->
+                            </div>
+
+                        </div>
+                        <div class="aui-list-item-inner" style="width: 46%;  padding-right: 0;">
+
+                            <div class="aui-info" style="padding-top:0">
+                                <div class="aui-list-item-input">
+                                  <div class="aui-btn aui-btn-info"  style="font-size: 0.6rem;" v-on:click="ClipWeChat(val);">复制微信</div>
+                                  <!-- <div class="aui-btn aui-btn-info" style="font-size: 0.6rem;" v-on:click="ClipWeChat(val);">复制微信</div> -->
+                                </div>
+                                <!-- <div class="aui-info-item">2015-07-14 10:31</div> -->
+                            </div>
+                            <div class="aui-info" style="padding:0">
+                              <div class="aui-list-item-input">
+                                <div class="aui-btn"  :class="[val.robotState==1?'aui-btn-warning':'aui-btn-defalut']"  style="font-size: 0.6rem;" v-on:click="SeeDetail(val);">查看详情</div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+              </template>
+            </ul>
+            <!-- </div> -->
+        </div>
+    </section>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script>
+
+
+    apiready = function() {
+       clipBoard = api.require('clipBoard');
+        RobotsList.getData();
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#ffffff',
+            images:['widget://image/refresh1.png','widget://image/refresh2.png','widget://image/refresh1.png'],
+            tips: { //（可选项）JSON 对象；整个下拉及加载过程的文字提示；不传则不显示文字区域
+                pull: '下拉刷新', //（可选项）字符串类型；下拉过程（下拉高度未达到阈值前）的文字提示；不传则不显示该时段的文字提示
+                threshold: '松开立即刷新', //（可选项）字符串类型；下拉过程（下拉高度达到或超过阈值）的文字提示；不传则不显示该时段的文字提示
+                load: '正在刷新' //（可选项）字符串类型；加载状态的文字提示；不传则不显示该时段的文字提示
+            }
+        }, function(ret, err) {
+            //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+            RobotsList.list = [];
+              RobotsList.getData();
+            api.refreshHeaderLoadDone()
+        });
+    }
+    var dialog = new auiDialog({})
+
+    function abv() {
+      var text = '';
+      if($api.getStorage("MyWx")!=undefined){
+        text = $api.getStorage("MyWx");
+      }
+        dialog.prompt({
+            title: "填写微信号",
+            text: '你在群里的微信号',
+            thevalue:text,
+            buttons: ['取消', '确定']
+        }, function(ret) {
+            if (ret.buttonIndex == 2) {
+                var thetext = $api.trim(ret.text);
+                dialog.alert({
+                    title: "请确认微信号是否正确",
+                    msg: "您输入的微信号是：" + thetext + "  请保证微信号填对,否则无法加机器人为好友",
+                    buttons: ['取消', '确定']
+                }, function(ret) {
+                    if (ret.buttonIndex == 2) {
+                      $api.setStorage('MyWx', thetext);
+                        $common.request('0x0001', {
+                            data: {
+                                values: {
+                                    ApiType: 'UsersAddWxGroup_NoSpend',
+                                    wxNo: thetext,
+                                    robotsFee: 0,
+                                    num: 1,
+                                    uxxx1__1: $api.getStorage('iii')
+                                }
+                            }
+                        }, function(ret, err) {
+                            // alert(JSON.stringify(ret))
+                            if (ret.error != 2) {
+                                var result = JSON.parse(ret.data).Table[0] ;
+                                RobotsList.getData();
+                                $common.openWin('RobotDetail', {
+                                    title: '机器人详情',
+                                    key: 100,
+                                    FrameName: 'RobotDetail',
+                                    ClientWxNo:thetext,
+                                    AppRootUsersId: result.AppRootUsersId,
+                                    WxNo: result.WxNo,
+                                    WxId: result.WxId
+                                });
+                            } else {
+                                alert(ret.msg);
+                            }
+                        });
+                    }
+                });
+            }
+        })
+
+    }
+    var RobotsList = new Vue({
+        el: '#RobotsList',
+        data: {
+            list: [],
+            gsid: '',
+            show: 1,
+            goodstype: 2
+        },
+        methods: {
+            getData: function() {
+              $common.progress();
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'GetOrderByUserName',
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+
+                    // alert(JSON.stringify(ret))
+                    if (ret.error != 2) {
+                        var tdata = ret.data.Table;
+
+                        if (tdata.length > 0) {
+                            RobotsList.list = tdata;
+                            //console.log(JSON.stringify(goods.list ));
+                            lock = false;
+
+                        } else {
+                            lock = true;
+                            $common.toast('暂无数据');
+                        }
+                        api.hideProgress();
+                    } else {
+
+                            $api.toast("提示", ret.msg, 1000);
+
+                    }
+                });
+            },
+            SeeDetail: function(index) {
+              if(index.robotState==0){
+                $common.toast("该机器人已过期，无法查看详情")
+                return;
+              }
+                $common.openWin('RobotDetail', {
+                    title: '机器人详情',
+                    key: 100,
+                    FrameName: 'RobotDetail',
+                    ClientWxNo: index.ClientWxNo,
+                    AppRootUsersId: index.AppRootUsersId,
+                    WxNo: index.WxNo,
+                    WxId: index.WxId
+                });
+            },
+            ClipWeChat:function(index){
+              clipBoard.set({
+                  value: index.WxNo
+              }, function(ret, err) {
+                  if (ret) {
+                    api.confirm({
+                        title: '复制成功',
+                        msg: '是否现在打开微信客户端粘贴微信号添加好友',
+                        buttons: ['取消', '确定']
+                    }, function(ret, err){
+                        if( ret.buttonIndex==2){
+                          window.location.href="weixin://"
+                        }
+                    });
+                  } else {
+                      alert(JSON.stringify(err));
+                  }
+              });
+            },
+            UpdateWx: function(index) {
+                dialog.prompt({
+                    title: "修改微信号",
+                    text: '你在群里的微信号',
+                    buttons: ['取消', '确定']
+                }, function(ret) {
+                    console.log(ret)
+                    if (ret.buttonIndex == 2) {
+                        dialog.alert({
+                            title: "请确认微信号是否正确",
+                            msg: "您输入的微信号是：" + ret.text + "  请保证微信号填对,否则无法加机器人为好友",
+                            buttons: ['取消', '确定']
+                        }, function(ret) {
+                            if (ret.buttonIndex == 2) {
+                                $common.request('0x0001', {
+                                    data: {
+                                        values: {
+                                            ApiType: 'UpdateUsersClientWxNo',
+                                            appRootUserId: index.AppRootUsersId,
+                                            clientWxNo: index.ClientWxNo,
+                                            uxxx1__1: $api.getStorage('iii')
+                                        }
+                                    }
+                                }, function(ret, err) {
+                                    // alert(JSON.stringify(ret))
+                                    if (ret.error != 2) {
+                                        var result = result.data.Table[0];
+                                        $common.toast(ret.msg);
+                                        // $common.openWin('RobotDetail',{title:'机器人详情',key:100,FrameName:'RobotDetail',ClientWxNo:result.ClientWxNo,AppRootUsersId:result.AppRootUsersId,WxNo:result.WxNo});
+                                    } else {
+                                        alert(ret.msg);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                })
+
+
+            }
+        }
+    })
+</script>

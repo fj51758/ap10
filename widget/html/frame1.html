@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>端API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <link rel="stylesheet" type="text/css" href="../css/loading.css" />
+    <style>
+        .aui-list-item-title-goods {
+            width: auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            font-size: 0.7rem !important;
+            height: 45px;
+        }
+
+        .aui-list-item-inner-goods {
+            width: 70% !important;
+        }
+
+        img.aui-img-round {
+            border-radius: 0;
+        }
+
+        .aui-list .aui-list-item-media-goods {
+            width: 6.3rem;
+            padding: 1.2rem 0.75rem 1.2rem 0;
+        }
+
+        .aui-bar-btn-item {
+            width: auto;
+        }
+
+        .column {
+            padding: 0 2%;
+            background: #ffffff;
+            overflow: hidden;
+            width: 100%;
+            /*float: left;*/
+        }
+
+        .aui-tab {
+            display: block;
+            overflow: hidden;
+            width: 50rem;
+        }
+
+        .aui-tab-item.aui-active {
+            color: #fe4f3f;
+            border-bottom: 2px solid #fe4f3f;
+            z-index: 1;
+        }
+
+        .aui-bar-btn-full {
+            background: #fff;
+        }
+
+        .aui-bar-btn-item {
+            border-color: #f5f5f5;
+        }
+
+        .aui-tab .aui-tab-item {
+            width: 3.5rem;
+            font-weight: 500;
+            float: left;
+        }
+        /*.aui-list .aui-list-item-inner {
+            min-height: 1.6rem;
+                padding-top: 0.7rem;
+        }*/
+
+        .aui-list .aui-list-item {
+            min-height: 1.6rem;
+        }
+
+        .aui-list .aui-list-item:after {
+            background-color: transparent;
+        }
+
+        .aui-row-diy .aui-col-xs-4 {
+            margin: 0 2px 0 0;
+            background: #fff;
+            padding: 0.5rem;
+            width: 32.7%;
+        }
+
+        .GoodsContent .aui-list:after {
+            background: transparent;
+        }
+
+        .GoodsContent .aui-list:before {
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15" id="main">
+        <ul class="aui-list aui-select-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-label">
+                    <input class="aui-checkbox" type="checkbox" name="demo1" v-on:change="IsOpenServerGoods(OpenServerGoods)" v-model="OpenServerGoods">
+                </div>
+                <div class="aui-list-item-inner">
+                    爆款推送
+                    <div class="aui-list-item-text">
+                        实时销量检测爆款
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <section class="aui-grid" style="background-color: transparent;margin-top:2px;">
+            <div class="aui-row aui-row-diy">
+                <div class="aui-col-xs-4" onclick="OpenUrl()">
+                    <i class="aui-iconfont"><img src="../image/social-qq.png" style="width: 2rem;"></i>
+                    <div class="aui-font-size-12">QQ采集</div>
+                </div>
+                <div class="aui-col-xs-4" onclick="$common.openWin('CommonPage',{title:'云Q采集',key:3,FrameName:'CollectGroups'});" tapmode="tapmode">
+                    <i class="aui-iconfont"><img src="../image/s_qq.png" style="width: 2rem;"></i>
+                    <div class="aui-font-size-12">云Q采集</div>
+                </div>
+                <div class="aui-col-xs-4" onclick="openChangelink()" tapmode="tapmode" style="border:none;">
+                    <i class="aui-iconfont"><img src="../image/s_copy.png" style="width: 2rem;"></i>
+                    <div class="aui-font-size-12">自主转链</div>
+                </div>
+            </div>
+        </section>
+        <div id="toTOP">
+            <div class="aui-searchbar" id="search" style="position: relative; ">
+                <div class="aui-searchbar-input aui-border-radius" tapmode>
+                    <i class="aui-iconfont aui-icon-search"></i>
+                    <form action="javascript:0;">
+                        <input type="search" placeholder="请输入商品标题/链接" id="search-input" onkeydown="if(event.keyCode==13) { eventsearch();return false};">
+                        <!-- <div id="cancel" @click="cancel" v-show="cancel_show"></div> -->
+                    </form>
+                </div>
+                <div class="search-btn aui-padded-r-10" onclick="eventsearch()">
+                    搜索
+                </div>
+            </div>
+            <!-- <div class="aui-bar aui-bar-btn  aui-bar-btn-full" id="btn-full" style="position: relative; ">
+                <div class="aui-bar-btn-item" aui-popup-for="top-left"> <i class="aui-iconfont aui-icon-top aui-text-warning aui-margin-r-5 aui-font-size-16" style="font-weight:600;"></i>排序</div>
+                <div class="aui-bar-btn-item" onclick="abc()"> <i class="aui-iconfont aui-icon-search aui-text-danger aui-margin-r-5 aui-font-size-16" style="font-weight:600;"></i>筛选</div>
+                <div class="aui-popup aui-popup-top-left" id="top-left" style="z-index: 999;top: 1.8rem;left:0;display: block;  position: absolute;display:none;width:50%;">
+                    <div class="aui-popup-arrow"></div>
+                    <div class="aui-popup-content">
+                        <ul class="aui-list aui-list-noborder">
+                            <template v-for="val in orderlist">
+                        <li class="aui-list-item aui-font-size-14" v-on:click="chooseOrder(val.val)">
+                            <div class="aui-list-item-inner aui-list-item-middle">
+                                {{val.text}}
+                            </div>
+                        </li>
+                      </template>
+                        </ul>
+                    </div>
+                </div> -->
+
+
+            <!-- <div class="aui-searchbar" id="search" style="top:initial">
+    <div class="aui-searchbar-input aui-border-radius" tapmode onclick="doSearch()">
+        <i class="aui-iconfont aui-icon-search"></i>
+        <form action="javascript:search();">
+            <input type="search" placeholder="请输入搜索内容" id="search-input">
+        </form>
+    </div>
+
+    <div class="aui-searchbar-cancel" tapmod>取消</div>
+</div> -->
+            <div class="aui-content" style="position: relative; bottom: 0;">
+                <!-- <div class="find_nav">
+                <div class="find_nav_left">
+                    <div class="find_nav_list" id="GoodsClassContent">
+                        <ul class="aui-font-size-12" style="transition-property: -webkit-transform; transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+                            <li><a href="#" class="active">TOP100</a></li>
+                            <template v-for="val in list">
+            <li><a href="#" class="active">{{val.GoodsClassName}}</a></li>
+  <li><a href="#" class="active">每日更新</a></li>
+    <li><a href="#" class="active">每日更新</a></li>
+      <li><a href="#" class="active">每日更新</a></li>
+        <li><a href="#" class="active">每日更新</a></li>
+          <li><a href="#" class="active">每日更新</a></li>
+            <li><a href="#" class="active">每日更新</a></li>
+              <li><a href="#" class="active">每日更新</a></li>
+              <li><a href="#" class="active">每日更新</a></li>
+                <li><a href="#" class="active">每日更新</a></li>
+                  <li><a href="#" class="active">每日更新</a></li>
+    </template>
+                        </ul>
+
+                    </div>
+                </div>
+            </div> -->
+                <div>
+                    <!-- <div v-if="show==2"> -->
+                    <div class="column">
+                        <div class="aui-tab" id="tab">
+                            <template v-for="val in list">
+          	        <div class="aui-tab-item {{$index==0?'aui-active':''}}"  v-on:click="chooseClass(val,$index)" tapmode="tapmode">{{val.Name}}</div>
+          						</template>
+                        </div>
+                    </div>
+                    <div class="menu" v-cloak>
+                        <div :class="{active:selected==1}" @click="changeOrder(1,1)">新品</div>
+                        <div :class="{active:selected==2}" @click="changeOrder(5,2)">销量</div>
+                        <div :class="{active:selected==3}" @click="changeOrder(4,3)">券后<span class="stag" :class="{up:porder=='asc',down:porder=='desc'}"></span></div>
+                        <div :class="{active:selected==4}" @click="changeOrder(2,4)">佣金<span class="stag" :class="{up:porder1=='asc',down:porder1=='desc'}"></span></div>
+                        <div aui-popup-for="top">渠道</div>
+                        <div onclick="abc()">筛选<span class="sfilter"></span></div>
+
+
+                    </div>
+                    <div class="aui-popup aui-popup-top" id="top" style="width: 0;left: 68%;position:absolute;top: 4.5rem;">
+                        <div class="aui-popup-arrow"></div>
+                        <div class="aui-popup-content">
+                            <ul class="aui-list aui-list-noborder">
+                                <li class="aui-list-item" v-on:click="ChangeType(0)">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-text-info" style="background: url('../image/tb.png') no-repeat center center;background-size: contain;  width: 1.8rem;height: 1.8rem;  margin-top: -0.1rem;"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-list-item-middle">
+                                        淘宝
+                                    </div>
+                                </li>
+                                <li class="aui-list-item" v-on:click="ChangeType(1)">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-text-info" style="background: url('../image/jd.png') no-repeat center center;background-size: contain;  width: 1.8rem;height: 1.8rem;  margin-top: -0.2rem;"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner">
+                                        京东
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="aui-refresh-content GoodsContent">
+                <div id="load5" class="load5">
+                    <div class="loader"></div><span>正在加载中...</span> </div>
+                <template v-if="(showtype==0)">
+              <ul class="aui-list aui-media-list" id="goods">
+                  <template v-for="val in goodslist">
+                    <li class="aui-list-item">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-media aui-list-item-media-goods">
+                                <img src="{{val.ImgUrl}}">
+                            </div>
+                            <div class="aui-list-item-inner aui-list-item-inner-goods">
+                                <div class="aui-list-item-text">
+                                    <div class="aui-list-item-title aui-list-item-title-goods">
+                                      <span class="aui-label aui-label-tb aui-margin-r-5" v-if="(goodsType==0)">淘宝</span>
+                                      <span class="aui-label aui-label-jd aui-margin-r-5" v-if="(goodsType==1)">京东</span>
+                                      {{val.GoodsName}}
+                                    </div>
+                                </div>
+                                <div class="aui-list-item-text aui-list-item-text-goods" style="margin:0.2rem auto;">
+                                    <div class="aui-list-item-right"><div class="goods-quan shoufa-quan fl"><span>券</span><b><i>￥</i>{{val.ActMoney}}</b></div></div>
+
+                                </div>
+                                <div class="aui-list-item-text aui-list-item-text-goods" >
+                                    <div class="aui-list-item-right" v-if="(goodsType==0)">月销： <span>{{val.SaleCount}}</span>件</div>
+                                    <div class="aui-list-item-right aui-font-size-12">佣金: {{val.TKMoneyRate}}%</div>
+                                </div>
+                                <div class="aui-list-item-text aui-list-item-text-goods">
+                                    <div class="aui-list-item-right aui-font-size-12" >原价: ￥<span>{{val.GoodsPrice}}</span></div>
+                                    <div class="aui-list-item-right aui-font-size-12" >券后价: <b  style="color:#ea5142">￥<span class="aui-font-size-16">{{val.LastPrice}}</span></b></div>
+                                </div>
+                                <div class="aui-list-item-text aui-list-item-text-goods" style="padding-top: 0.1rem;">
+                                  <div class="aui-btn aui-btn-info aui-font-size-12" style="padding:0.2rem 0.5rem;margin-left: 0.25rem;" v-on:click="addGoods(val,$index,val.tk_GoodsId)" tapmode="tapmode">加入待发</div>
+                                    <div class="aui-btn aui-btn-warning   aui-font-size-12" style="padding:0.2rem 0.5rem;" v-on:click="shareGoods(val,$index,val.tk_GoodsId)"  tapmode="tapmode">分享赚钱</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                  </template>
+                </ul>
+                </template>
+                <template v-if="(showtype==1)">
+            <ul class="aui-list aui-media-list" id="goods">
+                <template v-for="val in goodslist">
+                <li class="aui-list-item">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media aui-list-item-media-goods">
+                            <img src="{{val.ImgUrl}}">
+                        </div>
+                        <div class="aui-list-item-inner aui-list-item-inner-goods">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-list-item-title-goods">
+                              <span class="aui-label aui-label-tb aui-margin-r-5">淘宝</span>
+                                  {{val.GoodsName}}
+                                </div>
+                            </div>
+                            <div class="aui-list-item-text aui-list-item-text-goods" style="margin:0.2rem auto;">
+                                <div class="aui-list-item-right"><div class="goods-quan shoufa-quan fl"><span>券</span><b><i>￥</i>{{val.ActMoney}}</b></div></div>
+
+                            </div>
+                            <div class="aui-list-item-text aui-list-item-text-goods" >
+                                <div class="aui-list-item-right" v-if="(goodsType==0)">月销： <span>{{val.SaleCount}}</span>件</div>
+                                <div class="aui-list-item-right aui-font-size-12">佣金: {{val.TKMoneyRate}}%</div>
+                            </div>
+                            <div class="aui-list-item-text aui-list-item-text-goods">
+                                <div class="aui-list-item-right aui-font-size-12" >原价: ￥<span>{{val.GoodsPrice}}</span></div>
+                                <div class="aui-list-item-right aui-font-size-12" >券后价: <b  style="color:#ea5142">￥<span class="aui-font-size-16">{{val.LastPrice}}</span></b></div>
+                                                     </div>
+                            <div class="aui-list-item-text aui-list-item-text-goods" style="padding-top: 0.1rem;">
+
+                              <div class="aui-btn aui-btn-info aui-font-size-12" style="padding:0.2rem 0.5rem;margin-left: 0.25rem;" v-on:click="addGoods(val,$index,val.GoodsId)" tapmode="tapmode">加入待发</div>
+
+                                <div class="aui-btn aui-btn-warning   aui-font-size-12" style="padding:0.2rem 0.5rem;" v-on:click="shareGoods(val,$index,val.GoodsId)" tapmode="tapmode">分享赚钱</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                </template>
+                </ul>
+                </template>
+            </section>
+        </div>
+    </div>
+    <img src="../image/scorll.png" class="aui-hide" id="totop" onclick="totop()" style="position: fixed;right: 1em;  bottom: 10em;width: 2.2rem;">
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/aui-tab.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script type="text/javascript" src="../script/aui-pull-refresh.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+    var popup = new auiPopup();
+  var dialog = new auiDialog({});
+    function ClipUrl() {
+        $common.ClipText($common.QQcaijiUrl, "QQ采集器下载链接复制成功，请在电脑浏览器复制粘贴打开即可下载使用")
+    }
+
+    function OpenUrl() {
+        $common.ClipText($common.QQcaijiUrl, "QQ采集器下载链接复制成功，请在电脑浏览器复制粘贴打开即可下载使用")
+        $common.openWin('CommonPage', {
+            title: 'QQ采集',
+            key: 3,
+            FrameName: GetAppBaseConfig.QQCaiJiJieShaoLink
+        });
+    }
+    function openChangelink(){
+      dialog.alert({
+          title: "你要进行哪种转链呢？",
+          msg: '请点击按钮进入转链',
+          buttons: ['京东转链','淘宝转链']
+      }, function(ret) {
+        if(ret.buttonIndex == 1){
+          $common.openWin('CommonPage',{title:'京东自主转链',key:3,FrameName:'ChangelinkJD'});
+
+        }
+        if(ret.buttonIndex == 2){
+          $common.openWin('CommonPage',{title:'淘宝自主转链',key:3,FrameName:'Changelink'});
+
+        }
+      })
+    }
+</script>
+<script>
+    var lock = false;
+    var arr = [];
+    var init = {
+        pageNo: 0,
+        pageSize: 50,
+        keyWord: "",
+        goodsClass: 0
+    }
+    apiready = function() {
+        makeSharePic = api.require('makeSharePic');
+        GetAppBaseConfig = $api.getStorage('GetAppBaseConfig');
+        lockRefresh = false;
+        if (lockRefresh != true) {
+            api.setCustomRefreshHeaderInfo({
+                bgColor: '#ffffff',
+                images: ['widget://image/refresh1.png', 'widget://image/refresh2.png', 'widget://image/refresh1.png'],
+                tips: { //（可选项）JSON 对象；整个下拉及加载过程的文字提示；不传则不显示文字区域
+                    pull: '下拉刷新', //（可选项）字符串类型；下拉过程（下拉高度未达到阈值前）的文字提示；不传则不显示该时段的文字提示
+                    threshold: '松开立即刷新', //（可选项）字符串类型；下拉过程（下拉高度达到或超过阈值）的文字提示；不传则不显示该时段的文字提示
+                    load: '正在刷新' //（可选项）字符串类型；加载状态的文字提示；不传则不显示该时段的文字提示
+                }
+            }, function(ret, err) {
+                //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+
+                arr = [];
+                ListContent.goodslist = arr;
+                ListContent.page = 0;
+                ListContent.getData();
+                api.refreshHeaderLoadDone()
+
+
+            });
+        }
+        ListContent.getGoodsClass();
+        ListContent.getData();
+        //  GoodsList.getData();
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 200 //设置距离底部多少距离时触发，默认值为0，数字类型
+            }
+        }, function(ret, err) {
+            $("#totop").removeClass("aui-hide");
+            if (!lock) {
+                ListContent.getData();
+            }
+        });
+    }
+
+    function totop() {
+        scrollTo(0, 0);
+    }
+
+    function eventsearch() {
+        ListContent.keyWord = $api.val($api.dom("#search-input"));
+        ListContent.showtype = 0;
+        ListContent.goodsClass = "";
+        $('.aui-tab-item').eq(1).addClass('aui-active').siblings().removeClass('aui-active');
+        arr = [];
+        ListContent.goodslist = arr;
+        ListContent.page = 0;
+        ListContent.getData();
+    }
+    var jsfun = function(ret) {
+        ListContent.goodsClass = "";
+        ListContent.keyWord = ret.value.keyWord;
+        ListContent.maxPrice = ret.value.maxPrice;
+        ListContent.minPrice = ret.value.minPrice;
+        ListContent.yj = ret.value.yj;
+        ListContent.showtype = 0;
+        $('.aui-tab-item').eq(1).addClass('aui-active').siblings().removeClass('aui-active');
+        arr = [];
+        ListContent.goodslist = arr;
+        ListContent.page = 0;
+        ListContent.getData();
+    };
+
+    function abc() {
+        // api.openSlidPane({
+        //     type: 'left'
+        // });
+        api.openDrawerPane({
+            type: 'right'
+        });
+    }
+
+
+    var ListContent = new Vue({
+        el: '#main',
+        data: {
+            orderlist: [{
+                text: "新品",
+                val: 1
+            }, {
+                text: "销量",
+                val: 1
+            }, {
+                text: "原价",
+                val: 3
+            }, {
+                text: "券后价",
+                val: 4
+            }, {
+                text: "佣金比例",
+                val: 2
+            }],
+            list: [],
+            showtype: 1, //显示类型 0大淘客
+            goodslist: [],
+            pageSize: 20,
+            page: 0,
+            porder: 'def',
+            porder1: 'def',
+            keyWord: "", //搜索关键词
+            goodsClass: "", //大淘客分类
+            cid: 0, //千语分类
+            order: 1, //排序
+            type: 6, // 6为爆款 5为商品
+            OpenServerGoods: false, //爆款推送开关
+            Top100OpenServerGoods: false, //TOP100推送
+            goodsType: 0, //0 淘宝 1京东
+            maxPrice: 0,
+            minPrice: 0,
+            yj: 0,
+            selected: 1 //筛选选中条件
+        },
+        methods: {
+            ChangeType: function(val) {
+                var newClassList = []
+                if (val == 0) {
+                    newClassList = $api.getStorage("TbGoodsClass");
+
+                } else {
+                    newClassList = [{
+                        "ID": 0,
+                        "Name": "全部"
+                    }, {
+                        "ID": 1,
+                        "Name": "女装"
+                    }, {
+                        "ID": 2,
+                        "Name": "男装"
+                    }, {
+                        "ID": 3,
+                        "Name": "内衣配饰"
+                    }, {
+                        "ID": 4,
+                        "Name": "母婴玩具"
+                    }, {
+                        "ID": 5,
+                        "Name": "美妆个护"
+                    }, {
+                        "ID": 6,
+                        "Name": "食品保健"
+                    }, {
+                        "ID": 7,
+                        "Name": "居家生活"
+                    }, {
+                        "ID": 8,
+                        "Name": "鞋品箱包"
+                    }, {
+                        "ID": 6,
+                        "Name": "运动户外"
+                    }, {
+                        "ID": 7,
+                        "Name": "文体车品"
+                    }, {
+                        "ID": 8,
+                        "Name": "数码家电"
+                    }, ]
+                }
+                ListContent.list = newClassList;
+                $('.aui-tab-item').eq(1).addClass('aui-active').siblings().removeClass('aui-active');
+                ListContent.goodsClass = "";
+                ListContent.showtype = 0;
+                ListContent.goodsType = val;
+                ListContent.page = 0;
+                popup.hide($api.dom("#top"));
+                arr = [];
+                ListContent.goodslist = arr;
+                ListContent.page = 0;
+                ListContent.getData();
+                // $('.aui-tab-item').eq(3).addClass('aui-active').siblings().removeClass('aui-active');
+            },
+            changeOrder: function(val, i) {
+                this.selected = i;
+                ListContent.page = 0;
+                switch (i) {
+                    case 1:
+                    case 2:
+                        ListContent.order = val;
+                        arr = [];
+                        ListContent.goodslist = arr;
+                        ListContent.getData();
+                        break;
+                    case 3:
+                        if (this.porder == 'asc') {
+                            this.porder = 'desc';
+                            ListContent.order = 4;
+                        } else if (this.porder == 'desc' || this.porder == 'def') {
+                            this.porder = 'asc';
+                            ListContent.order = 7;
+                        }
+                        arr = [];
+                        ListContent.goodslist = arr;
+                        ListContent.getData();
+                        break;
+                    case 4:
+                        if (this.porder1 == 'asc') {
+                            this.porder1 = 'desc';
+                            ListContent.order = 2;
+                        } else if (this.porder1 == 'desc' || this.porder1 == 'def') {
+                            this.porder1 = 'asc';
+                            ListContent.order = 6;
+                        }
+                        arr = [];
+                        ListContent.goodslist = arr;
+                        ListContent.getData();
+                        break;
+                }
+            },
+            addGoods: function(val, index, GoodsId) {
+                $common.request('CommitGoods', {
+                    data: {
+                        values: {
+                            Id: GoodsId,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    ListContent.goodslist.splice(index, 1);
+                    $common.toast("加入成功")
+
+                });
+            },
+            shareGoods: function(val, index, GoodsId) {
+
+                $common.openWin('thirdHead', {
+                    title: '分享图片',
+                    key: 3,
+                    FrameName: 'goodsShare',
+                    GoodsId: GoodsId,
+                    type:ListContent.goodsType
+                });
+
+
+
+            },
+            chooseClass: function(val, index) {
+                // $common.progress();
+                ListContent.keyWord = "";
+                ListContent.showtype = val.ID == -1 ? 1 : 0;
+                // if(val.ID ==-1){
+                //   ListContent.showtype=1;
+                // }else {
+                //   ListContent.showtype=1;
+                // }
+                // index++;
+                $('.aui-tab-item').eq(index).addClass('aui-active').siblings().removeClass('aui-active');
+                arr = [];
+                ListContent.goodslist = arr;
+                ListContent.cid = val.ID;
+                if (val.Name == "全部") {
+                    ListContent.goodsClass = "";
+                } else {
+                    ListContent.goodsClass = val.Name;
+
+                }
+                // alert(  ListContent.goodsClass )
+                arr = [];
+                ListContent.page = 0;
+                ListContent.getData();
+            },
+            IsOpenServerGoods: function(OpenServerGoods) {
+              $common.progress("操作中")
+                 var ii = ListContent.OpenServerGoods == false ? 0 : 1
+                    // $common.request('Top100UserForOpen', {
+                    //     data: {
+                    //         values: {
+                    //             ToKen: $api.getStorage('iii'),
+                    //             ope:ii
+                    //         }
+                    //     }
+                    // }, function(ret, err) {
+                    //       console.log($api.getStorage('iii'));
+                    //       if (ret.StateCode == 1) {
+                    //           $common.toast('操作成功');
+                    //
+                    //       } else {
+                    //           $api.toast("提示", ret.Message, 1000);
+                    //       }
+                    //   });
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'IsStartOpenServerGoods',
+                            OpenServerGoodStart: ii,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    //alert(JSON.stringify(ret))
+                    if (ret.error == 1) {
+                        $common.toast('操作成功');
+                        lockRefresh = true;
+                        //更新本地缓存
+                        var sendconfig = $api.getStorage("sendconfig");
+                        sendconfig.Table[0].OpenServerGoods = ListContent.OpenServerGoods;
+                        $api.setStorage("sendconfig", sendconfig);
+                    } else {
+                        ListContent.OpenServerGoods = !ListContent.OpenServerGoods;
+                        $api.toast("提示", ret.msg, 1000);
+                    }
+                    lockRefresh = false;
+                     api.hideProgress();
+                });
+            },
+            chooseOrder: function(index) {
+                popup.hide($api.dom("#top-left"))
+                ListContent.order = index;
+                arr = [];
+                ListContent.getData();
+            },
+            getGoodsClass: function(index) {
+
+                if ($api.getStorage("GoodsClass") != undefined) {
+                    var b = $api.getStorage("GoodsClass");
+                    var newClassList = b;
+                    newClassList.unshift({
+                        "ID": -1,
+                        "Name": "Top100"
+                    });
+                    ListContent.list = newClassList;
+                    $api.setStorage("TbGoodsClass", newClassList)
+                }
+
+            },
+            getData: function(index) {
+                // $common.progress();
+                $common.showLoading();
+                ListContent.page++;
+                var sendconfig = $api.getStorage("sendconfig");
+                // console.log(JSON.stringify(sendconfig))
+                if (sendconfig != undefined) {
+                    // ListContent.Top100OpenServerGoods = sendconfig.Table[0].OpenServerGoods;
+                    ListContent.OpenServerGoods = sendconfig.Table[0].OpenServerGoods;
+                }
+                if (ListContent.showtype == 0) {
+                    // $common.request('0x0001', {
+                    //     data: {
+                    //         values: {
+                    //             pageNo:ListContent.page,
+                    //             pageSize: ListContent.pageSize,
+                    //             keyWord:ListContent.keyWord,
+                    //             goodsType: 0,
+                    //             apiType: "GetGoodsPage",
+                    //             goodsClass:ListContent.goodsClass=="全部"?"":ListContent.goodsClass
+                    //         }
+                    //     }
+                    // },
+
+
+                    $common.request('GetAppGoodsData', {
+                            data: {
+                                values: {
+                                    goodsClass: ListContent.goodsClass,
+                                    goodsType: ListContent.goodsType,
+                                    keyWord: ListContent.keyWord,
+                                    maxPrice: ListContent.maxPrice,
+                                    minPrice: ListContent.minPrice,
+                                    pageNo: ListContent.page,
+                                    pageSize: ListContent.pageSize,
+                                    sort: ListContent.order,
+                                    yj: ListContent.yj
+                                }
+                            }
+                        },
+                        function(ret, err) {
+                            // console.log(JSON.stringify(ret.list));
+                            var tdata = ret.list;
+                            if (tdata.length > 0) {
+                                // arr=tdata;
+                                for (var i = 0; i < tdata.length; i++) {
+                                    arr.push(tdata[i]);
+                                }
+                                ListContent.goodslist = arr;
+
+                                lock = false;
+                            } else {
+                                lock = true;
+                                $common.toast('暂无数据');
+                            }
+                            $common.hideLoading();
+                        });
+                }
+                if (ListContent.showtype == 1) {
+                    $common.request('GetQyGoodsInfo', {
+                        data: {
+                            values: {
+                                page: 1,
+                                cid: 0,
+                                order: 0,
+                                type: 6
+                            }
+                        }
+                    }, function(ret, err) {
+                        var tdata = ret.list.data.result;
+                        if (tdata.length > 0) {
+                            arr = tdata;
+                            ListContent.goodslist = arr;
+                            // console.log(JSON.stringify(arr));
+                            lock = false;
+                        } else {
+                            lock = true;
+                            $common.toast('暂无数据');
+                        }
+                        $common.hideLoading();
+                    });
+                }
+
+
+            }
+        },
+        watch: {
+            'list': function(n) {
+                try {
+                    var width = $(".aui-tab-item").last().offset().left + $(".aui-tab-item").last().width() + $(".more").width();
+                    if (this.list.length >= 8) {
+                        $common.swipe.ev($(".aui-tab"), width);
+                    }
+                } catch (err) {
+                    alert(err);
+                }
+
+            }
+        }
+    })
+</script>

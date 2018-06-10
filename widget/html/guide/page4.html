@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>引导页</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        body,html{background: #fff;position: relative;}
+        .aui-list .aui-list-item{padding-left: 0}
+        input[type='text']{
+          border: 1px solid #ddd;
+          min-height: 1.6rem;
+        }
+        .clear{
+          clear: both;
+          margin-top: 2rem;
+        }
+        .center{
+          text-align: center;
+        }
+        .nexBtn{
+          position: absolute;
+          right: 0;
+          bottom: 2rem;
+        }
+        .aui-bar-nav {
+            background: #fff;
+            color: #404040;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+  <header class="aui-bar aui-bar-nav" id='header'>
+      <a class="aui-pull-left aui-btn">
+          <!-- <span class="aui-iconfont aui-icon-left"></span>返回 -->
+      </a>
+      <div class="aui-title">新手引导</div>
+  </header>
+  <div id="main">
+    <div class="aui-content-padded">
+      <h1>第四步：将机器人加为好友</h1>
+      <div class="aui-content aui-font-size-12 aui-margin-b-10 aui-margin-t-10">请在手机微信中，将机器人邀请到您的微信群中。机器人进群时间预计十分钟，成功入群后在下方显示，如不显示可以点击刷新按钮。</div>
+      <div class="aui-pull-right aui-font-size-14"><div class="aui-btn">刷新</div></div>
+      <div class="clear">
+        <!-- 这里是可操作性内容 -->
+      </div>
+    </div>
+    <div class="nexBtn aui-content-padded"> <h1 class="aui-pull-right" onclick="$common.openFrame('page5','widget://html/guide/page5.html')">下一步</h1></div>
+
+  </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/handsome.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+
+
+<script>
+apiready = function() {
+  $api.dom('#header').style.background = '#fdfdfd';
+  $api.fixStatusBar($api.dom('#header'));
+  }
+
+</script>

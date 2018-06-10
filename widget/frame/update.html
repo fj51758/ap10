@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<link rel="stylesheet" type="text/css" href="../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+	<script type="text/javascript" src="../script/fastclick.js"></script>
+
+</head>
+<style>
+  body,html{background: transparent;position: relative;}
+	.reasonPop{
+		width: 100%;
+		height: 100%;
+		background: rgba(0,0,0,0.7);
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 999
+	}
+	.reasonPop .reasonBox{
+		width: 70%;
+		position: relative;
+		left: 15%;
+		top: 40%;
+    background: #fff;
+    text-align: center;
+    line-height: 2rem;
+    border-radius: 15px;
+    font-size: 20px;
+    padding: 0.5rem 1rem;
+	}
+  .reasonPop .reasonBox a{
+    font-size: 14px;
+
+  }
+
+</style>
+
+<body>
+	<section class="main" id="main">
+		<!-- 推荐理由弹框 -->
+		<section class="reasonPop">
+			<div class="reasonBox">
+        <p style="border-bottom:1px solid #ddd">有新版本啦！</p>
+        <a href="">去更新</a>
+      </div>
+			</div>
+		</section>
+	</section>
+	</div>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+      var data = api.pageParam;
+      var column = new Vue({
+        el: '#main',
+        data: {
+          pic:data.img,
+          reason:data.reason
+        },
+
+      });
+
+      if(api.systemType == 'ios'){
+        $("a").attr("href",'https://itunes.apple.com/cn/app/id1313271302')
+      }else{
+        $("a").attr("href",data.url)
+      }
+
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,206 @@
+html,body {  height:100%;  }
+.hover{ opacity: .8; }
+
+.flex-wrap{ display: -webkit-box;	display: -webkit-flex;	display: flex; }
+.flex-con{     -webkit-box-flex: 1;     -webkit-flex: 1;    flex: 1;}
+.flex-vertical{ -webkit-box-orient: vertical;-webkit-flex-flow: column;flex-flow: column;}
+
+.border-t,
+.border-b{ position:relative;  }
+.border-t:before,
+.border-b:after{     content: '';     position: absolute;     left: 0;  top:0;     background: #ddd;   right:0;    height: 1px;     -webkit-transform: scaleY(0.5);             transform: scaleY(0.5);     -webkit-transform-origin: 0 0;             transform-origin: 0 0; }
+.border-b:after{ top:auto; bottom:0;  }
+
+#wrap{ height: 100%; }
+.aui-checkbox-diy{
+  border-radius: 50px;
+}
+.btn_login {
+    /* display: block; */
+    background-color: #03a9f4;
+    padding: 0.5rem 0px;
+    text-align: center;
+    width: 90%;
+    color: white;
+    border-radius: 1.5rem;
+    margin: 8% 5% 0px 5%;
+    align-self: center;
+    outline: none;
+}
+.aui-text-success2 {
+    color: #008235  !important;
+}
+.aui-text-default2 {
+    color: #8a8a8a  !important;
+}
+.aui-text-warning2 {
+    color: #ff7e0b  !important;
+}
+
+/*.aui-content:first-child ul:before{
+      background-color: transparent;
+}
+.aui-content:first-child ul:after{
+      background-color: transparent;
+}*/
+/*.aui-content>:first-child ul:before{
+      background-color: transparent;
+}*/
+.aui-content .aui-media-list:nth-child(1){
+  background-color: transparent;
+}
+.aui-popup-bottom-share {
+    width: 100%;
+    left: 0;
+    margin-left: 0;
+    bottom: 0;
+}
+.menu{
+  display: flex;
+  display: -webkit-box;
+  align-items: center;
+  justify-content: space-between;
+  -webkit-box-pack: justify;
+  -webkit-box-align: center;
+  font-size: 0.7rem;
+  padding-left: 0.5rem;
+  border-top: 1px solid #e4e7e9;
+  border-bottom: 1px solid #e4e7e9;
+  color: #353535;
+  background: #fff;
+}
+.menu div:last-child{
+  border-left: 1px solid #e4e7e9;
+  padding: 0 1rem;
+}
+.menu div{
+  display: flex;
+  display: -webkit-box;
+  align-items: center;
+  justify-content: center;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+  height: 1.825rem;
+  min-width: 1.775rem;
+  margin-bottom: -1px;
+}
+.menu div.active{
+  /*border-bottom: 1px solid #ea5142;*/
+  color: #ea5142;
+}
+.menu div .showstyle{
+  display: block;
+  width: 0.65rem;
+  height: 0.65rem;
+}
+.menu div .stag{
+display: block;
+width: 0.375rem;
+height:0.5rem ;
+background: url('../image/sdefault.png') no-repeat;
+background-size: contain;
+margin-left: 0.2rem;
+}
+.menu div .stag.up{
+background: url('../image/sup.png') no-repeat;
+background-size: contain;
+}
+.menu div .stag.down{
+background: url('../image/sdown.png') no-repeat;
+background-size: contain;
+}
+.menu div .sfilter{
+display: block;
+width: 0.65rem;
+height: 0.45rem;
+background: url('../image/filter.png') no-repeat;
+background-size: contain;
+margin-left: 0.2rem;
+}
+.shoufa-quan {
+    font-size: 10px;
+    height: 17px;
+    line-height: 17px;
+    position: relative;
+    color: #fff;
+    border-left: #ff9950 1px dotted;
+}
+.shoufa-quan span {
+    position: absolute;
+    left: 0;
+    width: 19px;
+    height: 17px;
+    text-align: center;
+    background: #ff9950;
+    line-height: 17px;
+}
+.shoufa-quan b {
+    position: absolute;
+    left: 17px;
+    margin: 0;
+    font-size: 12px;
+    text-indent: 0;
+    text-align: center;
+    padding: 0 5px;
+    color: #ff6a00;
+    background: #fff;
+    line-height: 16px;
+    height: 17px;
+    border: 1px solid #ff9950;
+}
+.shoufa-quan b i {
+    font-family: "Microsoft Yahei";
+    font-style: normal;
+    font-size: 12px;
+}
+.gradient {
+    background: -moz-linear-gradient(-45deg, #ff6600 0%, #bb85b7  100%);
+    background: -webkit-gradient(linear, -45deg, left bottom, color-stop(0%, #000000), color-stop(100%, #bb85b7));
+    background: -webkit-linear-gradient(-45deg, #ff6600 0%, #bb85b7  100%);
+    background: -o-linear-gradient(-45deg, #ff6600 0%, #bb85b7  100%);
+    background: -ms-linear-gradient(-45deg, #ff6600 0%, #bb85b7  100%);
+    background:linear-gradient(-45deg, #ffa500 0%, #ffaaaa 100%);
+}
+.aui-list textarea{
+  height: auto;
+  line-height: 2rem;
+      /*background: #f5f5f5;*/
+}
+.AppNotice{
+  width: 100%;
+  height: 100%;
+}
+.AppNotice .AppNotice img{
+  width: 100%
+}
+.AppNotice .stepBox{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0,0,0,0.7)
+}
+.AppNotice .stepBox .stepItem{
+  width: 100%
+}
+.AppNotice .stepBox .btnSave{
+  position: absolute;
+  width: 8rem;
+  left: 50%;
+  margin-left: -3rem;
+  bottom: 12%;
+}
+.AppNotice .stepBox .btnSave img{
+  width: 100%;
+}
+.AppNotice .stepBox .cancel{
+  position: absolute;
+  left: 50%;
+  bottom: 7%;
+  margin-left: -0.7rem;
+  text-align: center;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: .5rem;
+}

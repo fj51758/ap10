@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>签到设置</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        body,
+        html {
+            background: #eee
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .csBox {
+            background: #fff;
+            padding: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='main'>
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-header">
+                原文案
+            </li>
+        </ul>
+        <div class="aui-content csBox">
+            <textarea name="name" rows="7" v-model='Remark' placeholder="请输入原文案" style="overflow: auto;"></textarea>
+        </div>
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="update()" tapmode="tapmode">开始转链</div>
+        </div>
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-header">
+                转后文案
+            </li>
+        </ul>
+        <div class="aui-content csBox">
+            <textarea name="name" rows="7" cols="80" v-model='NewRemark' style="overflow: auto;"></textarea>
+        </div>
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" onclick="openSharePopup(0)" tapmode="tapmode">分享给好友</div>
+        </div>
+        <div class="aui-popup aui-popup-bottom aui-popup-bottom-share " id="bottom" style="padding:0.8rem;">
+            <div class="aui-popup-content">
+                <ul class="popup">
+                    <section class="aui-grid">
+                        <div class="aui-row">
+                            <div class="aui-col-xs-4" onclick="OpenWx()">
+                                <i class="aui-iconfont"><img src="../image/s_wechat.png" style="width: 2.5rem;"></i>
+                                <div class="aui-grid-label">微信</div>
+                            </div>
+                            <div class="aui-col-xs-4" onclick="OpenQQ()">
+                                <i class="aui-iconfont"><img src="../image/s_qq.png" style="width: 2.5rem;"></i>
+                                <div class="aui-grid-label">QQ</div>
+                            </div>
+                            <div class="aui-col-xs-4">
+                                <i class="aui-iconfont" onclick="ClipUrl()"><img src="../image/s_copy.png" style="width: 2.5rem;"></i>
+                                <div class="aui-grid-label">复制文案</div>
+                            </div>
+                        </div>
+                    </section>
+                </ul>
+            </div>
+            <div class="aui-btn aui-btn-block aui-btn-m" style="background: #fff;  margin-top: 0.3rem;  color: #ccc;" onclick="$common.closeSharePopup()">取消</div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+
+<script>
+    apiready = function() {
+        // alert(api.winName+api.frameName)
+        $common.GetClipText(function(ret, err) {
+            var Remark = ret.value;
+            if (Remark != "" && Remark.indexOf("uland.taobao.com") != -1) {
+                api.confirm({
+                    title: '检测到文本',
+                    msg: Remark,
+                    buttons: ['取消', '一键粘贴']
+                }, function(ret, err) {
+                    if (ret.buttonIndex == 2) {
+                        main.Remark = Remark;
+                    }
+                });
+            }
+        })
+    }
+    var popup = new auiPopup();
+
+    function openSharePopup(i) {
+        if (main.NewRemark == "") {
+            $common.toast("转后文案为空,无法分享");
+            return;
+        }
+        NewRemark = main.NewRemark;
+        ErHe1_Link = main.ErHe1_Link;
+        popup.show($api.dom("#bottom"))
+    }
+
+    function OpenWx() {
+        $common.ClipText(main.NewRemark, "复制成功");
+        setTimeout(function() {
+            window.location.href = "weixin://";
+        }, 500)
+    }
+
+    function OpenQQ() {
+        $common.shareQQ(main.ErHe1_Link, "1121", "QFriend", main.NewRemark, "https://img.alicdn.com/imgextra/i1/1743583014/TB2I1Z0drZnBKNjSZFKXXcGOVXa_!!1743583014.jpg_1080x1800Q50s50.jpg", function(ret, err) {
+                if (ret.status == true) {
+                    u.toast('分享成功');
+                }
+            })
+            //  $common.shareQQ(shareUrl, shareTitle, "QFriend", shareDescription, shareImg, function(ret,err) {
+            //      if (ret.status == true) {
+            //          u.toast('分享成功');
+            //      }
+            //  })
+    }
+
+    function ClipUrl() {
+        $common.ClipText(main.NewRemark, "复制成功")
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            Remark: '',
+            NewRemark: '',
+            ErHe1_Link: 'http://www.kedao99.com/daili.html'
+        },
+        methods: {
+            update: function(index) {
+                if (main.Remark == "") {
+                    $common.toast("原文案不能为空");
+                    return
+                }
+                $common.progress()
+                $common.request('UsersChangeLinkJD', {
+                    data: {
+                        values: {
+                            Remark: main.Remark,
+                            ToKen: $api.getStorage("iii")
+                        }
+                    }
+                }, function(ret, err) {
+
+                    if (ret == undefined || ret == null || ret == "") {
+                        $common.toast("京东自主转链暂未开放");
+                        api.hideProgress();
+                        return;
+                    }
+                    if (ret.StateCode == 1) {
+                        main.NewRemark = ret.Remarks;
+                        main.ErHe1_Link = ret.ErHe1_Link;
+                        $common.toast("转链成功");
+                    } else {
+                        $common.toast(ret.Message);
+                    }
+                    api.hideProgress();
+                })
+            },
+            getData: function(index) {
+                if ($api.getStorage("sendconfig") != undefined) {
+                    var b = $api.getStorage("sendconfig");
+                    // alert(JSON.stringify(b.Table[0]))
+                    sign.CheckOutMoneyMax = b.Table[0].CheckOutMoneyMax;
+                    sign.CheckOutMoney = b.Table[0].CheckOutMoney;
+                    sign.UserCheckOrder = b.Table[0].UserCheckOrder;
+                    sign.CheckoutSb = b.Table[0].CheckoutSb;
+                    sign.CheckoutCg = b.Table[0].CheckoutCg;
+                } else {
+                    $api.toast("提示", ret.error, 1000);
+                }
+            },
+        }
+    })
+</script>

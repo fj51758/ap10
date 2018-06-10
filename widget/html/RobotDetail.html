@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        /*.track-rcol{width: 900px; border: 1px solid #eee;}*/
+
+        .track-list {
+            margin: 20px;
+            padding-left: 5px;
+            position: relative;
+            font-size: 0.6rem;
+        }
+
+        .track-list li {
+            position: relative;
+            padding: 9px 0 0 25px;
+            line-height: 18px;
+            border-left: 1px solid #d9d9d9;
+            color: #999;
+        }
+
+        .track-list li.first {
+            color: red;
+            padding-top: 0;
+            border-left-color: #fff;
+        }
+
+        .track-list li .node-icon {
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            width: 11px;
+            height: 11px;
+            background: url(http://demo.daimabiji.com/3531/img/order-icons.png) -21px -72px no-repeat;
+        }
+
+        .track-list li.first .node-icon {
+            background-position: 0 -72px;
+        }
+
+        .track-list li .time {
+            margin-right: 20px;
+            position: relative;
+            top: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .track-list li .txt {
+            max-width: 600px;
+            position: relative;
+            top: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .track-list li.first .time {
+            margin-right: 20px;
+        }
+
+        .track-list li.first .txt {
+            max-width: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav" onclick="$common.closeSelfWin();">
+        <a class="aui-pull-left aui-btn">
+            <span class="aui-iconfont aui-icon-left"></span>返回
+        </a>
+        <div class="aui-title">机器人详情</div>
+    </header>
+    <div class="aui-card-list">
+        <div class="aui-card-list-header">
+            <section class="aui-content-padded" style="margin:0;">
+
+                <p>第一步：添加微信号<span style="color:red;" class="RobotWxNo1">565665</span>为好友</p>
+                <p>第二步：发送群邀请给该微信号</p>
+                <p>请确认您自己微信号：<span style="color:red;" class="ClientWxNo">565665</span></p>
+            </section>
+        </div>
+        <div class="aui-card-list-footer" style="font-size: 0.6rem;padding-top:0">
+            <div class="aui-btn aui-btn-info" style="font-size: 0.6rem;" onclick="UpdateWx()">修改管理员微信号</div>
+            <div class="aui-list-item-right aui-btn aui-btn-info" style="font-size: 0.6rem;" onclick="Copy()">复制机器人微信号</div>
+
+        </div>
+        <!-- <div class="aui-card-list-footer" style="padding-top:0">
+            <div class="aui-btn" style="font-size: 0.5rem;">如果<span style="color: #e51c23;" class="RobotWxNo2">4545545445</span>超过10分钟没有反应，点我更换</div>
+        </div> -->
+    </div>
+    <section class="aui-grid aui-margin-b-15">
+
+        <div class="track-rcol">
+            <div class="track-list">
+                <ul id="ListContent">
+                  <template v-for="val in list">
+                    <li class="{{$index==0?'first':'node-icon'}}">
+                        <i class="node-icon"></i>
+                        <span class="time">{{val.CreateDateTimeStr}}</span>
+                        <span class="txt">{{val.Msg}}</span>
+                    </li>
+                    <!-- <li>
+                        <i class="node-icon"></i>
+                        <span class="time">2016-03-10 18:07:15</span>
+                        <span class="txt">【京东到家】京东配送员【申国龙】已出发，联系电话【18410106883，感谢您的耐心等待，参加评价还能赢取京豆呦】</span>
+                    </li>
+                    <li>
+                        <i class="node-icon"></i>
+                        <span class="time">2016-03-10 18:07:15</span>
+                        <span class="txt">感谢您在京东购物，欢迎您再次光临！</span>
+                    </li>
+                    <li>
+                        <i class="node-icon"></i>
+                        <span class="time">2016-03-10 18:07:15</span>
+                        <span class="txt">感谢您在京东购物，欢迎您再次光临！</span>
+                    </li>
+                    <li>
+                        <i class="node-icon"></i>
+                        <span class="time">2016-03-10 18:07:15</span>
+                        <span class="txt">感谢您在京东购物，欢迎您再次光临！</span>
+                    </li>
+                    <li>
+                        <i class="node-icon"></i>
+                        <span class="time">2016-03-10 18:07:15</span>
+                        <span class="txt">感谢您在京东购物，欢迎您再次光临！</span>
+                    </li> -->
+                  </template>
+                </ul>
+            </div>
+        </div>
+
+    </section>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-header">
+                你可能会遇到以下问题
+            </li>
+            <li class="aui-list-item aui-list-item-middle">
+                <div class="aui-media-list-item-inner">
+
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-14">1.发单号加好友失败</div>
+                        </div>
+                        <div class="aui-list-item-text">
+                            这时候你需要按上方提示更换机器人
+                        </div>
+                    </div>
+
+                </div>
+
+            </li>
+            <li class="aui-list-item aui-list-item-middle">
+
+                <div class="aui-media-list-item-inner">
+
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-14">2.发单号不进群</div>
+                        </div>
+                        <div class="aui-list-item-text">
+                            联系客服
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+
+<script>
+    var dialog = new auiDialog({})
+
+    var init = {
+        AppRootUsersId: 0,
+        ClientWxNo: 0,
+        WxId:0
+    }
+    function Copy(){
+      $common.clipText(pageData.WxNo, "复制成功")
+      api.confirm({
+          title: '复制成功',
+          msg: '是否现在打开微信客户端粘贴微信号添加好友',
+          buttons: ['取消', '确定']
+      }, function(ret, err){
+          if( ret.buttonIndex==2){
+            window.location.href="weixin://"
+          }
+      });
+    }
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        pageData = api.pageParam;
+        // alert(pageData)
+        $api.html($api.dom('.RobotWxNo1'), pageData.WxNo);
+        $api.html($api.dom('.RobotWxNo2'), pageData.WxNo);
+        $api.html($api.dom('.ClientWxNo'), pageData.ClientWxNo);
+        init.AppRootUsersId = pageData.AppRootUsersId;
+        init.ClientWxNo = pageData.ClientWxNo;
+        init.WxId = pageData.WxId;
+        ListContent.getData();
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#ffffff',
+            images:['widget://image/refresh1.png','widget://image/refresh2.png','widget://image/refresh1.png'],
+            tips: { //（可选项）JSON 对象；整个下拉及加载过程的文字提示；不传则不显示文字区域
+                pull: '下拉刷新', //（可选项）字符串类型；下拉过程（下拉高度未达到阈值前）的文字提示；不传则不显示该时段的文字提示
+                threshold: '松开立即刷新', //（可选项）字符串类型；下拉过程（下拉高度达到或超过阈值）的文字提示；不传则不显示该时段的文字提示
+                load: '正在刷新' //（可选项）字符串类型；加载状态的文字提示；不传则不显示该时段的文字提示
+            }
+        }, function(ret, err) {
+            //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+              ListContent.getData();
+            api.refreshHeaderLoadDone()
+        });
+    }
+    function UpdateWx() {
+        dialog.prompt({
+            title: "修改微信号",
+            text: '你在群里的微信号',
+            buttons: ['取消', '确定']
+        }, function(ret) {
+            if (ret.buttonIndex == 2) {
+                var thetext = $api.trim(ret.text);
+                dialog.alert({
+                    title: "请确认微信号是否正确",
+                    msg: "您输入的微信号是：" + thetext + "  请保证微信号填对,否则无法加机器人为好友",
+                    buttons: ['取消', '确定']
+                }, function(ret) {
+                    if (ret.buttonIndex == 2) {
+                        $common.request('0x0001', {
+                            data: {
+                                values: {
+                                    ApiType: 'UpdateUsersClientWxNo',
+                                    appRootUserId: init.AppRootUsersId,
+                                    clientWxNo: thetext,
+                                    uxxx1__1: $api.getStorage('iii')
+                                }
+                            }
+                        }, function(ret, err) {
+                            if (ret.error != 2) {
+                                $api.html($api.dom('.ClientWxNo'), thetext);
+                                $common.toast(ret.msg);
+                                api.execScript({
+                                  name: 'CommonPage',
+                                  frameName: 'RobotLsit',
+                                  script: 'apiready();'
+                                });
+                            } else {
+                                alert(ret.msg);
+                            }
+                        });
+                    }
+                });
+            }
+        })
+
+
+    }
+    var ListContent = new Vue({
+        el: '#ListContent',
+        data: {
+            list: [],
+            gsid: '',
+            show: 1,
+            goodstype: 2
+        },
+        methods: {
+            close: function() {
+                $("#modal").removeClass('show_column');
+                $("body").removeClass('overflow');
+            },
+            getMoneyList: function() {
+                var mList = [];
+                for (var i = 5; i < 360; i = i * 2) {
+                    mList.push({
+                        text: i,
+                        val: i
+                    })
+                }
+                ListContent.list = mList;
+            },
+            getData: function(index) {
+              // alert(init.WxId+"///"+ $api.getStorage('iii'))
+              $common.request('GetUserGroupRobotInfo', {
+                  data: {
+                      values: {
+                          // ApiType: 'GetUserGroupRobotInfo',
+                          wxId: init.WxId,
+                          ToKen: $api.getStorage('iii')
+                      }
+                  }
+              }, function(ret, err) {
+
+                console.log(JSON.stringify(ret));
+                  if (ret.StateCode ==1) {
+                      ListContent.list=ret.list;
+                      // if(ret.list.length==0){
+                      //   ListContent.list =[{CreateDateTime:'',Msg:'暂无数据'}]
+                      // }
+                  } else {
+                      alert(ret.msg);
+                  }
+              });
+            }
+        }
+    })
+</script>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>云发单</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .aui-list-item-right-diy {
+            margin-top: 1.2rem !important;
+            color: #039be5 !important;
+            font-size: 0.8rem !important;
+            padding-right: 1rem !important;
+        }
+
+        .aui-list-item-arrow:before {
+            width: 0.5rem;
+            height: 0.5rem;
+        }
+
+        .aui-list-item-label-icon-diy {
+            width: 3rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 70%;
+        }
+
+        .aui-list-in {
+            margin-bottom: 20px;
+        }
+
+        .aui-list {
+            font-size: 0.7rem !important;
+        }
+
+        .Balance {
+            color: #03a9f4;
+            font-size: 1rem;
+        }
+
+        .aui-popup-bottom {
+            width: 100%;
+            left: 0;
+            margin-left: 0;
+            bottom: 0;
+        }
+
+        .popup.aui-list .aui-list-item-inner {
+            justify-content: center;
+            -webkit-justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content" id="main">
+
+        <ul class="aui-list aui-form-list aui-margin-t-15">
+
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        机器人群昵称：
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="请输入昵称" v-model="RobotName">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <!-- <div class="btn_login aui-btn aui-btn-info aui-font-size-16" tapmode="tapmode" v-on:click="sure()"> 设置</div> -->
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="sure();" tapmode="tapmode">保存</div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script>
+    apiready = function() {
+        main.getdata();
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            RobotName: []
+        },
+        methods: {
+            sure: function() {
+                $common.request('UpdateRobotsName', {
+                    data: {
+                        values: {
+                            RobotsName: main.RobotName,
+                            Token: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.StateCode == 1) {
+                        $common.toast("保存成功")
+                    }
+                })
+
+
+            },
+            getdata: function() {
+                $common.request('GetGroupRobotName', {
+                    data: {
+                        values: {
+                            Token: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+
+                    if (ret.StateCode == 1) {
+                        main.RobotName = ret.GroupRobotsName
+                    }
+                })
+            }
+        },
+        created: function() {
+
+            // var date = new Date();
+            // var dateString = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+            // alert(dateString)
+            // main.beginDate=dateString;
+            // main.endDate=dateString;
+        }
+    });
+</script>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>导购机器人</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        body,
+        html {
+            background: #eee
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .csBox {
+            background: #fff;
+            padding: 0.75rem;
+        }
+
+        .aui-popup-bottom {
+            width: 100%;
+            left: 0;
+            margin-left: 0;
+            bottom: 0;
+        }
+
+        .aui-checkbox {
+            border-radius: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='main'>
+        <div class="aui-content aui-font-size-12 aui-content-padded">违规开关</div>
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">发分享链接踢</div>
+                    <div class="aui-list-item-right"><input type="checkbox" class="aui-switch" v-model="IsOpenRemoveBySendShareLink"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">发图片踢</div>
+                    <div class="aui-list-item-right"><input type="checkbox" class="aui-switch" v-model="IsOpenRemoveBySendImage"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">文字超出踢</div>
+                    <div class="aui-list-item-right"><input type="checkbox" class="aui-switch" v-model="IsOpenRemoveBySendTextOutLength"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">文本含链接踢</div>
+                    <div class="aui-list-item-right"><input type="checkbox" class="aui-switch" v-model="IsOpenRemoveBySendLink"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">用户可发文本最长长度</div>
+                    <div class="aui-list-item-right"><input type="text" class="right" v-model="TextOutLength"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">T出群后消息</div>
+                    <div class="aui-list-item-right"><input type="text" v-model="ManagerRemoveUserMessage" class="right"></div>
+                </div>
+            </li>
+        </ul>
+        <div class="aui-content aui-font-size-12 aui-content-padded">导购关键词（以逗号隔开）</div>
+        <div class="aui-content csBox" aui-popup-for="bottom">
+            <textarea name="name" rows="4" cols="80" v-model='NavOrderKeyText' readonly=""></textarea>
+        </div>
+
+        <div class="aui-content aui-font-size-12 aui-content-padded">导购文案设置</div>
+        <div class="aui-list csBox">
+            <h4>变量（生成模板是替换这些参数）</h4>
+            <div class="aui-list-item-inner">
+                <div class="aui-btn aui-btn-success  aui-btn-outlined" @click="addtext($event.currentTarget)">[短连接]</div>
+                <div class="aui-btn aui-btn-success  aui-btn-outlined" @click="addtext($event.currentTarget)">[关键词]</div>
+                <div class="aui-col-xs-4"></div>
+            </div>
+        </div>
+        <div class="aui-content csBox">
+            <textarea name="name" rows="5" cols="80" v-model='SendMessageModel'></textarea>
+        </div>
+
+        <div class="aui-content aui-font-size-12 aui-content-padded">邀请明细文案设置</div>
+        <div class="aui-list csBox">
+            <h4>变量（生成模板是替换这些参数）</h4>
+            <div class="aui-list-item-inner">
+                <div class="aui-btn aui-btn-success  aui-btn-outlined" @click="addDetail($event.currentTarget)">[邀请人数]</div>
+                <div class="aui-btn aui-btn-success  aui-btn-outlined" @click="addDetail($event.currentTarget)">[在群人数]</div>
+                <div class="aui-btn aui-btn-success  aui-btn-outlined" @click="addDetail($event.currentTarget)">[退群人数]</div>
+            </div>
+        </div>
+        <div class="aui-content csBox">
+            <textarea name="name" rows="6" cols="80" v-model='SeacherDetailMessageModel'></textarea>
+        </div>
+
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">邀请查询指令：</div>
+                    <div class="aui-list-item-right"><input type="text" class="right" v-model="UserSeacherSelfDetailOrder"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">邀请所得积分：</div>
+                    <div class="aui-list-item-right"><input type="text" class="right" v-model="FansiNewUserSock"></div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">进群消息：</div>
+                    <div class="aui-list-item-title"><textarea name="" cols="30" rows="10" v-model="NewUserMessage"></textarea></div>
+                </div>
+            </li>
+        </ul>
+
+        <div class="aui-content aui-font-size-12 aui-content-padded">淘口令设置</div>
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-font-size-14">打开淘口令查卷</div>
+                    <div class="aui-list-item-right"><input type="checkbox" class="aui-switch" v-model="OpenSearchTKL"></div>
+                </div>
+            </li>
+        </ul>
+        <!-- <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block" v-on:click="update();">保存</div>
+        </div> -->
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="update();" tapmode="tapmode">保存</div>
+        </div>
+
+        <!-- 导购关键词弹框 -->
+        <div class="aui-popup aui-popup-bottom" id="bottom">
+            <div class="aui-popup-content">
+                <header class="aui-bar aui-bar-nav aui-bar-light">
+                    <div class="aui-title">导购关键词</div>
+                    <a class="aui-pull-right aui-btn aui-btn-outlined aui-text-info " @click="closePopup">确定</a>
+                </header>
+                <ul class="aui-list aui-list-in">
+                    <li class="aui-list-item" @click="addGuideKey($event.currentTarget)">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-title aui-font-size-14">我要买</div>
+                            <div class="aui-list-item-right"><input type="checkbox" class="aui-checkbox"></div>
+                        </div>
+                    </li>
+                    <li class="aui-list-item" @click="addGuideKey($event.currentTarget)">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-title aui-font-size-14">我要找</div>
+                            <div class="aui-list-item-right"><input type="checkbox" class="aui-checkbox"></div>
+                        </div>
+                    </li>
+                    <li class="aui-list-item" @click="addGuideKey($event.currentTarget)">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-title aui-font-size-14">我想要</div>
+                            <div class="aui-list-item-right"><input type="checkbox" class="aui-checkbox"></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+
+<script>
+    apiready = function() {
+        guide.getData();
+        // alert(api.winName+api.frameName)
+    }
+    var popup = new auiPopup();
+    var guide = new Vue({
+        el: '#main',
+        data: {
+            NavOrderKeyText: '', //导购关键词
+            SendMessageModel: '', //导购文案
+            SeacherDetailMessageModel: '', //邀请明细
+            IsSendImage: '',
+            IsAtMeReply: '',
+            IsOpenRemoveBySendLink: '',
+            IsOpenRemoveBySendShareLink: '',
+            IsOpenRemoveBySendTextOutLength: '',
+            IsOpenRemoveBySendImage: '',
+            OpenSearchTKL: '',
+            TextOutLength: '',
+            UserSeacherSelfDetailOrder: '',
+            UserCheckOrder: '',
+            ManagerSeacherSortOrder: '',
+            NewUserMessage: '',
+            FansiNewUserSock: '',
+            BalanceKeyWord: '',
+            ManagerRemoveUserMessage: ''
+        },
+        methods: {
+            addtext: function(el) {
+                guide.SendMessageModel = guide.SendMessageModel + $(el).html();
+            },
+            addDetail: function(el) {
+                guide.SeacherDetailMessageModel = guide.SeacherDetailMessageModel + $(el).html();
+            },
+            closePopup: function() {
+                var key = '';
+                var obj = $("#bottom").find(".aui-list-item");
+                obj.each(function() {
+                    var checkbox = $(this).find('.aui-checkbox');
+                    if (checkbox.prop('checked')) {
+                        var txt = $(this).find(".aui-list-item-title").html();
+                        key += txt + ','
+                    }
+                })
+                key = key.substr(0, key.length - 1);
+                guide.NavOrderKeyText = key;
+                popup.hide($("#bottom"));
+            },
+            addGuideKey: function(el) {
+                var checkbox = $(el).find('.aui-checkbox');
+                if (checkbox.prop('checked')) {
+                    checkbox.prop('checked', false)
+                } else {
+                    checkbox.prop('checked', true)
+                }
+            },
+            update: function(index) {
+                // alert(JSON.stringify(guide.ManagerRemoveUserMessage))
+                    // alert(JSON.stringify(guide.ManagerRemoveUserMessage))
+                    //
+                    // alert(JSON.stringify(guide.IsOpenRemoveBySendImage))
+                    // alert(JSON.stringify(guide.IsOpenRemoveBySendTextOutLength))
+                    // alert(JSON.stringify(guide.OpenSearchTKL))
+                    // alert(JSON.stringify(guide.TextOutLength))
+                    // alert(JSON.stringify(guide.NavOrderKeyText))
+                    // alert(JSON.stringify(guide.SendMessageModel))
+                    // alert(JSON.stringify(guide.IsSendImage))
+                    // alert(JSON.stringify(guide.IsAtMeReply))
+                    // alert(JSON.stringify(guide.UserSeacherSelfDetailOrder))
+                    // alert(JSON.stringify(guide.UserCheckOrder))
+                    // alert(JSON.stringify(guide.NewUserMessage))
+                    // alert(JSON.stringify(guide.FansiNewUserSock))
+                    // alert(JSON.stringify(guide.BalanceKeyWord))
+                    // alert(JSON.stringify(guide.SeacherDetailMessageModel))
+
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            // ManagerRemoveUserMessage: guide.ManagerRemoveUserMessage,
+                            // SeacherDetailMessageModel:guide.SeacherDetailMessageModel,
+                            // SendMessageModel :guide.SendMessageModel,
+                            // NavOrderKeyText :guide.NavOrderKeyText,
+                            // IsSendImage:guide.IsSendImage,
+                            // IsAtMeReply:guide.IsAtMeReply,
+                            // IsOpenRemoveBySendLink:guide.IsOpenRemoveBySendLink,
+                            // isOpenRemoveBySendShareLink:guide.IsOpenRemoveBySendShareLink,
+                            // IsOpenRemoveBySendTextOutLength:guide.IsOpenRemoveBySendTextOutLength,
+                            // IsOpenRemoveBySendImage:guide.IsOpenRemoveBySendImage,
+                            // OpenSearchTKL:guide.OpenSearchTKL,
+                            // TextOutLength:guide.TextOutLength,
+                            // UserSeacherSelfDetailOrder:guide.UserSeacherSelfDetailOrder,
+                            // UserCheckOrder:guide.UserCheckOrder,
+                            // ManagerSeacherSortOrder:guide.ManagerSeacherSortOrder,
+                            // NewUserMessage:guide.NewUserMessage,
+                            // FansiNewUserSock:guide.FansiNewUserSock,
+                            // BalanceKeyWord:guide.BalanceKeyWord,
+                            // ApiType: "NavOrderConfig"
+
+                            // ManagerRemoveUserMessage: guide.ManagerRemoveUserMessage,
+                            // isOpenRemoveBySendShareLink: guide.IsOpenRemoveBySendShareLink?"1":"0", /// 当用户发送分享链接时，是否T出群
+                            // isOpenRemoveBySendImage: guide.IsOpenRemoveBySendImage?"1":"0", /// 当用户发送图片时，是否T出群
+                            // isOpenRemoveBySendTextOutLength: guide.IsOpenRemoveBySendTextOutLength?"1":"0", /// 当用户发送的文字超出长度时，是否T出群
+                            // isOpenRemoveBySendLink: guide.IsOpenRemoveBySendLink?"1":"0", /// 当用户发送的文本包含链接时是否T出群（如果链接为淘宝的链接或京东的链接则不T出）
+                            // OpenSearchTKL: guide.OpenSearchTKL, /// 当用户发送的文本包含链接时是否T出群（如果链接为淘宝的链接或京东的链接则不T出）
+                            // textOutLength: guide.TextOutLength, /// 用户可发送文本最长长度（首先IsOpenRemoveBySendTextOutLength必须是true，本属性才有效）
+                            // navOrderKeyText: guide.NavOrderKeyText, /// 导购文本（已逗号隔开）
+                            // sendMessageModel: guide.SendMessageModel, /// 导购文案
+                            // isSendImage: guide.IsSendImage?"1":"0", /// 是否发送图片
+                            // isAtMeReply: guide.IsAtMeReply?"1":"0", /// 在群@机器人的时候，是否转发到管理员
+                            // userSeacherSelfDetailOrder: guide.UserSeacherSelfDetailOrder, /// 成员获取自己的邀请明细指令
+                            // userCheckOrder: guide.UserCheckOrder, /// 签到指令
+                            // newUserMessage: guide.NewUserMessage.replace(/\\n/g, "\n"), /// 新人进群时的消息提示
+                            // fansiNewUserSock: guide.FansiNewUserSock, /// 邀请一个人等于多少积分
+                            // balanceKeyWord: guide.BalanceKeyWord, //余额查询
+                            // seacherDetailMessageModel: guide.SeacherDetailMessageModel.replace(/\\n/g, "\n"), /// 邀请查询模板
+
+                            ManagerRemoveUserMessage: guide.ManagerRemoveUserMessage,
+                            isOpenRemoveBySendShareLink: guide.IsOpenRemoveBySendShareLink ? 1 : 0,
+                            isOpenRemoveBySendImage: guide.IsOpenRemoveBySendImage ? 1 : 0,
+                            isOpenRemoveBySendTextOutLength: guide.IsOpenRemoveBySendTextOutLength ? 1 : 0,
+                            isOpenRemoveBySendLink: guide.IsOpenRemoveBySendLink ? 1 : 0,
+                            OpenSearchTKL: guide.OpenSearchTKL ? 1 : 0,
+                            textOutLength: guide.TextOutLength,
+                            navOrderKeyText: guide.NavOrderKeyText,
+                            sendMessageModel: guide.SendMessageModel,
+                            userSeacherSelfDetailOrder: guide.UserSeacherSelfDetailOrder,
+                            newUserMessage: guide.NewUserMessage,
+                            fansiNewUserSock: guide.FansiNewUserSock,
+                            seacherDetailMessageModel: guide.SeacherDetailMessageModel,
+                            ApiType: "NavOrderConfig",
+                            uxxx1__1: $api.getStorage('iii')
+                                // uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret) {
+                    if (ret.error == 1) {
+                        api.execScript({
+                            name: 'root',
+                            script: 'SendConfigFun();'
+                        });
+                        $common.toast('操作成功');
+                    } else {
+                        alert(JSON.stringify(ret))
+                    }
+                });
+            },
+            getData: function(index) {
+                if ($api.getStorage("sendconfig") != undefined) {
+                    var b = $api.getStorage("sendconfig");
+                    guide.SeacherDetailMessageModel = b.Table[0].SeacherDetailMessageModel.replace(/\\n/g, "\n");
+                    guide.SendMessageModel = b.Table[0].SendMessageModel;
+                    guide.NavOrderKeyText = b.Table[0].NavOrderKeyText;
+                    guide.IsSendImage = b.Table[0].IsSendImage;
+                    guide.IsAtMeReply = b.Table[0].IsAtMeReply;
+                    guide.IsOpenRemoveBySendLink = b.Table[0].IsOpenRemoveBySendLink;
+                    guide.IsOpenRemoveBySendShareLink = b.Table[0].IsOpenRemoveBySendShareLink;
+                    guide.IsOpenRemoveBySendTextOutLength = b.Table[0].IsOpenRemoveBySendTextOutLength;
+                    guide.IsOpenRemoveBySendImage = b.Table[0].IsOpenRemoveBySendImage;
+                    guide.OpenSearchTKL = b.Table[0].OpenSearchTKL;
+                    guide.TextOutLength = b.Table[0].TextOutLength;
+                    guide.UserSeacherSelfDetailOrder = b.Table[0].UserSeacherSelfDetailOrder;
+                    guide.UserCheckOrder = b.Table[0].UserCheckOrder;
+                    guide.ManagerSeacherSortOrder = b.Table[0].ManagerSeacherSortOrder;
+                    guide.NewUserMessage = b.Table[0].NewUserMessage.replace(/\\n/g, "\n");
+                    guide.FansiNewUserSock = b.Table[0].FansiNewUserSock;
+                    guide.BalanceKeyWord = b.Table[0].BalanceKeyWord;
+                    guide.ManagerRemoveUserMessage = b.Table[0].ManagerRemoveUserMessage
+                } else {
+                    $api.toast("提示", ret.error, 1000);
+                }
+            },
+        }
+    })
+</script>

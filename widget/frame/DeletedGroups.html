@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>端API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content" id="main">
+        <section class="aui-grid aui-margin-b-15">
+            <ul class="aui-list aui-media-list">
+                <template v-for="val in list">
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <!-- <div class="aui-list-item-media" style="width: 3rem;">
+                            </div> -->
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">
+                            <span>{{val.GroupName}}</span>
+                          </div>
+
+                            </div>
+
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-text aui-font-size-12">
+                            删除时间：<span>{{val.DeleteDateTime.replace("T", " ").split(".")[0]}}</span>
+                          </div>
+
+                            </div>
+
+                        </div>
+                        <div class="aui-list-item-inner" style="width: 46%;  padding-right: 0;">
+
+                            <div class="aui-info">
+                                <div class="aui-list-item-input">
+                                  <div class="aui-btn aui-btn-info" style="font-size: 0.6rem;" v-on:click="sure(val,$index);">恢复该群</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+              </template>
+            </ul>
+            <!-- </div> -->
+        </section>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script>
+    apiready = function() {
+        main.getdata();
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: []
+        },
+        methods: {
+            sure: function(val,index) {
+                $common.progress();
+                $common.request('RecycleGroup', {
+                    data: {
+                        values: {
+                            appUserGroupId: val.AppUserGroupId,
+                            Token: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                      api.hideProgress();
+                  if (ret.StateCode == 1) {
+                      $common.toast("操作成功")
+                        main.list.splice(index, 1);
+
+                  }else{
+                    $common.toast("操作失败")
+                  }
+
+                })
+            },
+            getdata: function() {
+              $common.progress();
+                $common.request('GetDeleteGroup', {
+                    data: {
+                        values: {
+                            ToKen: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.StateCode == 1) {
+                        if(ret.list!=null){
+                            main.list = ret.list;
+
+                        }else {
+                            $common.toast("暂无数据")
+                        }
+
+                    } else {
+                        $common.toast(ret.message)
+                    }
+                      api.hideProgress();
+                })
+            }
+        }
+    });
+</script>

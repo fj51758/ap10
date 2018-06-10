@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery-weui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .aui-list-item-label-icon-diy {
+            width: 1.5rem !important;
+            padding-right: 0.25rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 80%;
+        }
+        .getCode{
+          padding: 0 0.5rem;
+          border-left: 1px solid #ddd;
+          position: absolute;
+          right: 0;
+          color: #03a9f4
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15" id="ListContent">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">填写您的信息</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        手机号码
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="请输入手机号码" id="phone" v-model="phone">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        手机验证码
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="请输入验证码" id="code" v-model="code">
+                    </div>
+                    <div class="getCode before-click" @click="getcode" id="getcode">
+                        获取验证码
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        密码
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="password" placeholder="请输入密码" id="password" v-model="password">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        姓名
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="请输入姓名" id="name" v-model="name">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        QQ
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="请输入QQ" id="qq" v-model="qq">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="aui-content-padded"><div class="aui-btn aui-btn-info aui-btn-block" @click="save">立即注册</div></div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+
+
+<script>
+var ListContent;
+var dialog = new auiDialog();
+function getQueryString(url,name) {
+    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+    if(url.indexOf("?")>0){
+      var uu =url.split("?")[1];
+      var r = uu.match(reg);
+      // var r = window.location.search.substr(1).match(reg);
+      if (r != null) {
+          return unescape(r[2]);
+      }
+      return null;
+    }
+
+}
+    apiready = function() {
+        // alert(api.winName+api.frameName)
+    }
+    ListContent = new Vue({
+            el: '#ListContent',
+            data: {
+                list: [],
+                phone: '',
+                code: '',
+                password: '',
+                name: '',
+                qq: '',
+                uid:'',
+            },
+            methods:{
+              getcode:function(){
+                var self = $api.dom("#getcode");
+                if ($api.hasCls(self, "before-click")) {
+                    var phone = $api.val($api.dom(".phone"));
+                    if (!ListContent.phone ){
+                        $common.toast("请输入手机号码")
+                        return;
+                    }
+                    api.ajax({
+                        url: $common.host+ 'RegisterAshx/GetPhoneVerCode.ashx',
+                        method: 'post',
+                        timeout: 30,
+                        dataType: 'json',
+                        returnAll: false,
+                        data: {
+                            values: {
+                                phone:ListContent.phone
+                            }
+                        }
+                    }, function(ret, err) {
+                      if(ret.error =='1'){
+                        $api.removeCls(self, "before-click");
+                              var cnt = 60;
+                              self.innerHTML = cnt + " s后重发";
+                              var t = setInterval(function () {
+                                  cnt--;
+                                  if (cnt == 0) {
+                                      $api.addCls(self, "before-click");
+                                      self.innerHTML = "获取验证码";
+                                      clearInterval(t);
+                                      return;
+                                  }
+                                  self.innerHTML = cnt + " s后重发";
+                              }, 1000);
+
+                      }
+                    })
+                } else {
+                  return;
+                  
+                }
+              },
+              save:function(){
+                if((!ListContent.phone) || (!ListContent.code) || (!ListContent.password) || (!ListContent.name)){
+                  $common.toast("请输入完整信息");
+                  return false;
+                };
+                api.ajax({
+                    url: $common.host+ 'RegisterAshx/AddUser.ashx',
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            phone: ListContent.phone,
+                            personName: ListContent.name,
+                            qq: ListContent.qq,
+                            pwd: ListContent.password,
+                            phoneCode: ListContent.code,
+                            parentId: ListContent.uid,
+                        }
+                    }
+                }, function(ret, err) {
+                  if(ret.error =='1'){
+                    $common.toast("注册成功");
+                    api.closeWin();
+
+                  }else{
+                    $common.toast(ret.msg);
+                  }
+                })
+              },
+              init:function(){
+                dialog.prompt({
+                          title:"邀请链接",
+                          text:'请输入邀请链接',
+                          buttons:['识别邀请链接']
+                      },function(ret){
+                          if(ret.buttonIndex == 1){
+                            var uid = getQueryString(ret.text,"uid");
+                            if(!uid){
+                              $common.toast("邀请链接不正确");
+                              ListContent.init();
+                              return false
+                            }
+                            // ListContent.uid = uid;
+                            $common.request('CheckInvite', {
+                                data: {
+                                    values: {
+                                        inviteId:uid
+                                    }
+                                }
+                            }, function(ret, err) {
+                                if (ret.StateCode == 1) {
+                                  $common.toast("识别成功");
+                                }else{
+                                  $common.toast("邀请链接不正确");
+                                  ListContent.init();
+                                }
+                              })
+                          }
+                      })
+              }
+            }
+
+        })
+        ListContent.init();
+
+</script>

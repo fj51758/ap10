@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>消费提成</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui-slide.css" />
+    <style>
+        body,
+        html {
+            background: #eee
+        }
+
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .gray {
+            color: #999 !important;
+        }
+
+        .bold {
+            font-weight: bolder;
+        }
+
+        .black {
+            color: #000 !important;
+        }
+
+        .aui-searchbar {
+            position: relative;
+            background: rgba(0, 0, 0, 0.2)
+        }
+
+        .userItem {
+            background: #fff;
+            padding: 0.3rem 2rem;
+            margin-top: 0.3rem;
+        }
+
+        .userItem .aui-list-item-inner {
+            min-height: 1.2rem;
+        }
+
+        .Rbtn {
+            width: 100%;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            line-height: 2rem;
+            background: #03a9f4;
+            color: #fff;
+        }
+
+        .gradient {
+            background: -moz-linear-gradient(-45deg, #03a9f4 0%, #ff97aa 100%);
+            background: -webkit-gradient(linear, -45deg, left bottom, color-stop(0%, #000000), color-stop(100%, #ff97aa));
+            background: -webkit-linear-gradient(-45deg, #03a9f4 0%, #ff97aa 100%);
+            background: -o-linear-gradient(-45deg, #03a9f4 0%, #ff97aa 100%);
+            background: -ms-linear-gradient(-45deg, #03a9f4 0%, #ff97aa 100%);
+            background: linear-gradient(-45deg, #03a9f4 0%, #ff97aa 100%);
+        }
+
+        .aui-row-diy {
+            background: #fff;
+        }
+
+        .aui-row-diy .aui-col-xs-6 {
+            margin: 0.5em 0;
+            padding: 0.5rem 0;
+            text-align: left;
+            padding-left: 0.7rem;
+        }
+
+        .aui-row-diy .aui-col-xs-4 {
+            text-align: left;
+        }
+
+        .aui-list:before {
+            background-color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='main'>
+        <ul class="aui-list aui-media-list">
+            <template v-for="val in list">
+              <li class="aui-list-item aui-list-item-middle">
+      <div class="aui-list-item-inner">
+<div class="aui-list-item-text">
+<div class="aui-list-item-title aui-font-size-16">
+<span>账户：{{val.UserName}}</span>
+</div>
+<div class="aui-list-item-title aui-font-size-16 " >
+<span>姓名：{{val.PersonName}}</span>
+</div>
+
+</div>
+<div class="aui-list-item-text">
+<div class="aui-list-item-title aui-font-size-16">
+<span>本月消费：<span class="aui-text-danger">{{val.thisMonthSumConsumeAmout}}</span>元
+</div>
+</div>
+<div class="aui-list-item-text">
+
+<div class="aui-list-item-title aui-font-size-16 " >
+<span>本月消费提成：<span class="aui-text-danger">{{val.thisMonthCommssion}}</span>元
+</div>
+
+</div>
+<div class="aui-list-item-text">
+  <div class="aui-list-item-text aui-font-size-12">
+      <span> 注册日期：{{val.RegDateTimeStr }}</span>
+
+  </div>
+</div>
+
+</div>
+</li>
+    </template>
+        </ul>
+
+    </div>
+</body>
+
+</html>
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+    apiready = function() {
+       pageData = api.pageParam;
+        main.getData();
+
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: [],
+            EjCommssion: '',
+            SjCommssion: '',
+            allCount: '',
+            sumCommission: '',
+            MonthConsumeAmout: '',
+            DaiLiCommission: ''
+        },
+        methods: {
+            ClipWeChat: function() {
+                popup.show($api.dom("#bottom"))
+            },
+            addKey: function(el) {
+                sign.CheckoutCg = sign.CheckoutCg + $(el).html()
+            },
+            getData: function(index) {
+              $common.progress();
+              $common.request('GetXjUsersByUserId', {
+                  data: {
+                      values: {
+                          ToKen: $api.getStorage('iii'),
+                          UserId:pageData.UserId
+                      }
+                  }
+              }, function(ret, err) {
+                  if (ret.StateCode == 1) {
+                      if (ret.list.length > 0) {
+                          main.list = ret.list;
+                      } else {
+                          $common.toast('暂无数据');
+                      }
+                      //console.log(JSON.stringify(goods.list ));
+                      api.hideProgress();
+
+                  } else {
+                      $common.toast(ret.msg);
+                  }
+              });
+            },
+        }
+    })
+</script>

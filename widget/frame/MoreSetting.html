@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>高级功能</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <style>
+    </style>
+</head>
+<body>
+  <div id='main'>
+      <div class="aui-content aui-font-size-12" style="padding: 0.3rem 0.75rem;">设置</div>
+      <ul class="aui-list aui-list-in">
+            <li class="aui-list-item" onclick="$common.openWin('thirdHead',{title:'签到设置',key:3,FrameName:'SignSetting'});">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">签到设置</div>
+                </div>
+            </li>
+            <li class="aui-list-item" onclick="$common.openWin('thirdHead',{title:'导购机器人',key:3,FrameName:'GuideRobot'});">
+              <div class="aui-list-item-inner aui-list-item-arrow">
+                  <div class="aui-list-item-title">导购机器人</div>
+              </div>
+            </li>
+            <li class="aui-list-item" onclick="$common.openWin('thirdHead',{title:'机器人昵称设置',key:3,FrameName:'RobotSetting'});">
+              <div class="aui-list-item-inner aui-list-item-arrow">
+                  <div class="aui-list-item-title">机器人昵称设置</div>
+              </div>
+            </li>
+            <li class="aui-list-item" onclick="$common.openWin('thirdHead',{title:'待发商品设置',key:3,FrameName:'WaitGoodsSetting'});">
+              <div class="aui-list-item-inner aui-list-item-arrow">
+                  <div class="aui-list-item-title">待发商品设置</div>
+              </div>
+            </li>
+            <li class="aui-list-item" onclick="$common.openWin('thirdHead',{title:'共享商品账号',key:3,FrameName:'ShareGoods'});">
+              <div class="aui-list-item-inner aui-list-item-arrow">
+                  <div class="aui-list-item-title">共享商品账号</div>
+              </div>
+            </li>
+      </ul>
+
+  </div>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script>
+function open(){
+  api.openWin({
+      name: name,
+      url: 'widget://html/CommonPage.html',
+  });
+}
+</script>

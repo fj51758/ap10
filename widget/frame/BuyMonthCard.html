@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .aui-grid .aui-grid-label {
+            display: block;
+            font-size: 0.7rem;
+            position: relative;
+            margin-top: 0.25rem;
+            /*border: 1px solid;*/
+            line-height: 3.5rem;
+            margin: auto 1rem;
+            /*border-radius: 5px;
+            border: 1px solid #ccc;
+            background: #fff;*/
+        }
+
+        .selected {
+            border: 1px solid #e51c23 !important;
+        }
+
+        .aui-col-xs-grid-label {
+            border: 1px solid #ccc;
+            padding: 0 !important;
+            margin: 1rem 5%;
+            border-radius: 5px;
+            width: 40%;
+        }
+
+        .aui-grid .aui-iconfont {
+            font-size: 0.8rem;
+        }
+
+        .aui-dialog-body {
+            text-align: left;
+        }
+
+        .aui-list-header {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: block;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            background-color: #e0e0e0;
+            color: #212121;
+            line-height: 1;
+            padding: 0.4rem;
+            font-size: 0.6rem;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="aui-grid aui-margin-b-15" id='ListContent'>
+        <div class="aui-tips" style="padding: 0 1.5rem;z-index:1" onclick="  $common.openWin('thirdHead', {title:'月卡说明',key:'OutUrl', FrameName:'http://help.t-ke.cn/web/#/page/76'});">
+            <div class="aui-tips-title" style="text-decoration: underline;">月卡收费明细:请点击这里查看哦.....</div>
+        </div>
+        <ul class="aui-form-list">
+            <template v-for="val in MonthCardList">
+              <li class=" aui-list-header">当前使用月卡</li>
+            <li class="aui-list-item" style="background: url('../image/MouthCardBg.png') no-repeat center center;  height: 10rem;  background-size: cover;margin: 0.7rem;border-radius: 8px;">
+                <div class="aui-list-item-inner aui-padded-l-15 aui-padded-r-15 aui-padded-t-15">
+                    <div class="aui-list-item-label aui-text-white aui-text-white " style="text-align: center;">
+                        <b class="aui-font-lsize-20" style="font-size: 1.2rem;">云发单·月卡</b>
+                        <b style="color: #ff6600; line-height: 1.5rem;"><span style="font-size: 1.6rem;">&nbsp;{{val.DisCounts*10}}</span> 折</b>
+                    </div>
+                </div>
+                <div class="aui-list-item-inner aui-margin-l-15 aui-margin-t-15 aui-margin-r-15 aui-font-size-18" style="text-align: center;background: rgba(255,255,255,0.5);border-radius: 4px;padding: 0.8rem;">
+                    <div class="aui-list-item-label aui-text-default  aui-padded-b-10">
+                        每天抵消群数量：{{val.GroupCount}} 个
+                    </div>
+                    <div class="aui-list-item-label aui-text-default aui-font-size-14">
+                        月卡有效期：{{val.BeginDateTimeStr}}</br> 至 {{val.EndDateTimeStr}}
+                    </div>
+                </div>
+            </li>
+            <div class="aui-card-list-footer aui-text-center" onclick="$common.openWin('thirdHead',{title:'我的月卡',key:3,FrameName:'MouthCardLsit'});" tapmode="tapmode">
+                查看更多月卡....
+            </div>
+          </template>
+
+        </ul>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">配置月卡</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label" style="width:10rem;">
+                        每月发单群数
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="number" id="GroupCount"  placeholder="输入每月所发单群数量" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onafterpaste="this.value=this.value.replace(/[^\d]/g,'')">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="CreateMonthCard();" tapmode="tapmode">生成月卡</div>
+        </div>
+
+        <section class="aui-content-padded">
+            <h4>月卡说明:</h4>
+            <p>1.月卡一旦购买，无法退款。</p>
+            <p>2.可多次购买月卡，每月只生效一张月卡。</p>
+            <p>3.月卡有效期30天到后，需重新购买月卡或者账户余额足够才可继续发单。</p>
+            <p>4.账户余额小于0元无法购买月卡，请保证账户余额大于或等于0元。</p>
+            <p>5.每张月卡有可发群数量上限，如购买后，开启发单的群数量超过月卡群数量上限。超过的群还是按照10个群为一组，6元/10群/天/扣费，每组不足10个群也扣6元。</p>
+        </section>
+        <!-- <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block" v-on:click="sure();" tapmode="tapmode">确认充值</div>
+        </div> -->
+
+    </section>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script>
+    apiready = function() {
+        main.getdata();
+    }
+    var dialog = new auiDialog();
+    var main = new Vue({
+        el: '#ListContent',
+        data: {
+            GroupCount: 10,
+            MonthCardList: []
+        },
+        methods: {
+            CreateMonthCard: function() {
+              $common.progress("月卡生成中")
+
+                var UserGroupCount = 0;
+                $common.request('CreateRecommendCard', {
+                    data: {
+                        values: {
+                            ToKen: $api.getStorage('iii'),
+                            GroupCount: $api.val($api.dom("#GroupCount"))
+                        }
+                    }
+                }, function(ret, err) {
+                    console.log(JSON.stringify(ret));
+                    if (ret.StateCode == 1) {
+                        UserGroupCount = ret.list[0].GroupCounts;
+                        dialog.alertMsg({
+                            title: "根据您的发单群数量，系统为您匹配了该月卡套餐!",
+                            msg: "\
+                <div class=\"aui-info\" style=\"padding:0 0 0.5rem\">\
+                    <div class=\"aui-margin-l-5 aui-text-info aui-font-size-18\" style=' display: block;'>" + ret.list[
+                                    0].ZkFee + "元 \
+                      <span class=\"aui-margin-l-5  aui-font-size-14\" style=\"text-decoration: line-through; color: #757575;\">" + ret.list[0].YuanFee +
+                                "元 </span>\
+                      </div>\
+                </div>\
+                <div class=\"aui-info\" style=\"padding:0 0 0.5rem\">\
+                <span class=\"aui-margin-l-5\"> 可发群个数上限：<span class=\"aui-text-info\">" +
+                                ret.list[0].GroupCounts +
+                                "</span>&nbsp;&nbsp;个</span>\
+                </div>\
+                <div class=\"aui-info\" style=\"padding:0 0 0.5rem\">\
+                    <span class=\"aui-margin-l-5\">折扣：<span class=\"aui-text-info\">" +
+                                ret.list[0].Discount*10 +
+                                "</span>&nbsp;&nbsp;折</span>\
+                </div>\
+                <div class=\"aui-info\" style=\"padding:0 0 0.5rem\">\
+                    <span class=\"aui-margin-l-5\">月卡到期时间：" +
+                                ret.list[0].EndDateStr + " </span>\
+                </div>\
+                <div class=\"aui-text-danger\" style=\"padding:0 0 0.5rem\">\
+                    <span class=\"aui-margin-l-5\">注意：请确认你的发单群数量，你填写的群数量影响了月卡的可发单群数量，每月只生效一张最先买的月卡，后面买的月卡在下月生效，后续会出月卡升级功能，请耐心等待！ </span>\
+                </div>\
+                "
+                        }, function(ret1) {
+                            if (ret1.buttonIndex == 2) {
+                                $common.request('BuyMonthCard', {
+                                    data: {
+                                        values: {
+                                            ToKen: $api.getStorage('iii'),
+                                            groupCount: ret.list[0].GroupCounts,
+                                            UserGroupCount: $api.val($api.dom("#GroupCount"))
+                                        }
+                                    }
+                                }, function(ret3) {
+                                    console.log(JSON.stringify(ret3))
+                                    if (ret3.StateCode == 1) {
+                                        $("body").html(ret3.date).hide();
+
+
+                                        api.hideProgress();
+                                    } else {
+                                        $common.toast(ret3.Message)
+                                    }
+                                })
+                            }else{
+                              // alert("1")
+                              dialog.close()
+                            }
+                        })
+
+                    } else {
+                        $common.toast(ret.Message)
+                    }
+                    api.hideProgress();
+
+                })
+
+
+            },
+            getdata: function() {
+                $common.progress();
+                $common.request('GetNowMonthCardInfo', {
+                    data: {
+                        values: {
+                            ToKen: $api.getStorage('iii'),
+                            ope: 0
+                        }
+                    }
+                }, function(ret, err) {
+                    api.hideProgress();
+                    if (ret.StateCode == 1) {
+                        if (ret.list != null) {
+                            main.MonthCardList = ret.list;
+                        }
+                    }
+                })
+            }
+        }
+    })
+</script>

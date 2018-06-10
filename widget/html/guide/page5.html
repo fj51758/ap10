@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>引导页</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        body,html{background: #fff;position: relative;}
+        .aui-list .aui-list-item{padding-left: 0}
+        input[type='text']{
+          border: 1px solid #ddd;
+          min-height: 1.6rem;
+        }
+        .clear{
+          clear: both;
+          margin-top: 2rem;
+        }
+        .center{
+          text-align: center;
+        }
+        .nexBtn{
+          position: absolute;
+          right: 0;
+          bottom: 2rem;
+        }
+        .aui-bar-nav {
+            background: #fff;
+            color: #404040;
+            border-bottom: 1px solid #ddd;
+        }
+        .mar{
+          margin-top: 2rem;
+        }
+        .aui-radio{
+          margin-right: 0.3rem;
+        }
+        .aui-radio:checked{
+          background-color: #ffc107;
+          border: solid 1px #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+  <header class="aui-bar aui-bar-nav" id='header'>
+      <a class="aui-pull-left aui-btn">
+          <!-- <span class="aui-iconfont aui-icon-left"></span>返回 -->
+      </a>
+      <div class="aui-title">新手引导</div>
+  </header>
+  <div id="main">
+    <div class="aui-content-padded">
+      <h1>第五步：挑选商品</h1>
+      <div class="aui-content aui-font-size-12 aui-margin-b-10 aui-margin-t-10">千相魔方智能淘客机器人支持三种商品来源方式</div>
+      <div class="aui-content aui-font-size-12 aui-margin-b-10  mar">第一种：从商城中手工挑选推送的商品</div>
+      <div class="center aui-content-padded"><div class="aui-btn">进入商城</div></div>
+      <div class="aui-content aui-font-size-12 aui-margin-b-10 mar">第二种：开启系统爆款推送，人工选品，自动推送</div>
+      <div class="aui-margin-b-10 aui-margin-t-10 center">
+        <div class="aui-btn aui-btn-warning aui-btn-outlined"><input class="aui-radio" type="radio" name="radio2">开启爆款推送</div>
+      </div>
+      <div class="aui-content aui-font-size-12 aui-margin-b-10  mar">第三种：从qq群采集商品发单（仅支持winPC）</div>
+      <div class="center aui-content-padded"><div class="aui-btn">下载采集工具</div></div>
+      <div class="aui-text-info aui-font-size-12 aui-margin-b-10 center mar" style='text-decoration: underline;'>查看PC端采集工具使用教程</div>
+    </div>
+    <div class="nexBtn aui-content-padded"> <h1 class="aui-pull-right" onclick="$common.closeSelfWin()">教程结束返回首页</h1></div>
+
+  </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/handsome.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+
+<script>
+apiready = function() {
+  $api.dom('#header').style.background = '#fdfdfd';
+  $api.fixStatusBar($api.dom('#header'));
+  }
+</script>

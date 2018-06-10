@@ -1,0 +1,324 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <!-- 在IOS设备上，有时会将数字转为手机号，这里也要禁止下 -->
+    <meta name="format-detection" content="telephone=no" />
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        html {
+            background-color: #ffffff;
+        }
+        /*header{ background-color:#333333;}*/
+
+        header ul {
+            background: white;
+        }
+
+        header ul li {
+            height: 3.0rem;
+            line-height: 3.0rem;
+            text-align: center;
+            display: none;
+            color: #323237;
+            position: relative;
+            font-size: 0.9rem;
+        }
+
+        header ul li.active {
+            display: block;
+        }
+
+        .zhanwei {
+            height: 10%;
+            -webkit-box-flex: 1;
+            flex: 1 1 auto;
+        }
+
+        .img-row {
+            /*display:flex;
+                display: -webkit-box;
+                flex-flow:row nowrap;
+                justify-content: center;
+                align-items: stretch;
+                -webkit-box-align:stretch;
+                -webkit-box-pack:center;*/
+            margin-top: 4.6%;
+            margin-bottom: 8%;
+            text-align: center;
+        }
+
+        .tapmode {
+            background-color: gray;
+        }
+
+        .tapmode-w {
+            background-color: rgba(238, 238, 238, 0.6);
+        }
+
+        .tapmode-b {
+            color: rgb(30, 30, 30);
+        }
+
+        #wrap {
+            height: 100%;
+        }
+
+        .back_end {
+            width: 1.25rem;
+            height: 1.25rem;
+            float: right;
+            background: url('../image/ic_close_black_36dp.png') no-repeat;
+            background-size: contain;
+            position: absolute;
+            top: 0.85rem;
+            right: 0.9rem;
+            z-index: auto;
+        }
+
+        #login_main {
+            /* height: 86%; */
+            display: -webkit-box;
+            display: flex;
+            -webkit-box-orient: vertical;
+            flex-flow: column;
+            margin-top: 8%;
+            flex: 1 1 auto;
+            -webkit-box-flex: 1;
+        }
+
+        .btn_login {
+            /* display: block; */
+            background-color: #03a9f4;
+            padding: 0.5rem 0px;
+            text-align: center;
+            width: 90%;
+            font-size: 1.0rem;
+            color: white;
+            border-radius: 1.5rem;
+            margin: 8% 5% 0px 5%;
+            align-self: center;
+            outline: none;
+        }
+
+        .hrow {
+            display: -webkit-box;
+            display: flex;
+            /* -webkit-box-orient: horizontal; */
+            flex-flow: row nowrap;
+            justify-content: space-between;
+            align-items: center;
+            /* background-color: white; */
+            -webkit-box-align: center;
+            -webkit-box-pack: justify;
+        }
+
+        .btn_regist {
+            width: 30%;
+            border: 1px solid #ff0000;
+            border-radius: 1.5rem;
+            padding: 0.5rem 0px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #ff0000;
+            margin: 0.8rem 35%;
+            align-self: center;
+            outline: none;
+            background-color: white;
+        }
+
+        .hs-lefticon {
+            flex: 0 1 auto;
+            width: 1.2em;
+            /* height: 24px; */
+        }
+
+        .hs-input {
+            height: 1.4rem;
+            font-size: 0.75rem;
+            margin-left: 1em;
+            padding-top: 0.2rem;
+            width: 60%;
+            -webkit-box-flex: 3;
+            flex: 3 3 auto;
+            z-index: auto;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap" class="flex-wrap flex-vertical">
+        <header>
+            <ul style="width:100%;margin:0 auto;">
+                <li class="border-b active">
+                    <div>登录</div>
+                    <div class="back_end" onclick="closeWin()"></div>
+                </li>
+                <!-- <li class="border-b" >
+                <div>注册</div>
+                <div class="back_end" ></div>
+            </li> -->
+            </ul>
+        </header>
+        <div class="content" id="login_main">
+            <ul>
+                <li>
+                    <div class="hrow" style="margin:1% 5% 1% 5%;padding:2% 0px 2% 0px;border-bottom:1px solid rgb(215,215,215);">
+                        <image class="hs-lefticon" src="../image/login_user.png"></image>
+                        <input type="text" id="login_user_name" placeholder="请输入手机号/账号" value="" class="hs-input" />
+                    </div>
+                </li>
+                <li>
+                    <div class="hrow" style="margin:1% 5% 1% 5%;padding:2% 0px 2% 0px;border-bottom:1px solid rgb(215,215,215);">
+                        <image class="hs-lefticon" src="../image/login_password.png"></image>
+                        <input type="password" id="login_password" placeholder="请输入密码" value="" class="hs-input" />
+                    </div>
+                </li>
+
+            </ul>
+            <!-- <div class="btn_login" tapmode="tapmode" onclick="login(this)"> 登录</div> -->
+            <div class="aui-content-padded">
+                <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" onclick="login(this)" tapmode="tapmode">登录</div>
+            </div>
+            <div class="hrow " style="margin:6% 10% 0px 10%; font-size: 0.7rem;color: #bbb;">
+                <!-- <div style="flex:0 1 auto;" tapmode="tapmode-b" onclick="forget_password()"><u>忘记密码?</u></div> -->
+                <div style="flex:0 1 auto;" tapmode="tapmode-b" onclick="$common.openWin('CommonPage',{title:'注册',key:3,FrameName:'Regist'});"><u>快速注册</u></div>
+            </div>
+
+            <!-- <div  class= "btn_regist" tapmode="tapmode-w" onclick="registerFree(this)" id="register_btn">免费注册</div> -->
+
+            <!-- <template v-if="other_icons">
+        <div class="zhanwei"></div>
+        <div class="flex-wrap" style="flex-direction:row; flex-wrap:nowrap; justify-content:center; align-items:center;margin:0 5% 0 5%;-webkit-box-pack: center;-webkit-box-align: center">
+            <div style="flex-grow: 1;flex-shrink: 1; margin-right:5%;width:28%;"><hr style=" height:2px;border:none;border-top:1px solid #ddd; width: 100%;"/></div>
+            <div style="flex: 0 0 auto;font-size:0.8rem;color:#bbb;">免注册 一键登录</div>
+            <div style="flex-grow: 1;flex-shrink: 1; margin-left:5%;width:28%;"><hr style=" height:2px;border:none;border-top:1px solid #ddd;width: 100%;"/></div>
+        </div>
+
+        <div class="img-row">
+            <template v-if="haswx">
+                <img id="wx"  src="../image/login_weixin.png"  style="width:3.0rem;height:3.0rem;margin:0 4%;" onclick="login_weixin()"/>
+            </template>
+            <template v-if="hasqq">
+                <img id="qq"  src="../image/login_qq.png"  style="width:3.0rem;height:3.0rem;margin:0 4%;" onclick="login_qq()"/>
+            </template>
+            <template v-if="hastb">
+                <img id="tb" src="../image/login_taobao.png"  style="width:3.0rem;height:3.0rem;margin:0 4%;" onclick="login_taobao()"/>
+            </template>
+        </div>
+    </template> -->
+        </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/handsome.js"></script>
+<script type="text/javascript" src="../script/md5.js"></script>
+<script type="text/javascript">
+    var moduletaobao = null;
+    var qq = null;
+    var wx = null;
+    var tbclick = false;
+    var hasProgress = false;
+    var fromWhere = 'web';
+    var pageData = '';
+    var loginparam = '';
+    apiready = function() {
+        // if ($api.getStorage('iii') != undefined) {
+        //       $api.setStorage('iii', "00");
+        // }
+        // $handsome.setTopColor($api.dom('header'));
+        $api.fixStatusBar($api.dom('header'));
+
+        $handsome.addWin(api.winName);
+        pageData = api.pageParam;
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err) {
+            if (hasProgress) {
+                $handsome.hideProgress();
+            } else {
+                hasProgress = false;
+                closeWin();
+            }
+        });
+        if ($api.getStorage('UserName') != undefined) {
+            document.getElementById("login_user_name").value = $api.getStorage('UserName');
+            document.getElementById("login_password").value = $api.getStorage('PassWord');
+        }
+        /*ios中针对淘宝登录没有回调的问题*/
+        // api.addEventListener({
+        //             name: 'HideProgressEvent'
+        // }, function(ret, err) {
+        //                  hasProgress = false;
+        //                  api.hideProgress();
+        // });
+    };
+
+
+    // 关闭当前页
+    function closeWin() {
+        $common.closeLoginWin();
+    }
+    // 用户登录 成功后跳转到首页 并且要传递token
+    function login(tag) {
+        var user_phone = document.getElementById("login_user_name").value;
+        var user_password = document.getElementById("login_password").value;
+        $common.request('login', {
+            data: {
+                values: {
+                    username: user_phone,
+                    password: user_password
+                }
+            }
+        }, function(ret, err) {
+            if (ret.error == 1) {
+                fromWhere = 'web';
+                $common.toast(ret.msg);
+                $api.setStorage('UserName', user_phone);
+                $api.setStorage('PassWord', user_password);
+                $api.setStorage('iii', ret.iii);
+                $common.loginOpen(ret, fromWhere);
+                api.closeToWin({
+    name: 'login_index'
+});
+            } else {
+                $common.alert(ret.msg);
+            }
+        });
+    }
+
+    // 免费注册
+    function registerFree(tag) {
+        api.openWin({
+            name: 'register_page',
+            url: '../html/regist.html',
+            pageParam: pageData
+        });
+    }
+    // 快速登录
+    function quick_login(tag) {
+        api.openWin({
+            name: 'quicklogin_page',
+            url: '../html/quick_login.html',
+            pageParam: pageData
+        });
+    }
+    // 忘记密码
+    function forget_password() {
+        api.openWin({
+            name: 'forget_password_win',
+            url: './changeInfor/forgetpassword.html',
+            // pageParam: pageData
+        });
+    }
+</script>

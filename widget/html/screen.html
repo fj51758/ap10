@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/1.css" />
+    <style>
+        /*.track-rcol{width: 900px; border: 1px solid #eee;}*/
+
+        .track-list {
+            margin: 20px;
+            padding-left: 5px;
+            position: relative;
+            font-size: 0.6rem;
+        }
+
+        .track-list li {
+            position: relative;
+            padding: 9px 0 0 25px;
+            line-height: 18px;
+            border-left: 1px solid #d9d9d9;
+            color: #999;
+        }
+
+        .track-list li.first {
+            color: red;
+            padding-top: 0;
+            border-left-color: #fff;
+        }
+
+        .track-list li .node-icon {
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            width: 11px;
+            height: 11px;
+            background: url(http://demo.daimabiji.com/3531/img/order-icons.png) -21px -72px no-repeat;
+        }
+
+        .track-list li.first .node-icon {
+            background-position: 0 -72px;
+        }
+
+        .track-list li .time {
+            margin-right: 20px;
+            position: relative;
+            top: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .track-list li .txt {
+            max-width: 600px;
+            position: relative;
+            top: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .track-list li.first .time {
+            margin-right: 20px;
+        }
+
+        .track-list li.first .txt {
+            max-width: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav" style="min-height:3rem;">
+        <div class="aui-title">搜索条件</div>
+    </header>
+    <div id="J_SiftContainer" class="m-sift">
+        <div class="content">
+            <!-- <div class="sift-row price-range-row">
+            <div class="row-head"><span class="title">价格区间（元）</span><span class="two-input"><input id="J_siftStartPrice" class="price-range-item" name="start_price" type="number" min="0" placeholder="最低价"><span class="divider">-</span><input id="J_siftEndPrice" class="price-range-item"
+                    name="end_price" type="number" min="0" placeholder="最高价"></span>
+            </div>
+        </div> -->
+            <div class="aui-content aui-margin-b-15">
+                <ul class="aui-list aui-list-in">
+                    <!-- <li class="aui-list-header">
+            带有其他元素的列表
+        </li> -->
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-title">券后价(元)</div>
+                            <div class="aui-list-item-right">
+
+                                <div class="row-head">
+                                    <input id="minPrice" class="price-range-item" name="start_price" type="number" min="0" value="0" placeholder="最低价">
+                                    <span class="divider">—</span>
+                                    <input id="maxPrice" class="price-range-item" name="end_price" type="number" min="0" value="10" placeholder="最高价">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-title">佣金比例</div>
+                            <div class="aui-list-item-right">
+                                <div class="row-head">大于
+                                    <input class="price-range-item" id="yj" name="start_price" type="number" min="0" value="30" style="width:65%;"> %
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">销量</div>
+                <div class="aui-list-item-right">
+                  <div class="row-head">大于
+                    <input class="price-range-item" name="start_price" type="number" min="0" placeholder="0"  style="width:65%;"> 件
+                  </div>
+                </div>
+            </div>
+        </li> -->
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-title">关键词</div>
+                            <div class="aui-list-item-right" style="width:100%;">
+                                <input class="price-range-item" id="keyWord" name="start_price" type="text" placeholder="搜索关键词" style="width:100%;">
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="sift-bottom">
+            <div class="sift-clear sift-btn" onclick="refrash();" tapmode="tapmode">重置</div>
+            <div class="sift-btn-ok sift-btn" onclick="Commit();" tapmode="tapmode">确定</div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+    function Commit() {
+        var ret = {
+            value: {
+                maxPrice: $api.val($api.dom("#maxPrice")),
+                minPrice: $api.val($api.dom("#minPrice")),
+                yj: $api.val($api.dom("#yj")),
+                keyWord: $api.val($api.dom("#keyWord"))
+            }
+        }
+        if(parseInt(ret.value.minPrice)>parseInt(ret.value.maxPrice)){
+          $common.toast("最低价不能大于最高价")
+          return;
+        }
+        api.execScript({
+            name: 'index',
+            frameName: 'frame1',
+            script: 'jsfun(' + JSON.stringify(ret) + ');'
+        });
+        api.closeDrawerPane();
+    }
+
+    function refrash() {
+        var maxPrice = $api.val($api.dom("#maxPrice"), "");
+        var minPrice = $api.val($api.dom("#minPrice"), "");
+        var yj = $api.val($api.dom("#yj"),0);
+        var keyWord = $api.val($api.dom("#keyWord"), "");
+        var ret = {
+            value: {
+                maxPrice: 0,
+                minPrice: 0,
+                yj: 0,
+                keyWord: ""
+            }
+        }
+        api.execScript({
+            name: 'index',
+            frameName: 'frame1',
+            script: 'jsfun(' + JSON.stringify(ret) + ');'
+        });
+
+    }
+
+    var ListContent = new Vue({
+        el: '#ListContent',
+        data: {
+            list: [],
+            gsid: '',
+            show: 1,
+            goodstype: 2
+        },
+        methods: {
+            close: function() {
+                $("#modal").removeClass('show_column');
+                $("body").removeClass('overflow');
+            },
+            getMoneyList: function() {
+                var mList = [];
+                for (var i = 5; i < 360; i = i * 2) {
+                    mList.push({
+                        text: i,
+                        val: i
+                    })
+                }
+                ListContent.list = mList;
+            },
+            getData: function(index) {
+                this.close();
+                lock = false;
+                var active = $(".aui-tab-item").eq(index);
+                active.addClass('aui-active').siblings().removeClass('aui-active');
+                $('.cloumn-box').eq(index).addClass('active').siblings().removeClass('active');
+                if (this.goodstype == 2) {
+                    defaults.gsid = $("#tab").attr('data-plate-gsid');
+                }
+                defaults.cid = active.attr('data-plate-id');
+                defaults.page = 1;
+                //				gData = [];
+                //				homeData.list = gData;
+                $common.progress();
+                // getGoodsList(true);
+                //alert($("#goodslist").offset().top);
+                //$(window).scrollTop($("#goodslist").offset().top);
+            },
+        }                       
+    })
+    ListContent.getMoneyList();
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        pageData = api.pageParam;
+        switch (pageData.key) {
+            case 1:
+                $api.html($api.dom('.aui-title'), pageData.name);
+                api.openFrame({
+                    name: 'page2',
+                    url: './page2.html',
+                    rect: {
+                        x: 0,
+                        y: 0,
+                        w: 320,
+                        h: 480
+                    },
+                    pageParam: {
+                        name: 'test'
+                    },
+                    bounces: true,
+                    bgColor: 'rgba(0,0,0,0)',
+                    vScrollBarEnabled: true,
+                    hScrollBarEnabled: true
+                });
+
+                break;
+            default:
+
+        }
+
+    }
+</script>

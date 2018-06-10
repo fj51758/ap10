@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>云发单</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .aui-list-item-right-diy {
+            margin-top: 1.2rem !important;
+            font-size: 0.8rem !important;
+            padding-right: 1rem !important;
+        }
+
+        .aui-list-item-arrow:before {
+            width: 0.5rem;
+            height: 0.5rem;
+        }
+
+        .aui-list-item-label-icon-diy {
+            width: 3rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 70%;
+        }
+
+        .aui-list-in {
+            margin-bottom: 20px;
+        }
+
+        .aui-list {
+            font-size: 0.7rem !important;
+        }
+
+        .Balance {
+            color: #03a9f4;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body v-cloak>
+    <div class="aui-content aui-margin-b-15" id="main" >
+
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item gradient" style="    position: relative;">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media">
+                        <img src="../image/head.png" id="LogoUrl" style="width:80%;border-radius:50px;border: 2px solid #fff;">
+                    </div>
+                    <div class="aui-list-item-inner" onclick="login()" tapmode="tapmode">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-text-white" style="line-height:1.5rem;" id="PersonName">{{PersonName}}</div>
+                            <div class="aui-btn aui-btn-white" style="position: absolute;  right: 0.3rem; top: 0.9rem !important;font-size: 0.6rem !important;">切换账号</div>
+                        </div>
+                        <div class="aui-list-item-text aui-text-white">
+                            <span>账号:<span id="UserName">{{UserName}}</span></span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-media-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title" style="font-size: 0.8rem;">账户余额: &nbsp;<b id="Balance" class="Balance">{{Balance}}</b>&nbsp;元</div>
+
+                            <div class="aui-list-item-right aui-list-item-right-diy aui-text-info" onclick="$common.openWin('CommonPage',{title:'充值',key:2,FrameName:'ReCharge'});" tapmode="tapmode">去充值</div>
+                        </div>
+                        <div class="aui-list-item-text aui-ellipsis-2">
+                            今日预消费{{imoney}}元&nbsp;&nbsp;&nbsp;本月预估收入:{{sumCommission}}元
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-list-in aui-margin-t-15">
+
+            <li class="aui-list-item aui-list-item-arrow">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/sendsetting.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;" onclick="$common.openWin('CommonPage',{title:'群发设置',key:3,FrameName:'SendSetting'});" tapmode="tapmode">
+                    群发设置
+                </div>
+            </li>
+            <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openWin('CommonPage',{title:'转链设置',key:3,FrameName:'ChangeLinkSetting'});" tapmode="tapmode">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/changelink.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    转链设置
+                </div>
+            </li>
+            <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openWin('CommonPage',{title:'高级功能',key:3,FrameName:'MoreSetting'});" tapmode="tapmode">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/gaoji.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    高级功能
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openWin('CommonPage',{title:'扣费明细',key:3,FrameName:'CostDetail'});" tapmode="tapmode">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/cost.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    扣费明细
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openWin('CommonPage',{title:'提交反馈',key:3,FrameName:'SubmitBug'});" tapmode="tapmode">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/question.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    提交反馈
+                </div>
+            </li>
+            <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openWin('CommonPage',{title:'关于',key:3,FrameName:'about'});" tapmode="tapmode">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/AboutOur.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    关于
+                </div>
+            </li>
+
+        </ul>
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item" onclick="ClipWeChat('hguo2018')">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media" style="    width: 3rem;">
+                        <img src="../image/cooperate.png" style="width:80%;border-radius:50px;">
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title" style="line-height:1.5rem;" id="EndRemark">{{HeHuoRenAdvert}}{{HeHuoRenWeiXin}}</div>
+                            <!-- <div class="aui-list-item-right">账号:<span>13650734764</span></div> -->
+                        </div>
+                        <!-- <div class="aui-list-item-text">
+                            微信号:13650734764
+                        </div> -->
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-media-list-item-inner" onclick="ClipQQ(704236971)">
+                    <div class="aui-list-item-media" style="    width: 3rem;">
+                        <img src="../image/cooperate.png" style="width:80%;border-radius:50px;">
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title" style="line-height:1.5rem;">
+                                官方售后QQ群:{{AfterSaleQQ}}
+                            </div>
+                            <!-- <div class="aui-list-item-right">账号:<span>13650734764</span></div> -->
+                        </div>
+                        <!-- <div class="aui-list-item-text">
+                            微信号:13650734764
+                        </div> -->
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <!-- <ul class="aui-list aui-list-in">
+            <li class="aui-list-item  aui-list-item-arrow" onclick="login()">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/question.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    退出登录
+                </div>
+            </li>
+        </ul> -->
+
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+    apiready = function() {
+        clipBoard = api.require('clipBoard');
+        GetAppBaseConfig = $api.getStorage('GetAppBaseConfig');
+        main.getdata();
+    }
+
+    function ClipWeChat(index) {
+        clipBoard.set({
+            value: main.HeHuoRenWeiXin
+        }, function(ret, err) {
+            if (ret) {
+                api.confirm({
+                    title: '复制成功',
+                    msg: '是否现在打开微信客户端粘贴微信号添加好友',
+                    buttons: ['取消', '确定']
+                }, function(ret, err) {
+                    if (ret.buttonIndex == 2) {
+                        window.location.href = "weixin://"
+                    }
+                });
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+
+    function ClipQQ(index) {
+        clipBoard.set({
+            value: main.AfterSaleQQ
+        }, function(ret, err) {
+            if (ret) {
+                api.confirm({
+                    title: '复制成功',
+                    msg: '是否现在打开QQ客户端',
+                    buttons: ['取消', '确定']
+                }, function(ret, err) {
+                    if (ret.buttonIndex == 2) {
+                        window.location.href = "mqq://"
+                    }
+                });
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: [],
+            Balance: "",
+            UserName: "",
+            PersonName: "",
+            LogoUrl: "",
+            sumCommission: 0,
+            imoney: 0,
+            HeHuoRenAdvert: "",
+            HeHuoRenWeiXin: "",
+            AfterSaleQQ: ""
+
+        },
+        methods: {
+            getdata: function() {
+                main.HeHuoRenAdvert = GetAppBaseConfig.HeHuoRenAdvert;
+                main.HeHuoRenWeiXin = GetAppBaseConfig.HeHuoRenWeiXin;
+                main.AfterSaleQQ = GetAppBaseConfig.AfterSaleQQ;
+                var Usersconfig = $api.getStorage("Usersconfig");
+                var GetBalance = $api.getStorage("GetBalance");
+                if (Usersconfig != undefined) {
+                    // $api.html($api.dom("#EndRemark"), Usersconfig.EndRemark);
+                    main.Balance = Usersconfig.Balance;
+                    main.UserName = Usersconfig.UserName;
+                    main.PersonName = Usersconfig.PersonName;
+                    main.LogoUrl = Usersconfig.LogoUrl;
+                }
+                if (GetBalance != undefined) {
+                    main.sumCommission = $api.getStorage('sumCommission');
+                    main.imoney = GetBalance.imoney == null ? 0 : GetBalance.imoney;
+                }
+                var ThisOrLastInCome = $api.getStorage('ThisOrLastInCome');
+                if(ThisOrLastInCome !=undefined){
+                  main.sumCommission = ThisOrLastInCome.ThisMonthSumCommssion == null ? 0 : ThisOrLastInCome.ThisMonthSumCommssion.toFixed(2);
+                }
+
+            }
+        }
+    });
+
+    function login() {
+        api.confirm({
+            title: '提示',
+            msg: '确定切换账号吗',
+            buttons: ['取消', '确定']
+        }, function(ret, err) {
+            if (ret.buttonIndex == 2) {
+                api.openWin({
+                    name: 'login_index',
+                    url: 'widget://html/login_index.html'
+                });
+            }
+        });
+
+
+    }
+</script>

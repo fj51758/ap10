@@ -1,0 +1,74 @@
+.m-sift .content {
+    background: #fff;
+    /*height: 100%;
+    overflow-y: scroll;*/
+}
+.m-sift .price-range-row {
+    padding-top: 10px;
+}
+.m-sift .sift-row {
+    padding: 0 4% 10px;
+    border-bottom: 1px solid #e7e7e7;
+}
+.m-sift .sift-row .row-head {
+    line-height: 28px;
+    height: 28px;
+    margin: 10px 0;
+}
+.m-sift .sift-row .title {
+    vertical-align: middle;
+    font-size: 14px;
+    font-family: tahoma,arial,'Hiragino Sans GB','Microsoft Yahei',sans-serif;
+    line-height: 28px;
+    display: inline-block;
+}
+.m-sift .two-input {
+    display: block;
+    float: right;
+    width: 54%;
+    text-align: right;
+    margin-right: 5px;
+}
+.m-sift .price-range-item {
+  display: inline-block;
+line-height: 1.3rem;
+min-height: 1.3rem;
+width: 40%;
+background: #f2f2f2;
+outline: none;
+text-indent: 5px;
+border-radius: 4px;
+font-size: 0.6rem;
+-webkit-tap-highlight-color: rgba(0,0,0,0);
+-webkit-appearance: none;
+border: 0;
+border-radius: 0;
+text-align: center;
+}
+.m-sift .price-range-row .divider {
+    padding: 0 5px;
+}
+
+.m-sift {
+    color: #051b28;
+}
+.m-sift .sift-bottom {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+}
+.m-sift .sift-btn {
+    width: 50%;
+    height: 48px;
+    background: #FFF;
+    line-height: 48px;
+    float: left;
+    text-align: center;
+    border-top: 1px solid #e7e7e7;
+}
+.m-sift .sift-btn-ok {
+    color: #fff;
+    background: #ff6600;
+    border-top-color: #e7e7e7;
+}

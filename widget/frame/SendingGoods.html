@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>端API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .aui-list-item-title-goods {
+            width: auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            font-size: 0.7rem !important;
+            height: 45px;
+        }
+
+        .aui-list-item-inner-goods {
+            width: 70% !important;
+        }
+
+        img.aui-img-round {
+            border-radius: 0;
+        }
+
+        .aui-list .aui-list-item-media-goods {
+            width: 5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15" id="main">
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-header " style="line-height:22px; ">
+                发送中的商品
+                <div class="aui-btn aui-btn-primary aui-pull-right aui-font-size-12" style="padding: 1px 5px;" v-on:click="clear();">清空商品</div>
+            </li>
+            <template v-for="val in list">
+            <li class="aui-list-item">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media">
+                        <img src="{{val.ImgUrl}}">
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-ellipsis-2 ">{{val.GoodsName}}</div>
+                        </div>
+                        <div class="aui-list-item-text">
+                            发送时间：{{val.NextTime}}
+                        </div>
+                        <!-- <div class="aui-info-item">
+                            将发送到：<span>{{val.GroupName}}</span>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="aui-info" style="padding-top:0">
+                    <div class="aui-info-item">
+                        将发送到：<span>{{val.GroupName}}</span>
+                    </div>
+                    <div class="aui-info-item"></div>
+                </div>
+            </li>
+  </template>
+        </ul>
+    </div>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+</script>
+<script>
+var lock = false;
+
+apiready = function() {
+        ListContent.getData();
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 200 //设置距离底部多少距离时触发，默认值为0，数字类型
+            }
+        }, function(ret, err) {
+            if (!lock) {
+                ListContent.getData();
+            }
+        });
+    }
+var ListContent = new Vue({
+    el: '#main',
+    data: {
+        list: [],
+        gsid: '',
+        show: 1,
+        goodstype: 2
+    },
+    methods: {
+        clear: function(index) {
+          $common.request('0x0001', {
+              data: {
+                  values: {
+                      ApiType: 'ClearWaitGoodsList',
+                      uxxx1__1: $api.getStorage('iii')
+                  }
+              }
+          }, function(ret, err) {
+            if(ret.error != 2){
+              // alert(JSON.stringify(ret))
+              ListContent.list=[];
+          $common.toast('操作成功');
+            }
+          });
+        },
+        getData: function() {
+            $common.progress();
+            $common.request('0x0001', {
+                data: {
+                    values: {
+                        ApiType: 'GetWaitGoodsUser',
+                        uxxx1__1: $api.getStorage('iii')
+                    }
+                }
+            }, function(ret, err) {
+
+                // alert(JSON.stringify(ret))
+                if (ret.error != 2) {
+                    var tdata = JSON.parse(ret.data).Table;
+                    // alert(JSON.stringify(ret))
+                    if (tdata.length > 0) {
+                      ListContent.list = tdata;
+                    } else {
+                        $common.toast('暂无数据');
+                    }
+                    api.hideProgress();
+                } else {
+                    {
+                        $api.toast("提示", ret.error, 1000);
+                    }
+                }
+            });
+        }
+    }
+})
+</script>

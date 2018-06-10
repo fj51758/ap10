@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/weui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .aui-list-item-label-icon-diy {
+            width: 1.5rem !important;
+            padding-right: 0.25rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 80%;
+        }
+    </style>
+</head>
+
+<body>
+  <div class="weui-cells weui-cells_form" style="width:100%">
+      <div class="weui-cell " style="padding-left: 0.3rem;line-height: 1rem;  width:100%;  border-bottom: 1px solid #efefef;">
+          <div class="weui-cell__hd">
+              <label class="weui-label">支付宝账号</label>
+          </div>
+          <div class="weui-cell__bd">
+              <input class="weui-input" id="alipay" type="text" placeholder="请输入支付宝账号" style="background:none;width: 100%;height:100%">
+          </div>
+      </div>
+      <div class="weui-cell " style="padding-left: 0.3rem;line-height: 1rem;  width:100%;  border-bottom: 1px solid #efefef;">
+          <div class="weui-cell__hd">
+              <label class="weui-label">预留手机号</label>
+          </div>
+          <div class="weui-cell__bd">
+              <input class="weui-input" id="UserName123" type="text" placeholder="" disabled="disabled" style="background:none;width: 100%;height:100%">
+          </div>
+      </div>
+      <div class="weui-cell weui-cell_vcode" style="padding-left: 0.3rem;line-height: 1rem;  width:100%;  border-bottom: 1px solid #efefef;">
+          <div class="weui-cell__hd">
+              <label class="weui-label">手机验证码</label>
+          </div>
+          <div class="weui-cell__bd">
+              <input class="weui-input " id="phoneCode" type="number" placeholder="云发单手机验证码" style="background:none;width: 100%;height:100%;">
+          </div>
+          <div class="weui-cell__ft">
+              <button class="weui-vcode-btn" onclick="getCode(this)" id="J_getCode">获取验证码</button>
+              <button class="weui-vcode-btn" onclick="getCode(this)" id="J_resetCode" style="display:none"><span id="J_second">60</span>秒后重发</button>
+          </div>
+      </div>
+      <div class="weui-cell " style="padding-left: 0.3rem;line-height: 1rem;  width:100%;  border-bottom: 1px solid #efefef;">
+          <div class="weui-cell__hd">
+              <label class="weui-label">提现金额</label>
+          </div>
+          <div class="weui-cell__bd">
+              <input class="weui-input" id="banlace" type="text" placeholder="请输入金额" style="background:none;width: 100%;height:100%;">
+          </div>
+      </div>
+      <div class="weui-cell " style="padding-left: 0.3rem;line-height: 1rem;  width:100%;  border-bottom: 1px solid #efefef;">
+          <div class="weui-cell__hd">
+              <label class="weui-label">真实姓名</label>
+          </div>
+          <div class="weui-cell__bd">
+              <input class="weui-input" id="personName" type="text" placeholder="请输入姓名" style="background:none;width: 100%;height:100%;">
+          </div>
+      </div>
+      <div class="weui-cell " style="padding-left: 0.3rem;line-height: 1rem;  width:100%;  border-bottom: 1px solid #efefef;">
+          <div class="weui-cell__hd">
+              <label class="weui-label">QQ</label>
+          </div>
+          <div class="weui-cell__bd">
+              <input class="weui-input" id="qq" type="text" placeholder="请输入QQ" style="background:none;width: 100%;height:100%;">
+          </div>
+      </div>
+  </div>
+  <span style="font-size:initial;color:#999">提示：申请详情请联系客服或者管理员</span>
+  <div class="aui-content-padded">
+      <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" onclick="update()" tapmode="tapmode">确认提现</div>
+  </div>
+  <div class="aui-content-padded">
+      <div class="aui-btn aui-btn-warning aui-btn-block aui-btn-sm"  onclick="$common.openWin('fourthHead',{title:'提现记录',key:2,FrameName:'ApplyWithdrawList'});"  tapmode="tapmode">提现记录</div>
+  </div>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/jquery.min.js"></script>
+<script type="text/javascript" src="../script/jquery-weui.min.js"></script>
+<script>
+apiready = function() {
+     Usersconfig = $api.getStorage('Usersconfig');
+    if(Usersconfig!=undefined){
+      phone = Usersconfig.UserName;
+      $("#UserName123").val(phone)
+      $("#banlace").val(Usersconfig.DaiLiCommission);
+    }
+}
+/*获取验证码*/
+var isPhone = 1;
+var code = "";
+
+function getCode(e) {
+    //checkPhone(); //验证手机号码
+    if (isPhone) {
+        api.ajax({
+          url: $common.host+"/RegisterAshx/GetPhoneVerCode_TiXian.ashx",
+          method: 'post',
+          data: {
+              values: {
+                 phone:phone,
+                 ope: "1",
+                type: "1"
+              }
+          }
+      },function (result) {
+            if (result.error == 1)
+            {
+                  $common.toast('发送成功,请在手机上查看验证码');
+                resetCode(); //倒计时
+            }else {
+            $common.toast(result.msg, 'warning');
+              return;
+            }
+        });
+
+    }
+}
+//倒计时
+ function resetCode() {
+     $('#J_getCode').hide();
+     $('#J_second').html('60');
+     $('#J_resetCode').show();
+     var second = 60;
+     var timer = null;
+     timer = setInterval(function () {
+         second -= 1;
+         if (second > 0) {
+             $('#J_second').html(second);
+             $("#J_resetCode").attr({ "disabled": "disabled" });
+         } else {
+             clearInterval(timer);
+             $('#J_getCode').show();
+             $('#J_resetCode').hide();
+         }
+     }, 1000);
+ }
+
+  function update(){
+       var alipay = $("#alipay").val();
+        var PersonName = $("#personName").val();
+        var QQ = $("#qq").val();
+        var amout = $("#banlace").val();
+        var PhoneCode = $("#phoneCode").val();
+        var pattern = /^1[0-9]{10}$/;
+        if (alipay == '') {
+          $common.toast('请输入支付宝'); return;
+        }
+        if (PersonName == '') {$.toptip('请输入真实姓名'); return;
+        }
+        if (amout == '') {
+            $common.toast('输入提现金额'); return;
+        }
+        if (amout <= 0) {
+            $common.toast('提现金额需大于0'); return;
+        }
+        $(this).attr("disabled","disabled").val("正在申请中!");
+    $common.request('0x0001', {
+        data: {
+            values: {
+              ApiType: "UserRecoverAmout",
+              phone :phone,
+              amout: $("#banlace").val(),
+              alipay: $("#alipay").val(),
+              personName: $("#personName").val(),
+              qq: $("#qq").val(),
+              vel: PhoneCode
+            }
+        }
+    }, function(ret) {
+      // alert(JSON.stringify(ret))
+        if (ret.error == 0) {
+            // api.execScript({
+            //     name: 'root',
+            //     script: 'SendConfigFun();'
+            // });
+
+            $common.toast('申请成功,将在7个工作日内到账');
+            $common.request('0x0001', {
+                data: {
+                    values: {
+                        ApiType: 'App_GetBelongInfoByUsers',
+                        iiiKey: $api.getStorage('iii')
+                    }
+                }
+            }, function(ret, err) {
+                if (ret.error == 0) {
+                    var tdata = JSON.parse(ret.data).Table[0];
+                    // console.log(JSON.stringify(tdata))
+                    $api.setStorage('Usersconfig', tdata);
+                    api.closeWin();
+                }
+            });
+        } else {
+             alert(ret.msg)
+        }
+    });
+  }
+</script>

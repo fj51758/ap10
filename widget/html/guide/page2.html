@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>引导页</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        body,html{background: #fff;position: relative;}
+        .aui-list .aui-list-item{padding-left: 0}
+        input[type='text']{
+          border: 1px solid #ddd;
+          min-height: 1.6rem;
+        }
+        .clear{
+          clear: both;
+          margin-top: 2rem;
+        }
+        .center{
+          text-align: center;
+        }
+        .nexBtn{
+          position: absolute;
+          right: 0;
+          bottom: 2rem;
+        }
+        .aui-list-item-label{
+          justify-content: flex-end;
+        }
+        .aui-bar-nav {
+            background: #fff;
+            color: #404040;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+  <header class="aui-bar aui-bar-nav" id='header'>
+      <a class="aui-pull-left aui-btn">
+          <!-- <span class="aui-iconfont aui-icon-left"></span>返回 -->
+      </a>
+      <div class="aui-title">新手引导</div>
+  </header>
+  <div id="main">
+    <div class="aui-content-padded">
+      <h1>第二步：获取机器人</h1>
+      <div class="aui-content aui-font-size-12 aui-margin-b-10 aui-margin-t-10">请提供一个微信号，这个微信号的功能是将机器人拉入群聊，微信号不要输错，输错了将导致机器人无法入群。</div>
+      <ul class="aui-list aui-form-list">
+       <li class="aui-list-item">
+           <div class="aui-list-item-inner">
+               <div class="aui-list-item-label aui-text-info aui-font-size-14" >
+                   微信号:
+               </div>
+               <div class="aui-list-item-input">
+                   <input type="text" placeholder="" class="aui-margin-l-10 aui-padded-l-5">
+               </div>
+           </div>
+       </li>
+     </ul>
+    </div>
+    <div class="nexBtn aui-content-padded"> <h1 class="aui-pull-right" onclick="$common.openFrame('page3','widget://html/guide/page3.html')">下一步</h1></div>
+
+  </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/handsome.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+
+
+<script>
+apiready = function() {
+    $api.dom('#header').style.background = '#fdfdfd';
+    $api.fixStatusBar($api.dom('#header'));
+  }
+
+</script>

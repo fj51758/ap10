@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery-weui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .aui-list-item-label-icon-diy {
+            width: 1.5rem !important;
+            padding-right: 0.25rem !important;
+        }
+  
+        .aui-list-item-label-icon-diy img {
+            width: 80%;
+        }
+
+        .aui-col-xs-2 {
+            background: #03a9f4;
+            margin: 5px;
+            text-align: center;
+            color: #fff;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15" id="main">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">群发时间</li>
+            <div class="aui-row">
+                <template v-for="val in TimeList">
+    <div class="aui-col-xs-2">
+        <div class="aui-grid-label">{{val.text}}</div>
+        <template>
+    </div>
+</div>
+            <!-- <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        开始时间
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="" id="SendOrderStartTime" >
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        结束时间
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="" id="SendOrderEndTime" >
+                    </div>
+                </div>
+            </li> -->
+        </ul>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">消息设置</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        群消息间隔
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="number" placeholder="10" style="display:inline;width: 16%;" id="GroupSpan" ><input type="text" placeholder="分钟" disabled="disabled" style="display: inline;width: 50%;">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        不发送文案
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="checkbox" class="aui-switch" id="SendModel"  />
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        消息尾巴
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="领卷方法:点击图片长按->识别2唯码->复制口令到taobao即可购物" id="LastWord" ></textarea>
+                    </div>
+                </div>
+            </li>
+            <div class="aui-list-item-inner aui-list-item-center" style="boder:none;">
+                <div class="aui-btn aui-btn-info " style="width:80%;" v-on:click="Update();">保存</div>
+            </div>
+        </ul>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/jquery.min.js"></script>
+<script type="text/javascript" src="../script/jquery-weui.min.js"></script>
+
+<script>
+    var sendOrderStartTime = "";
+    var sendOrderEndTime = "";
+    var groupSpan = "";
+    var imageSpan = "";
+    var messageSpan = "";
+    var TbMessageModel = "";
+    var JdMessageModel = "";
+    var LastWord = "";
+    apiready = function() {
+        main.getData();
+        // alert(api.winName+api.frameName)
+    }
+    var isTomorrow = 0;
+    var Minute = [];
+    var hour = [];
+    for (var i = 0; i < 60; i++) {
+        Minute.push(i >= 10 ? i : '0' + i);
+    }
+    for (var i = 0; i < 24; i++) {
+        hour.push(i >= 10 ? i + ":" : '0' + i + ":");
+    }
+    $("#SendOrderStartTime").picker({
+        title: "请选择开始时间",
+        cols: [{
+            textAlign: 'center',
+            values: ['每天 ']
+                //如果你希望显示文案和实际值不同，可以在这里加一个displayValues: [.....]
+        }, {
+            textAlign: 'center',
+            values: hour
+        }, {
+            textAlign: 'center',
+            values: Minute
+        }]
+    });
+    $("#SendOrderEndTime").picker({
+        title: "请选择结束时间",
+        cols: [{
+            textAlign: 'center',
+            values: ['每天 ', '隔天 ']
+                //如果你希望显示文案和实际值不同，可以在这里加一个displayValues: [.....]
+        }, {
+            textAlign: 'center',
+            values: hour
+        }, {
+            textAlign: 'center',
+            values: Minute
+        }]
+    });
+
+    var main = new Vue({
+            el: '#main',
+            data: {
+                list: [],
+                box: {
+                    SendOrderStartTime: '',
+                    SendOrderEndTime: '',
+                    GroupSpan: '',
+                    LastWord: '',
+                    NotTjRemark: '',
+                    TimeList:[]
+                }
+            },
+            methods: {
+                Update: function() {
+                    var time_to_sec = function(time) {
+                        var s = '';
+                        var hour = time.split(':')[0];
+                        var min = time.split(':')[1];
+                        s = Number(hour * 3600) + Number(min * 60);
+                        return s;
+                    };
+                    if ($("#SendOrderEndTime").val().indexOf("隔天") != -1) {
+                        isTomorrow = 1;
+                    } else {
+                        isTomorrow = 0;
+                        if (time_to_sec($("#SendOrderStartTime").val().split("天")[1]) > time_to_sec($("#SendOrderEndTime").val().split("天")[1])) {
+                            alert("每日开始发送时间不得大于结束时间");
+                            return;
+                        }
+                    }
+                    if ($("#GroupSpan").val() < 10) {
+                        alert("群发间隔必须大于10分钟");
+                        return;
+                    }
+                    $common.request('0x0001', {
+                        data: {
+                            values: {
+                                SendOrderStartTime: $("#SendOrderStartTime").val().split("天")[1],
+                                SendOrderEndTime: $("#SendOrderEndTime").val().split("天")[1],
+                                groupSpan: $("#GroupSpan").val(),
+                                imageSpan: 0,
+                                messageSpan: 0,
+                                lastWord: $("#LastWord").val(),
+                                tbMessageModel: TbMessageModel,
+                                jdMessageModel: JdMessageModel,
+                                ApiType: "GroupSendConfig",
+                                NotTjRemark: $("#SendModel").is(":checked"),
+                                SendOrderEndTimeIsTomorrow: isTomorrow,
+                                // uxxx1__1: $api.getStorage('iii')
+                            }
+                        }
+                    }, function(ret, err) {
+
+                        if (ret.error == 1) {
+                           api.execScript({
+                               name: 'root',
+                               script: 'SendConfigFun();'
+                           });
+
+                            $common.toast('操作成功');
+                        } else {
+                          alert(ret.msg)
+                        }
+                    });
+                },
+                getData: function(index) {
+                  var arr =[]
+                  $common.request('0x0001', {
+                      data: {
+                          values: {
+                              ApiType: 'GetSelectUserSendTime',
+                              type："",
+                              uxxx1__1: $api.getStorage('iii')
+                          }
+                      }
+                  }, function(ret, err) {
+                    alert(JSON.stringify(ret));
+                    if(ret.error != 2){
+                      for (i = 0; i < 24; i++) {
+                                   var k = i > 9 ? i : '0' + i
+                                   arr.push({text:k,val:i})
+                               }
+                      main.TimeList=arr;
+                    }
+                  });
+                  if($api.getStorage("sendconfig")!=undefined){
+                   var b = $api.getStorage("sendconfig");
+                           var newSendOrderEndTime = b.Table[0].SendOrderEndTime + "";
+                           var newSendOrderStartTime = b.Table[0].SendOrderStartTime + "";
+                           if (b.Table[0].SendOrderEndTimeIsTomorrow == 1) {
+                               $("#SendOrderEndTime").val("隔天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));
+
+                           } else {
+                               $("#SendOrderEndTime").val("每天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));
+
+                           }
+                           //var now = new String(time);
+                           //return now.substr(0, now.length - 3);
+                           $("#SendOrderStartTime").val("每天 " + newSendOrderStartTime.substr(0, newSendOrderStartTime.length - 3));
+                           $("#GroupSpan").val(b.Table[0].GroupSpan);
+                           $("#ImageSpan").val(b.Table[0].ImageSpan);
+                           $("#MessageSpan").val((b.Table[0].MessageSpan) / 1000);
+                           $("#LastWord").val((b.Table[0].LastWord));
+                           TbMessageModel = b.Table[0].TbMessageModel;
+                           JdMessageModel = b.Table[0].JdMessageModel;
+                           $("#SendModel").attr("checked", b.Table[0].NotTjRemark);
+
+                           //if (b.Table[0].NotTjRemark == "0") {
+                           //    $("#SendModel").val("二维码+文案");
+                           //}
+                           //else if (b.Table[0].NotTjRemark == "1") {
+                           //    $("#SendModel").val("纯二维码图片");
+                           //} else {
+                           //    $("#SendModel").val("二维码+文案");
+                           //}
+
+                       } else {
+                           {
+                               $api.toast("提示", ret.error, 1000);
+                           }
+                       }
+                  }
+                    // $common.request('0x0001', {
+                    //     data: {
+                    //         values: {
+                    //             ApiType: 'GroupSendConfig',
+                    //             type: 'get',
+                    //             uxxx1__1: $api.getStorage('iii')
+                    //         }
+                    //     }
+                    // }, function(ret, err) {
+                    //
+                    //     // alert(JSON.stringify(ret))
+                    //     if (ret.error != 2) {
+                    //         var b = JSON.parse(ret.data);
+                    //         var newSendOrderEndTime = b.Table[0].SendOrderEndTime + "";
+                    //         var newSendOrderStartTime = b.Table[0].SendOrderStartTime + "";
+                    //         if (b.Table[0].SendOrderEndTimeIsTomorrow == 1) {
+                    //             $("#SendOrderEndTime").val("隔天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));
+                    //
+                    //         } else {
+                    //             $("#SendOrderEndTime").val("每天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));
+                    //
+                    //         }
+                    //         //var now = new String(time);
+                    //         //return now.substr(0, now.length - 3);
+                    //         $("#SendOrderStartTime").val("每天 " + newSendOrderStartTime.substr(0, newSendOrderStartTime.length - 3));
+                    //         $("#GroupSpan").val(b.Table[0].GroupSpan);
+                    //         $("#ImageSpan").val(b.Table[0].ImageSpan);
+                    //         $("#MessageSpan").val((b.Table[0].MessageSpan) / 1000);
+                    //         $("#LastWord").val((b.Table[0].LastWord));
+                    //         TbMessageModel = b.Table[0].TbMessageModel;
+                    //         JdMessageModel = b.Table[0].JdMessageModel;
+                    //         $("#SendModel").attr("checked", b.Table[0].NotTjRemark);
+                    //
+                    //         //if (b.Table[0].NotTjRemark == "0") {
+                    //         //    $("#SendModel").val("二维码+文案");
+                    //         //}
+                    //         //else if (b.Table[0].NotTjRemark == "1") {
+                    //         //    $("#SendModel").val("纯二维码图片");
+                    //         //} else {
+                    //         //    $("#SendModel").val("二维码+文案");
+                    //         //}
+                    //
+                    //     } else {
+                    //         {
+                    //             $api.toast("提示", ret.error, 1000);
+                    //         }
+                    //     }
+                    // });
+                },
+                more: function() {
+
+                    $("#modal").addClass('show_column').css('top', $("#head").height());
+                    $("body").addClass('overflow');
+                }
+
+        })
+        // apiready = function() {
+        //     pageData = api.pageParam;
+        //     switch (pageData.key) {
+        //         case 1:
+        //             $api.html($api.dom('.aui-title'), pageData.name);
+        //             api.openFrame({
+        //                 name: 'page2',
+        //                 url: './page2.html',
+        //                 rect: {
+        //                     x: 0,
+        //                     y: 0,
+        //                     w: 320,
+        //                     h: 480
+        //                 },
+        //                 pageParam: {
+        //                     name: 'test'
+        //                 },
+        //                 bounces: true,
+        //                 bgColor: 'rgba(0,0,0,0)',
+        //                 vScrollBarEnabled: true,
+        //                 hScrollBarEnabled: true
+        //             });
+        //
+        //             break;
+        //         default:
+        //
+        //     }
+        //
+        // }
+</script>
+
+[-<head>-]
+[-    <meta charset="UTF-8">-]
+[-    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />-]
+[-    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">-]
+[-    <title>文档</title>-]
+[-    <link rel="stylesheet" type="text/css" href="../css/api.css" />-]
+[-    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />-]
+[-    <link rel="stylesheet" type="text/css" href="../css/jquery-weui.min.css" />-]
+
+[-    <link rel="stylesheet" type="text/css" href="../css/style.css" />-]
+[-    <style>-]
+[-        .aui-list-item-label-icon-diy {-]
+[-            width: 1.5rem !important;-]
+[-            padding-right: 0.25rem !important;-]
+[-        }-]
+
+[-        .aui-list-item-label-icon-diy img {-]
+[-            width: 80%;-]
+[-        }-]
+
+[-        .aui-col-xs-2 {-]
+[-            background: #03a9f4;-]
+[-            margin: 5px;-]
+[-            text-align: center;-]
+[-            color: #fff;-]
+[-            padding: 5px;-]
+[-        }-]
+[-    </style>-]
+[-</head>-]
+
+[-<body>-]
+[-    <div class="aui-content aui-margin-b-15" id="main">-]
+[-        <ul class="aui-list aui-form-list">-]
+[-            <li class="aui-list-header">群发时间</li>-]
+[-            <div class="aui-row">-]
+[-                <template v-for="val in TimeList">-]
+[-    <div class="aui-col-xs-2">-]
+[-        <div class="aui-grid-label">{{val.text}}</div>-]
+[-        <template>-]
+[-    </div>-]
+[-</div>-]
+[-            <!-- <li class="aui-list-item">-]
+[-                <div class="aui-list-item-inner">-]
+[-                    <div class="aui-list-item-label">-]
+[-                        开始时间-]
+[-                    </div>-]
+[-                    <div class="aui-list-item-input">-]
+[-                        <input type="text" placeholder="" id="SendOrderStartTime" >-]
+[-                    </div>-]
+[-                </div>-]
+[-            </li>-]
+[-            <li class="aui-list-item">-]
+[-                <div class="aui-list-item-inner">-]
+[-                    <div class="aui-list-item-label">-]
+[-                        结束时间-]
+[-                    </div>-]
+[-                    <div class="aui-list-item-input">-]
+[-                        <input type="text" placeholder="" id="SendOrderEndTime" >-]
+[-                    </div>-]
+[-                </div>-]
+[-            </li> -->-]
+[-        </ul>-]
+[-        <ul class="aui-list aui-form-list">-]
+[-            <li class="aui-list-header">消息设置</li>-]
+[-            <li class="aui-list-item">-]
+[-                <div class="aui-list-item-inner">-]
+[-                    <div class="aui-list-item-label">-]
+[-                        群消息间隔-]
+[-                    </div>-]
+[-                    <div class="aui-list-item-input">-]
+[-                        <input type="number" placeholder="10" style="display:inline;width: 16%;" id="GroupSpan" ><input type="text" placeholder="分钟" disabled="disabled" style="display: inline;width: 50%;">-]
+[-                    </div>-]
+[-                </div>-]
+[-            </li>-]
+[-            <li class="aui-list-item">-]
+
+[-                <div class="aui-list-item-inner">-]
+[-                    <div class="aui-list-item-label">-]
+[-                        不发送文案-]
+[-                    </div>-]
+[-                    <div class="aui-list-item-input">-]
+[-                        <input type="checkbox" class="aui-switch" id="SendModel"  />-]
+[-                    </div>-]
+[-                </div>-]
+[-            </li>-]
+[-            <li class="aui-list-item">-]
+[-                <div class="aui-list-item-inner">-]
+[-                    <div class="aui-list-item-label">-]
+[-                        消息尾巴-]
+[-                    </div>-]
+[-                    <div class="aui-list-item-input">-]
+[-                        <textarea placeholder="领卷方法:点击图片长按->识别2唯码->复制口令到taobao即可购物" id="LastWord" ></textarea>-]
+[-                    </div>-]
+[-                </div>-]
+[-            </li>-]
+[-            <div class="aui-list-item-inner aui-list-item-center" style="boder:none;">-]
+[-                <div class="aui-btn aui-btn-info " style="width:80%;" v-on:click="Update();">保存</div>-]
+[-            </div>-]
+[-        </ul>-]
+[-    </div>-]
+[-</body>-]
+
+[-</html>-]
+[-<script type="text/javascript" src="../script/api.js"></script>-]
+[-<script type="text/javascript" src="../script/vue.js"></script>-]
+[-<script type="text/javascript" src="../script/common.js"></script>-]
+[-<script type="text/javascript" src="../script/jquery.min.js"></script>-]
+[-<script type="text/javascript" src="../script/jquery-weui.min.js"></script>-]
+
+[-<script>-]
+[-    var sendOrderStartTime = "";-]
+[-    var sendOrderEndTime = "";-]
+[-    var groupSpan = "";-]
+[-    var imageSpan = "";-]
+[-    var messageSpan = "";-]
+[-    var TbMessageModel = "";-]
+[-    var JdMessageModel = "";-]
+[-    var LastWord = "";-]
+[-    apiready = function() {-]
+[-        main.getData();-]
+[-        // alert(api.winName+api.frameName)-]
+[-    }-]
+[-    var isTomorrow = 0;-]
+[-    var Minute = [];-]
+[-    var hour = [];-]
+[-    for (var i = 0; i < 60; i++) {-]
+[-        Minute.push(i >= 10 ? i : '0' + i);-]
+[-    }-]
+[-    for (var i = 0; i < 24; i++) {-]
+[-        hour.push(i >= 10 ? i + ":" : '0' + i + ":");-]
+[-    }-]
+[-    $("#SendOrderStartTime").picker({-]
+[-        title: "请选择开始时间",-]
+[-        cols: [{-]
+[-            textAlign: 'center',-]
+[-            values: ['每天 ']-]
+[-                //如果你希望显示文案和实际值不同，可以在这里加一个displayValues: [.....]-]
+[-        }, {-]
+[-            textAlign: 'center',-]
+[-            values: hour-]
+[-        }, {-]
+[-            textAlign: 'center',-]
+[-            values: Minute-]
+[-        }]-]
+[-    });-]
+[-    $("#SendOrderEndTime").picker({-]
+[-        title: "请选择结束时间",-]
+[-        cols: [{-]
+[-            textAlign: 'center',-]
+[-            values: ['每天 ', '隔天 ']-]
+[-                //如果你希望显示文案和实际值不同，可以在这里加一个displayValues: [.....]-]
+[-        }, {-]
+[-            textAlign: 'center',-]
+[-            values: hour-]
+[-        }, {-]
+[-            textAlign: 'center',-]
+[-            values: Minute-]
+[-        }]-]
+[-    });-]
+
+[-    var main = new Vue({-]
+[-            el: '#main',-]
+[-            data: {-]
+[-                list: [],-]
+[-                box: {-]
+[-                    SendOrderStartTime: '',-]
+[-                    SendOrderEndTime: '',-]
+[-                    GroupSpan: '',-]
+[-                    LastWord: '',-]
+[-                    NotTjRemark: '',-]
+[-                    TimeList:[]-]
+[-                }-]
+[-            },-]
+[-            methods: {-]
+[-                Update: function() {-]
+[-                    var time_to_sec = function(time) {-]
+[-                        var s = '';-]
+[-                        var hour = time.split(':')[0];-]
+[-                        var min = time.split(':')[1];-]
+[-                        s = Number(hour * 3600) + Number(min * 60);-]
+[-                        return s;-]
+[-                    };-]
+[-                    if ($("#SendOrderEndTime").val().indexOf("隔天") != -1) {-]
+[-                        isTomorrow = 1;-]
+[-                    } else {-]
+[-                        isTomorrow = 0;-]
+[-                        if (time_to_sec($("#SendOrderStartTime").val().split("天")[1]) > time_to_sec($("#SendOrderEndTime").val().split("天")[1])) {-]
+[-                            alert("每日开始发送时间不得大于结束时间");-]
+[-                            return;-]
+[-                        }-]
+[-                    }-]
+[-                    if ($("#GroupSpan").val() < 10) {-]
+[-                        alert("群发间隔必须大于10分钟");-]
+[-                        return;-]
+[-                    }-]
+[-                    $common.request('0x0001', {-]
+[-                        data: {-]
+[-                            values: {-]
+[-                                SendOrderStartTime: $("#SendOrderStartTime").val().split("天")[1],-]
+[-                                SendOrderEndTime: $("#SendOrderEndTime").val().split("天")[1],-]
+[-                                groupSpan: $("#GroupSpan").val(),-]
+[-                                imageSpan: 0,-]
+[-                                messageSpan: 0,-]
+[-                                lastWord: $("#LastWord").val(),-]
+[-                                tbMessageModel: TbMessageModel,-]
+[-                                jdMessageModel: JdMessageModel,-]
+[-                                ApiType: "GroupSendConfig",-]
+[-                                NotTjRemark: $("#SendModel").is(":checked"),-]
+[-                                SendOrderEndTimeIsTomorrow: isTomorrow,-]
+[-                                // uxxx1__1: $api.getStorage('iii')-]
+[-                            }-]
+[-                        }-]
+[-                    }, function(ret, err) {-]
+
+[-                        if (ret.error == 1) {-]
+[-                           api.execScript({-]
+[-                               name: 'root',-]
+[-                               script: 'SendConfigFun();'-]
+[-                           });-]
+
+[-                            $common.toast('操作成功');-]
+[-                        } else {-]
+[-                          alert(ret.msg)-]
+[-                        }-]
+[-                    });-]
+[-                },-]
+[-                getData: function(index) {-]
+[-                  var arr =[]-]
+[-                  $common.request('0x0001', {-]
+[-                      data: {-]
+[-                          values: {-]
+[-                              ApiType: 'GetSelectUserSendTime',-]
+[-                              type："",-]
+[-                              uxxx1__1: $api.getStorage('iii')-]
+[-                          }-]
+[-                      }-]
+[-                  }, function(ret, err) {-]
+[-                    alert(JSON.stringify(ret));-]
+[-                    if(ret.error != 2){-]
+[-                      for (i = 0; i < 24; i++) {-]
+[-                                   var k = i > 9 ? i : '0' + i-]
+[-                                   arr.push({text:k,val:i})-]
+[-                               }-]
+[-                      main.TimeList=arr;-]
+[-                    }-]
+[-                  });-]
+[-                  if($api.getStorage("sendconfig")!=undefined){-]
+[-                   var b = $api.getStorage("sendconfig");-]
+[-                           var newSendOrderEndTime = b.Table[0].SendOrderEndTime + "";-]
+[-                           var newSendOrderStartTime = b.Table[0].SendOrderStartTime + "";-]
+[-                           if (b.Table[0].SendOrderEndTimeIsTomorrow == 1) {-]
+[-                               $("#SendOrderEndTime").val("隔天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));-]
+
+[-                           } else {-]
+[-                               $("#SendOrderEndTime").val("每天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));-]
+
+[-                           }-]
+[-                           //var now = new String(time);-]
+[-                           //return now.substr(0, now.length - 3);-]
+[-                           $("#SendOrderStartTime").val("每天 " + newSendOrderStartTime.substr(0, newSendOrderStartTime.length - 3));-]
+[-                           $("#GroupSpan").val(b.Table[0].GroupSpan);-]
+[-                           $("#ImageSpan").val(b.Table[0].ImageSpan);-]
+[-                           $("#MessageSpan").val((b.Table[0].MessageSpan) / 1000);-]
+[-                           $("#LastWord").val((b.Table[0].LastWord));-]
+[-                           TbMessageModel = b.Table[0].TbMessageModel;-]
+[-                           JdMessageModel = b.Table[0].JdMessageModel;-]
+[-                           $("#SendModel").attr("checked", b.Table[0].NotTjRemark);-]
+
+[-                           //if (b.Table[0].NotTjRemark == "0") {-]
+[-                           //    $("#SendModel").val("二维码+文案");-]
+[-                           //}-]
+[-                           //else if (b.Table[0].NotTjRemark == "1") {-]
+[-                           //    $("#SendModel").val("纯二维码图片");-]
+[-                           //} else {-]
+[-                           //    $("#SendModel").val("二维码+文案");-]
+[-                           //}-]
+
+[-                       } else {-]
+[-                           {-]
+[-                               $api.toast("提示", ret.error, 1000);-]
+[-                           }-]
+[-                       }-]
+[-                  }-]
+[-                    // $common.request('0x0001', {-]
+[-                    //     data: {-]
+[-                    //         values: {-]
+[-                    //             ApiType: 'GroupSendConfig',-]
+[-                    //             type: 'get',-]
+[-                    //             uxxx1__1: $api.getStorage('iii')-]
+[-                    //         }-]
+[-                    //     }-]
+[-                    // }, function(ret, err) {-]
+[-                    //-]
+[-                    //     // alert(JSON.stringify(ret))-]
+[-                    //     if (ret.error != 2) {-]
+[-                    //         var b = JSON.parse(ret.data);-]
+[-                    //         var newSendOrderEndTime = b.Table[0].SendOrderEndTime + "";-]
+[-                    //         var newSendOrderStartTime = b.Table[0].SendOrderStartTime + "";-]
+[-                    //         if (b.Table[0].SendOrderEndTimeIsTomorrow == 1) {-]
+[-                    //             $("#SendOrderEndTime").val("隔天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));-]
+[-                    //-]
+[-                    //         } else {-]
+[-                    //             $("#SendOrderEndTime").val("每天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));-]
+[-                    //-]
+[-                    //         }-]
+[-                    //         //var now = new String(time);-]
+[-                    //         //return now.substr(0, now.length - 3);-]
+[-                    //         $("#SendOrderStartTime").val("每天 " + newSendOrderStartTime.substr(0, newSendOrderStartTime.length - 3));-]
+[-                    //         $("#GroupSpan").val(b.Table[0].GroupSpan);-]
+[-                    //         $("#ImageSpan").val(b.Table[0].ImageSpan);-]
+[-                    //         $("#MessageSpan").val((b.Table[0].MessageSpan) / 1000);-]
+[-                    //         $("#LastWord").val((b.Table[0].LastWord));-]
+[-                    //         TbMessageModel = b.Table[0].TbMessageModel;-]
+[-                    //         JdMessageModel = b.Table[0].JdMessageModel;-]
+[-                    //         $("#SendModel").attr("checked", b.Table[0].NotTjRemark);-]
+[-                    //-]
+[-                    //         //if (b.Table[0].NotTjRemark == "0") {-]
+[-                    //         //    $("#SendModel").val("二维码+文案");-]
+[-                    //         //}-]
+[-                    //         //else if (b.Table[0].NotTjRemark == "1") {-]
+[-                    //         //    $("#SendModel").val("纯二维码图片");-]
+[-                    //         //} else {-]
+[-                    //         //    $("#SendModel").val("二维码+文案");-]
+[-                    //         //}-]
+[-                    //-]
+[-                    //     } else {-]
+[-                    //         {-]
+[-                    //             $api.toast("提示", ret.error, 1000);-]
+[-                    //         }-]
+[-                    //     }-]
+[-                    // });-]
+[-                },-]
+[-                more: function() {-]
+
+[-                    $("#modal").addClass('show_column').css('top', $("#head").height());-]
+[-                    $("body").addClass('overflow');-]
+[-                }-]
+
+[-        })-]
+[-        // apiready = function() {-]
+[-        //     pageData = api.pageParam;-]
+[-        //     switch (pageData.key) {-]
+[-        //         case 1:-]
+[-        //             $api.html($api.dom('.aui-title'), pageData.name);-]
+[-        //             api.openFrame({-]
+[-        //                 name: 'page2',-]
+[-        //                 url: './page2.html',-]
+[-        //                 rect: {-]
+[-        //                     x: 0,-]
+[-        //                     y: 0,-]
+[-        //                     w: 320,-]
+[-        //                     h: 480-]
+[-        //                 },-]
+[-        //                 pageParam: {-]
+[-        //                     name: 'test'-]
+[-        //                 },-]
+[-        //                 bounces: true,-]
+[-        //                 bgColor: 'rgba(0,0,0,0)',-]
+[-        //                 vScrollBarEnabled: true,-]
+[-        //                 hScrollBarEnabled: true-]
+[-        //             });-]
+[-        //-]
+[-        //             break;-]
+[-        //         default:-]
+[-        //-]
+[-        //     }-]
+[-        //-]
+[-        // }-]
+[-</script>-]

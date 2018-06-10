@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery-weui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .aui-list-item-label-icon-diy {
+            width: 1.5rem !important;
+            padding-right: 0.25rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 80%;
+        }
+
+        .aui-list .aui-list-item-label,
+        .aui-list .aui-list-item-label-icon {
+            width: 40%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15" id="ListContent">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">京东设置</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        京东联盟ID
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="请输入文本" id="jdUserId">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        京东推广位
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="请输入文本" id="defaultJdPid"></textarea>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header" style="position:relative;height: 40px;  line-height: 25px;">
+                淘宝设置
+                <!-- <div style="text-align: right;position: absolute;right: 5px;top: 5px;line-height: 20px;" onclick="$common.openNewWin('CommonPage',{url:'https://oauth.taobao.com/authorize?response_type=code&view=web&redirect_uri=http%3A%2F%2Fai.vertq.com%2FoatuthTb.ashx&state=5454&client_id=24659577',FrameName:'ChangeLinkSetting'});"> -->
+                <div style="text-align: right;position: absolute;right: 5px;top: 5px;line-height: 20px;" onclick="openAuth()">
+
+                    <div class="aui-btn aui-btn-warning">更新淘宝授权</div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        淘宝授权码
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="请输入文本" id="tbToKen"></textarea>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        淘宝刷新码
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="请输入文本" id="tbRefreshToKen"></textarea>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        淘宝推广位
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="请输入文本" id="defaultTbPid"></textarea>
+                    </div>
+                </div>
+            </li>
+            <!-- <div class="aui-list-item-inner aui-list-item-center" style="boder:none;">
+                <div class="aui-btn aui-btn-info " style="width:80%;" v-on:click="Update()">保存</div>
+            </div> -->
+            <div class="aui-content-padded">
+                <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="Update();" tapmode="tapmode">保存</div>
+            </div>
+        </ul>
+
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/jquery.min.js"></script>
+<script type="text/javascript" src="../script/jquery-weui.min.js"></script>
+
+<script>
+    apiready = function() {
+      GetAppBaseConfig = $api.getStorage('GetAppBaseConfig');
+
+        ListContent.getData();
+        // alert(api.winName+api.frameName)
+    }
+    var ListContent = new Vue({
+            el: '#ListContent',
+            data: {
+                list: [],
+                box: {
+                    SendOrderStartTime: '',
+                    SendOrderEndTime: '',
+                    GroupSpan: '',
+                    LastWord: '',
+                    NotTjRemark: ''
+                }
+            },
+            methods: {
+                Update: function() {
+                    $common.request('0x0001', {
+                        data: {
+                            values: {
+                                jdUserId: $("#jdUserId").val(), /// 京东联盟ID
+                                defaultJdPid: $("#defaultJdPid").val(), /// 京东默认推广位ID
+                                tbToken: $("#tbToKen").val(), /// 京东高佣PAI授权码
+                                tbRefreshToKen: $("#tbRefreshToKen").val(), /// 淘宝刷新码
+                                defaultTbPid: $("#defaultTbPid").val(), /// 淘宝默认推广位PID
+                                tbUserId: $("#tbUserId").val(), /// 淘宝用户ID(可不填)
+                                tklAppKey: $("#tklAppKey").val(), /// 淘口令APIID
+                                tklAppPw: $("#tklAppPw").val(), /// 淘口令API密匙
+                                ApiType: "ChangedLinkConfig",
+                            }
+                        }
+                    }, function(ret, err) {
+
+                        if (ret.error == 1) {
+                            api.execScript({
+                                name: 'root',
+                                script: 'SendConfigFun();'
+                            });
+
+                            $common.toast('操作成功');
+                        } else {
+                            alert(ret.msg)
+                        }
+                    });
+                },
+                getData: function(index) {
+                  $common.request('0x0001', {
+                      data: {
+                          values: {
+                              ApiType: 'GroupSendConfig',
+                              type: 'get',
+                              uxxx1__1: $api.getStorage('iii')
+                          }
+                      }
+                  }, function(ret, err) {
+                      // alert(JSON.stringify(ret))
+                      if (ret.error != 2) {
+                          var b = JSON.parse(ret.data);
+                        $("#jdUserId").val(b.Table[0].JdUserId);
+                        $("#defaultJdPid").val(b.Table[0].DefaultJdPid);
+                        $("#tbToKen").val(b.Table[0].TbToKen);
+                        $("#tbRefreshToKen").val(b.Table[0].TbRefreshToKen);
+                        $("#defaultTbPid").val(b.Table[0].DefaultTbPid);
+                        $("#tbUserId").val(b.Table[0].TbUserId);
+                        $("#tklAppKey").val(b.Table[0].TklAppKey);
+                        $("#tklAppPw").val(b.Table[0].TklAppPw);
+                    } else {
+
+                          $common.toast(ret.msg);
+
+                    }
+                  })
+                },
+            }
+        })
+    function openAuth() {
+        api.closeWin();
+        if (api.systemType == 'ios') {
+            api.openApp({
+                iosUrl: $common.TaoBaoAuthorize(),
+                appParam: {
+                    appParam: 'app参数'
+                }
+            });
+        } else {
+            api.openApp({
+                androidPkg: 'android.intent.action.VIEW',
+                mimeType: 'text/html',
+                uri: $common.TaoBaoAuthorize()
+            }, function(ret, err) {
+                if (ret) {
+                    // alert(JSON.stringify(ret));
+                } else {
+                    // alert(JSON.stringify(err));
+                }
+            });
+        }
+        // api.openWin({
+        //     name: 'auth',
+        //     url: 'widget://html/auth.html',
+        //     pageParam: {
+        //         url: 'https://oauth.taobao.com/authorize?response_type=code&view=web&redirect_uri=http%3A%2F%2Fai.vertq.com%2FoatuthTb_App.ashx&state=5454&client_id=24659577'
+        //     }
+        // });
+
+    }
+</script>

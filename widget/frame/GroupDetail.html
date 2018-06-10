@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>签到设置</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        body,
+        html {
+            background: #eee
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .gray {
+            color: #999 !important;
+        }
+
+        .aui-popup-bottom {
+            width: 100%;
+            left: 0;
+            margin-left: 0;
+            bottom: 0;
+        }
+
+        .popup.aui-list .aui-list-item-inner {
+            justify-content: center;
+            -webkit-justify-content: center;
+        }
+
+        .aui-list .aui-list-item-right,
+        .aui-list-item-title-row em {
+            max-width: 70%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='main' class="aui-content" >
+        <div class="aui-content aui-font-size-14 aui-content-padded aui-text-info">群名称：{{GroupName}}</div>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        淘宝推广位
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="可设置该群的淘宝推广位" v-model='CellId'></textarea>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        京东推广位
+                    </div>
+                    <div class="aui-list-item-input">
+                            <input type="text" placeholder="可设置该群的京东推广位"  v-model='JdCellId'>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        消息尾巴
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="可设置该群的消息尾巴"  v-model='LastWord'></textarea>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" onclick="openExchange()">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        积分兑换
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div>可兑换该群的积分</div>
+                    </div>
+                    <div class="aui-pull-right aui-list-item-arrow"></div>
+                </div>
+            </li>
+            <!-- <div class="aui-list-item-inner aui-list-item-center" style="boder:none;">
+                <div class="aui-btn aui-btn-info " style="width:80%;" v-on:click="Update()">保存</div>
+            </div> -->
+        </ul>
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block " style='padding:0.3rem;' v-on:click="Update()">保存</div>
+        </div>
+        <!-- <div class="aui-content-padded" aui-popup-for="bottom">
+            <div class="aui-btn aui-btn-info aui-btn-block " style='padding:0.3rem;'>操作</div>
+        </div> -->
+        <!-- <div class="aui-content-padded">
+        <div class="aui-btn aui-btn-info aui-btn-block" style='padding:0.3rem;'>保存</div>
+      </div> -->
+        <!--弹框 -->
+        <div class="aui-popup aui-popup-bottom" id="bottom">
+            <div class="aui-popup-content">
+                <ul class="aui-list aui-list-in popup">
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner" v-on:click="ChangeRobot()">更换机器人</div>
+                    </li>
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner" v-on:click="UpdateGroupCellName(1)">设置淘宝推广位</div>
+                    </li>
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner" v-on:click="UpdateGroupCellName(0)">设置京东推广位</div>
+                    </li>
+                    <!-- <li class="aui-list-item">
+                      <div class="aui-list-item-inner aui-text-success">群成员管理</div>
+                  </li>
+                  <li class="aui-list-item">
+                      <div class="aui-list-item-inner">积分管理</div>
+                  </li> -->
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner" v-on:click="UpdateGroupLastWord()">消息尾巴</div>
+                    </li>
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner aui-text-danger" v-on:click="deleteGroup()">删除群</div>
+                    </li>
+                </ul>
+                <ul class="aui-list aui-list-in aui-margin-t-5 popup">
+                    <li class="aui-list-item" onclick="closePopup()">
+                        <div class="aui-list-item-inner">取消</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+    var popup = new auiPopup();
+    function closePopup() {
+        popup.hide($api.dom("#bottom"))
+    }
+</script>
+<script>
+    var pageData = [];
+    var GroupId=null;
+    apiready = function() {
+        pageData = api.pageParam;
+        main.getData();
+        GroupId=pageData.GroupId;
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            GroupName: '',
+            SumMoney: '',
+            JdCellId: '',
+            CellId: '',
+            LastDay: '',
+            Day7Money: '',
+            Day30Money: '',
+            CellId: '',
+            LastWord: ''
+        },
+        methods: {
+            ChangeRobot: function(index) {
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'ChangedWxid',
+                            GroupKey: pageData.GroupId,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error != 2) {
+                        alert(ret.msg);
+                        popup.hide($api.dom("#bottom"))
+                    }
+                });
+            },
+            Update: function(index) {
+              $common.request('0x0001', {
+                  data: {
+                      values: {
+                          v: "2",
+                          GroupKey: pageData.GroupId,
+                          IsTb: "1",
+                          value: main.CellId,
+                          ApiType: "UpdateGroupCellName"
+                      }
+                  }
+              }, function(ret) {
+                  if (ret.error == 1) {
+                      $common.toast('操作成功');
+                  } else {
+                      alert("淘宝推广位设置失败:"+ret.msg)
+                  }
+              });
+              $common.request('0x0001', {
+                  data: {
+                      values: {
+                          v: "2",
+                          GroupKey: pageData.GroupId,
+                          IsTb: "0",
+                          value: main.JdCellId,
+                          ApiType: "UpdateGroupCellName"
+                      }
+                  }
+              }, function(ret) {
+                  if (ret.error == 1) {
+                      $common.toast('操作成功');
+                  } else {
+                      alert("京东推广位设置失败:"+ret.msg)
+                  }
+              });
+              $common.request('0x0001', {
+                  data: {
+                      values: {
+                          groupKey: pageData.GroupId,
+                          lastWord: main.LastWord,
+                          ApiType: "UpdateGroupLastWord"
+
+                      }
+                  }
+              }, function(ret) {
+              // console.log(JSON.stringify(ret));
+                  if (ret.error == 1) {
+                      $common.toast('操作成功');
+                  } else {
+                      alert("群消息尾巴设置失败:"+ret.msg)
+                  }
+              });
+            },
+            UpdateGroupCellName: function(index) {
+              var title=index==1?"输入淘宝推广位PID":"输入京东推广位";
+              var text=index==1?"例如:mm_xxxx_xxxxx_xxxxx":"";
+              dialog.prompt({
+                  title: title,
+                  text: text,
+                  buttons: ['取消', '确定']
+              }, function(ret) {
+                  console.log(ret)
+                  if (ret.buttonIndex == 2) {
+                                    $common.request('0x0001', {
+                                        data: {
+                                            values: {
+                                                GroupKey: pageData.GroupId,
+                                                IsTb: index,
+                                                value: input,
+                                                ApiType: "UpdateGroupCellName"
+                                            }
+                                        }
+                                    }, function(ret) {
+                                        if (ret.error == 1) {
+                                            api.execScript({
+                                                name: 'root',
+                                                script: 'SendConfigFun();'
+                                            });
+                                            $common.toast('操作成功');
+                                        } else {
+                                            alert(ret.msg)
+                                        }
+                                    });
+                  }
+              })
+
+            }, 
+            getData: function(index) {
+                $common.progress();
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'GetGroupData',
+                            groupKey: pageData.GroupId,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+
+                    if (ret.error == 1) {
+                        var tdata = JSON.parse(ret.data).Table[0];
+                        if (JSON.parse(ret.data).Table.length > 0) {
+                              console.log(JSON.stringify(tdata))
+                            main.GroupName = tdata.GroupName;
+                            main.SumMoney = tdata.SumMoney;
+                            main.JdCellId = tdata.JdCellId;
+                            main.CellId = tdata.CellId;
+                            main.LastDay = tdata.LastDay;
+                            main.Day7Money = tdata.Day7Money;
+                            main.Day30Money = tdata.Day30Money;
+                            main.CellId = tdata.CellId;
+                            main.LastWord = tdata.LastWord==null?"":tdata.LastWord;
+                        } else {
+                            lock = true;
+                            $common.toast('暂无数据');
+                        }
+                        api.hideProgress();
+                    } else {
+                        {
+                            $api.toast("提示", ret.error, 1000);
+                        }
+                    }
+                });
+            },
+        }
+    })
+
+
+    function openExchange() {
+      api.openWin({
+          name: 'exchange',
+          url: 'widget://frame/exchange.html',
+          pageParam: {
+              GroupId: GroupId
+          }
+      });
+    }
+</script>

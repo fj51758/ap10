@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>积分兑换</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .a-table{
+          width: 100%;
+          border:solid 1px #efeff0;
+        }
+        .a-table thead tr th{
+          width: 50%;
+          background-color: #f7f7f7;
+          color: #696969;
+          padding: 12px 0;
+          font-weight: normal;
+        }
+        .a-table tbody tr td{
+          width: 50%;
+          background-color: #fff;
+          color: #696969;
+          padding: 12px 0;
+          text-align: center;
+        }
+        .exchange-box{
+          padding: 16px;
+        }
+        .aui-searchbar-input {
+          width: auto;
+          margin: 0.5rem;
+      }
+    </style>
+</head>
+
+<body>
+  <section id="main">
+  <header class="aui-bar aui-bar-nav" id="header">
+    <a class="aui-pull-left aui-btn" onclick="$common.closeSelfWin();">
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </a>
+    <div class="aui-title">积分兑换</div>
+  </header>
+
+    <div style="background-color:#efeff5">
+      <div class="aui-searchbar-input aui-border-radius">
+          <i class="aui-iconfont aui-icon-search" style="width:10%"></i>
+          <form action="javascript:0;" style="width:90%">
+              <!--<input type="search" placeholder="搜索" id="search-input" v-model="input"  @keyup.13="search"/>-->
+              <input type="search" placeholder="请输入搜索内容" id="search-input" onkeydown="if(event.keyCode==13) { eventsearch();return false};">
+          </form>
+      </div>
+    </div>
+
+    <div class="aui-content exchange-box" style="background-color:#f9f9f9">
+      <table class="a-table" border="1">
+        <thead>
+          <tr>
+            <th>用户</th>
+            <th>积分</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyList">
+          <tr v-for="item in list">
+            <td>{{item.NickName}}</td>
+            <td valign="middle"><i style="display:inline-block;margin:0.2rem">{{item.Balance}}</i><b class="aui-pull-right aui-btn aui-btn-info" style="display:inlinle-block"  @click="exchange(item.NickName,item.Balance,item.WxId)">兑换</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+  </section>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script type="text/javascript">
+  var GroupId='';
+  var user="";
+  var jifen="";
+  var arr = [];
+  var searchInput = {
+      key: ""
+  }
+  var getlist;
+  apiready=function(){
+        var header = $api.dom('#header');
+        $api.fixStatusBar(header);
+        pageParam=api.pageParam;
+        GroupId=pageParam.GroupId;
+
+         getlist=new Vue({
+            el:"#main",
+            data:{
+                list:[],
+                GroupId:GroupId,
+                user:"",
+                jifen:""
+            },
+            methods:{
+              getData: function() {
+                // alert(searchInput.key)
+                  $common.progress();
+                  $common.request('0x0001', {
+                      data: {
+                        values: {
+                                        ApiType: 'GetSeachGroupMemberList',
+                                        groupKey: GroupId,
+                                        key:searchInput.key,
+                                        uxxx1__1: $api.getStorage('iii')
+                                    }
+                      }
+                  }, function(ret, err) {
+                      if (ret.error != 2) {
+                          var tdata = JSON.parse(ret.data).Table;
+                          if (tdata.length > 0) {
+                              for (var i = 0; i < tdata.length; i++) {
+                                  arr.push(tdata[i]);
+                              }
+                              getlist.list = arr;
+                          } else {
+                              arr=[];
+                              $common.toast('暂无数据');
+                          }
+                          api.hideProgress();
+                      } else {
+                          {
+                              $api.toast("提示", ret.error, 1000);
+                          }
+                      }
+                  });
+              },
+              exchange:function(user,point,wxid){
+                // alert(wxid)
+                $common.openWin('fourthHead',{title:'积分兑换',key:3,FrameName:'exchange_1',GroupId:''+GroupId,user:user,jifen:point,wxid:wxid});
+              },
+            }
+        });
+        getlist.getData();//先初始化Vue 拿GroupId值
+
+  }
+
+  function eventsearch() {
+      arr = [];
+      searchInput.key = $api.val($api.dom("#search-input"));
+      $common.progress();
+      getlist.getData();
+  }
+
+  function refresh(){
+    arr=[];
+    getlist.getData();
+  }
+</script>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>云发单</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery-weui.min.css" />
+
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .aui-list-item-right-diy {
+            margin-top: 1.2rem !important;
+            color: #039be5 !important;
+            font-size: 0.8rem !important;
+            padding-right: 1rem !important;
+        }
+
+        .aui-list-item-arrow:before {
+            width: 0.5rem;
+            height: 0.5rem;
+        }
+
+        .aui-list-item-label-icon-diy {
+            width: 3rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 70%;
+        }
+
+        .aui-list-in {
+            margin-bottom: 20px;
+        }
+
+        .aui-list {
+            font-size: 0.7rem !important;
+        }
+
+        .Balance {
+            color: #03a9f4;
+            font-size: 1rem;
+        }
+
+        .aui-popup-bottom {
+            width: 100%;
+            left: 0;
+            margin-left: 0;
+            bottom: 0;
+        }
+
+        .popup.aui-list .aui-list-item-inner {
+            justify-content: center;
+            -webkit-justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content" id="main">
+
+        <ul class="aui-list aui-form-list">
+            <li class=" aui-list-header">定时清空待发商品设置</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label" style="width:8rem;">
+                        每日清空时间：
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="请输入每日自动清空待发商品的时间" v-model="ClearTime" tapmode="tapmode" id="ClearTime">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    <div class="aui-list-item-label">
+                        定时清空开关
+                    </div>
+                    <div class="aui-list-item-input" style="width:30%;">
+                        <input type="checkbox" class="aui-switch" v-model="isOpen" tapmode="tapmode">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <!-- <div class="btn_login aui-btn aui-btn-info aui-font-size-16" tapmode="tapmode" v-on:click="sure()"> 设置</div> -->
+        <div class="aui-content-padded">
+            <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="sure();" tapmode="tapmode">保存</div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script type="text/javascript" src="../script/jquery.min.js"></script>
+<script type="text/javascript" src="../script/jquery-weui.min.js"></script>
+<script>
+    apiready = function() {
+      if ($api.getStorage("sendconfig") != undefined) {
+           sendconfig = $api.getStorage("sendconfig");
+             console.log(JSON.stringify(sendconfig))
+         }
+        main.getdata();
+
+
+    }
+    var Minute = [];
+    var hour = [];
+    for (var i = 0; i < 60; i++) {
+        Minute.push(i >= 10 ? i :'0' + i);
+    }
+    for (var i = 0; i < 24; i++) {
+        hour.push(i >= 10 ? i + ":" :'0' + i + ":");
+    }
+    $("#ClearTime").picker({
+        title: "选择每日定时清空时间",
+        cols: [{
+            textAlign: 'center',
+            values: ['']
+                //如果你希望显示文案和实际值不同，可以在这里加一个displayValues: [.....]
+        }, {
+            textAlign: 'center',
+            values: hour
+        }, {
+            textAlign: 'center',
+            values: Minute
+        }]
+    });
+    var main = new Vue({
+        el: '#main',
+        data: {
+            ClearTime: "",
+            isOpen: false
+        },
+        methods: {
+            sure: function() {
+              var ClearTime = "2018-06-02 "+main.ClearTime.replace(/[ ]/g,"")+":00";
+               $common.progress("设置保存中")
+                $common.request('SetClearWaitGoods', {
+                    data: {
+                        values: {
+                            time:ClearTime,
+                            isOpen: main.isOpen==false?0:1,
+                            Token: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                      // alert(ClearTime)
+                      //   alert(typeof(main.isOpen))
+                      //     alert(main.isOpen==false?0:1)
+                    if (ret.StateCode == 1) {
+                        $common.toast(ret.Message);
+                        sendconfig.Table[0].ClearTime = ClearTime;
+                        $api.setStorage("sendconfig", sendconfig);
+                    }else {
+                        $common.toast(ret.Message)
+                    }
+                    api.hideProgress();
+
+                })
+            },
+            getdata: function() {
+
+
+                    main.ClearTime = sendconfig.Table[0].ClearTime == null?"06:00":sendconfig.Table[0].ClearTime.replace("2018-06-02 ","").replace(":00","");
+
+                    var isOpen = sendconfig.Table[0].ClearTime == null?false:true;
+                    main.isOpen = isOpen;
+
+            }
+        },
+        created: function() {
+
+            // var date = new Date();
+            // var dateString = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+            // alert(dateString)
+            // main.beginDate=dateString;
+            // main.endDate=dateString;
+        }
+    });
+</script>

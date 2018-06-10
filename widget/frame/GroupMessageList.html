@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>端API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content" id="main">
+        <section class="aui-grid aui-margin-b-15">
+            <ul class="aui-list aui-media-list">
+                <template v-for="val in list">
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <!-- <div class="aui-list-item-media" style="width: 3rem;">
+                            </div> -->
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">
+                            <span>群名：{{val.GroupName}}</span>
+                          </div>
+
+                            </div>
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-14 aui-text-info">
+                            <span>消息：{{val.Content}}</span>
+                          </div>
+                            </div>
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-text aui-font-size-12">
+                          消息时间：<span>{{val.CreateDateTime}}</span>
+                          </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </li>
+              </template>
+            </ul>
+            <!-- </div> -->
+        </section>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script>
+    apiready = function() {
+        main.getdata();
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#ffffff',
+            images: ['widget://image/refresh1.png', 'widget://image/refresh2.png', 'widget://image/refresh1.png'],
+            tips: { //（可选项）JSON 对象；整个下拉及加载过程的文字提示；不传则不显示文字区域
+                pull: '下拉刷新', //（可选项）字符串类型；下拉过程（下拉高度未达到阈值前）的文字提示；不传则不显示该时段的文字提示
+                threshold: '松开立即刷新', //（可选项）字符串类型；下拉过程（下拉高度达到或超过阈值）的文字提示；不传则不显示该时段的文字提示
+                load: '正在刷新' //（可选项）字符串类型；加载状态的文字提示；不传则不显示该时段的文字提示
+            }
+        }, function(ret, err) {
+            //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+            main.getdata();
+            api.refreshHeaderLoadDone()
+        });
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: []
+        },
+        methods: {
+            sure: function(val,index) {
+                $common.progress();
+                $common.request('RecycleGroup', {
+                    data: {
+                        values: {
+                            appUserGroupId: val.AppUserGroupId,
+                            Token: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                      api.hideProgress();
+                  if (ret.StateCode == 1) {
+                      $common.toast("操作成功")
+                        main.list.splice(index, 1);
+
+                  }else{
+                    $common.toast("操作失败")
+                  }
+
+                })
+            },
+            getdata: function() {
+
+              $common.progress();
+                $common.request('GetUserWecharMessageRead', {
+                    data: {
+                        values: {
+                            ToKen: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.StateCode == 1) {
+                        if(ret.list.length!=0){
+                            main.list = ret.list;
+                        }else {
+                            $common.toast("暂无数据")
+                        }
+                    } else {
+                        $common.toast(ret.message)
+                    }
+                      api.hideProgress();
+                })
+            }
+        }
+    });
+</script>

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no">
+    <title>订单列表项</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        body,
+        html {
+            background: #fff;
+        }
+
+        .aui-radio:checked {
+            border: 1px solid #FFC816;
+            background: #FFC816;
+            background: -webkit-gradient(linear, left top, right top, from(#ffec33), to(#fec133));
+            background: -moz-linear-gradient(left, #ffec33, #fec133);
+            filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ffec33', endColorstr='#fec133');
+            */
+        }
+
+        .aui-radio {
+            background: #ddd;
+            margin-right: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .aui-radio:before {
+            content: '';
+            width: 0.5rem;
+            height: 0.3rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -0.25rem;
+            margin-top: -0.25rem;
+            background: transparent;
+            border: 1px solid #ffffff;
+            border-top: none;
+            border-right: none;
+            z-index: 2;
+            -webkit-border-radius: 0;
+            border-radius: 0;
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+        .title {
+            padding: 0.5rem 1rem;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            justify-content: space-between;
+            -webkit-justify-content: space-between;
+        }
+
+        .title em {
+            font-style: normal;
+            color: #fb0000;
+        }
+
+        .imglist {
+            width: 100%;
+            display: -webkit-box;
+            overflow-x: scroll;
+            padding: 0 1rem;
+        }
+
+        .imglist .imgItem {
+            width: 5rem;
+            height: 5rem;
+            margin-right: 0.5rem;
+            position: relative;
+            text-align: center;
+        }
+
+        .imglist .imgItem img {
+            width: 100%;
+        }
+
+        .imglist .imgItem input {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .share .shareTxt {
+            background: #f0eff4;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            width: 100%;
+            height: 6rem;
+            overflow-y: scroll;
+        }
+
+        .share {
+            padding: 0.5rem 1rem;
+        }
+
+        .tip {
+            font-size: 12px;
+            color: #999;
+            padding: 0 1rem;
+        }
+
+        .btnBox {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            justify-content: space-between;
+            -webkit-justify-content: space-between;
+            padding: 1rem;
+            width: 100%;
+        }
+
+        .btnBox div {
+            width: 45%;
+            background: #FFC816;
+            text-align: center;
+            font-size: 14px;
+            color: #000;
+            line-height: 2rem;
+            border-radius: 25px;
+        }
+
+        .shareHead {
+            width: 100%;
+            padding: 0 1rem;
+            margin-top: 1.5rem;
+            position: relative;
+            text-align: center;
+            height: 1rem;
+        }
+
+        .shareHead span {
+            background: #fff;
+            padding: 0 0.5rem;
+            position: absolute;
+            z-index: 2;
+            left: 50%;
+            margin-left: -50px;
+        }
+
+        .shareHead .line {
+            width: 90%;
+            height: 1px;
+            background: #ddd;
+            position: absolute;
+            left: 5%;
+            top: 13px;
+        }
+
+        .shareType {
+            padding: 1rem;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            justify-content: space-between;
+            -webkit-justify-content: space-between;
+            text-align: center;
+        }
+
+        .shareType img {
+            width: 2.5rem;
+        }
+
+        .shareType p {
+            color: #666;
+            line-height: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" style=margin-top:0;>
+        <div class="title">
+            <span>分享图片</span>
+            <!-- <span>已选 <em>{{len}}</em> 张</span> -->
+        </div>
+        <div class="imglist">
+            <div class="imgItem" v-show="poster" v-on:click="select($event.currentTarget)">
+                <img :src="posterSrc" alt="" style="width:auto;height:100%;">
+                <input class="aui-radio" type="radio" name="radio" :checked="poster">
+            </div>
+            <div class="imgItem" v-for="val in item_info[0].item.images" v-on:click="select($event.currentTarget)">
+                <img :src="val" alt="">
+                <input class="aui-radio" type="radio" name="radio" :checked="$index==0?true:false">
+            </div>
+
+            <!-- <div class="imgItem"><img src="../../image/list1.png" alt=""><input class="aui-radio" type="checkbox"></div> -->
+        </div>
+        <div class="title">
+            <span>编辑分享文案</span>
+            <!-- <span v-on:click="makePicture"><em>生成分享海报</em></span> -->
+        </div>
+        <div class="share">
+            <textarea class="shareTxt" v-model="shareTxt" readonly="readonly"></textarea>
+        </div>
+        <p class="tip">请不要修改“【】”之间文字</p>
+        <div class="btnBox">
+            <div v-on:click="edit">编辑模版</div>
+            <div v-on:click="copy">仅复制分享文案</div>
+        </div>
+        <div class="shareHead">
+            <span>图文分享到</span>
+            <div class="line"></div>
+        </div>
+        <div class="shareType">
+            <div v-on:click="wxFriend">
+                <img src="../image/s_wechat.png" alt="">
+                <p>微信</p>
+            </div>
+            <div v-on:click="qqFriend">
+                <img src="../image/s_qq.png" alt="">
+                <p>QQ</p>
+            </div>
+            <!-- <div v-on:click="wb">
+          <img src="../../image/wb.png" alt="">
+          <p>微博</p>
+        </div> -->
+            <div v-on:click="wx">
+                <img src="../image/s_friend.png" alt="">
+                <p>朋友圈</p>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+<script type="text/javascript" src="../script/aui-slide.js"></script>
+
+<script type="text/javascript">
+    arr = [];
+    console.log(new Date().getSeconds());
+
+    apiready = function() {
+        data = api.pageParam;
+        wx = api.require('wx');
+        QQPlus = api.require('qq');
+        photoBrowser = api.require('photoBrowser');
+        makeSharePic = api.require('makeSharePic');
+
+        // var weibo = api.require('weibo');
+        goods.getData()
+
+        function updateLen() {
+            var obj = $(".imglist").find("input:checked");
+            goods.len = obj.length;
+        }
+
+        function makePoster() {
+            var title = goods.item_info[0].item.title;
+            var quan = data.quan;
+            var img = goods.item_info[0].item.images[0];
+            var makeSharePic = api.require('makeSharePic');
+            var tkl = escape(goods.tkl);
+            // var qrcode ="http://lexyoux.cn/regist/poster.html?tkl="+tkl+"&shopgoodsid="+data.ShopGoodsID;
+            var qrcode = "http://share.dfcnzf.cn/TKLShareTemp.html?tkl=" + tkl + "&shopgoodsid=" + data.ShopGoodsID;
+            http: //share.dfcnzf.cn/TKLShareTemp.html?tkl=NrLK0wpf21Q
+                makeSharePic.makePicture({
+                    imgUrl: img,
+                    qrCode: qrcode,
+                    expressType: '包邮',
+                    goodTitle: '          ' + title,
+                    nowPriceStatus: '现价 ：￥' + data.price,
+                    discountType: '券',
+                    discountPrice: quan + '元',
+                    finalPriceType: '券后价 ',
+                    finalPrice: data.discount_price,
+                    insertImage: false,
+                }, function(ret, err) {
+                    //alert(JSON.stringify(ret))
+                    if (ret.status) {
+                        goods.posterSrc = ret.filePath;
+                        goods.poster = true;
+                        //alert(ret.filePath);
+                    } else {
+                        $common.toast("生成海报失败，请重试！")
+                            //alert(err.message);
+                    }
+                });
+        }
+
+        // if(data.GoodsId == undefined){
+        //   //阿里妈妈产品
+        //   makeAliTKL();
+        // }else{
+        //   //内部产品
+        //   makeTKL();
+        // }
+
+        // 内部产品生成淘口令
+        function makeTKL() {
+            api.ajax({
+                url: $handsome.host + 'NewHome/GetTowToOneLink.ashx',
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                returnAll: false,
+                data: {
+                    values: {
+                        type: 'GetTowOneLink',
+                        userid: userid,
+                        auth: userinfo.IdNav,
+                        goodsId: data.GoodsId,
+                        ChannelUId: data.guideId,
+                        timeStamp: $handsome.humanDate(),
+                    }
+                }
+            }, function(ret, err) {
+                if (!ret.isError) {
+                    TwotoOneUrl = ret.errorMessage;
+                    //alert(TwotoOneUrl)
+                    getTKL(TwotoOneUrl);
+
+                }
+            })
+        }
+
+        // 阿里妈妈产品生成淘口令
+        function makeAliTKL() {
+
+            api.ajax({
+                url: $handsome.host + 'NewHome/OperateData.ashx',
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                returnAll: false,
+                data: {
+                    values: {
+                        type: 'AlimamaEhlLink',
+                        userId: userid,
+                        auth: userinfo.IdNav,
+                        itemid: data.ShopGoodsID,
+                        timeStamp: $handsome.humanDate(),
+                    }
+                }
+            }, function(ret, err) {
+                if (!ret.isError) {
+                    TwotoOneUrl = ret.errorMessage;
+                    //alert(TwotoOneUrl)
+                    getTKL(TwotoOneUrl);
+
+                }
+            })
+        }
+
+
+        function getTKL(TwotoOneUrl) {
+            api.ajax({
+                url: $handsome.host + 'NewHome/GetData.ashx',
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                returnAll: false,
+                data: {
+                    values: {
+                        type: 'GetTKL',
+                        link: TwotoOneUrl,
+                        title: data.title,
+                        timeStamp: $handsome.humanDate(),
+                    }
+                }
+            }, function(ret, err) {
+                if (!ret.isError) {
+                    goods.tkl = ret.data;
+                    var txt = goods.shareTxt;
+                    var New = txt.replace("淘口令", ret.data);
+                    goods.shareTxt = New;
+                    //alert(goods.tkl)
+                }
+            })
+        }
+
+
+    }
+    var goods = new Vue({
+        el: '#main',
+        data: {
+            shareTxt: "",
+            item_info: arr,
+            len: 1,
+            poster: false,
+            posterSrc: '', //海报地址
+            tkl: '', //淘口令
+        },
+        methods: {
+            edit: function() {
+                var obj = $(".shareTxt")
+                obj.removeAttr("readOnly");
+                obj.focus()
+            },
+            copy: function() {
+                var txt = $(".shareTxt").val();
+                var clipBoard = api.require('clipBoard');
+                clipBoard.set({
+                    value: txt
+                }, function(ret, err) {
+                    if (ret) {
+                        $common.toast("复制成功")
+                    } else {
+                        //alert(JSON.stringify(err));
+                    }
+                });
+            },
+            select: function(el) {
+                if (api.systemType != 'ios') {
+                    photoBrowser.open({
+                        images: [goods.posterSrc],
+                        activeIndex: 0,
+                        bgColor: '#000'
+                    }, function(ret, err) {
+                        if (ret) {
+                            if (ret.eventType == "click") {
+                                photoBrowser.close()
+                            }
+                        }
+                    });
+                }
+            },
+            wxFriend: function() {
+                var sharedModule = api.require('shareAction');
+                var inShare = api.require('inShare');
+                var img;
+                var input = $(".aui-radio:checked");
+                img = input.siblings("img").attr("src");
+                // img = "https://gchat.qpic.cn/gchatpic_new/1377626911/572386812-2303372854-8F952E41A809F91CD095D36875D1E75E/0"
+                api.imageCache({
+                    url: img
+                }, function(ret, err) {
+                    if (api.systemType == 'ios') {
+                        sharedModule.share({
+                            text: '',
+                            type: 'image',
+                            images: [ret.url]
+                        });
+                    } else {
+                        inShare.shareImgsTo({
+                            imgPaths: ret.url,
+                            sendPattern: 'ONLY',
+                            app: 'wxFriend',
+                        }, function(ret, err) {
+                            if (ret.status) {
+                                // alert(JSON.stringify(ret));
+                            } else {
+                                // alert(ret.errorMessage);
+                            }
+                        });
+                    }
+
+                    // sharedModule.share({
+                    //     text: '纯文本信息',
+                    //     type: 'image',
+                    //     images: [ret.url]
+                    // });
+                    // $common.clipText(ret.url, "复制成功");
+                    // setTimeout(function(){
+                    //   window.location.href="weixin://";
+                    // },500)
+                    // wx.shareImage({
+                    //         scene: 'session',
+                    //         contentUrl: ret.url,
+                    //     }, function(rets, err) {
+                    //         if (rets.status) {
+                    //           $common.toast('分享成功');
+                    //
+                    //         }
+                    //     });
+                });
+
+            },
+            wb: function() {
+                var img;
+                var input = $(".aui-radio:checked");
+                img = input.siblings("img").attr("src");
+
+            },
+            qqFriend: function() {
+                var img;
+                var input = $(".aui-radio:checked");
+                img = input.siblings("img").attr("src");
+                api.imageCache({
+                    url: img
+                }, function(ret, err) {
+                    QQPlus.shareImage({
+                        type: 'QFriend',
+                        imgPath: ret.url,
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            $common.toast('分享成功');
+
+                        } else {
+                            $common.toast({
+                                msg: JSON.stringify(err)
+                            });
+                        }
+                    });
+
+                });
+            },
+            wx: function() {
+                var sharedModule = api.require('shareAction');
+                var inShare = api.require('inShare');
+                var img;
+                var input = $(".aui-radio:checked");
+                img = input.siblings("img").attr("src");
+                api.imageCache({
+                    url: img
+                }, function(ret, err) {
+                    if (api.systemType == 'ios') {
+                        sharedModule.share({
+                            text: '',
+                            type: 'image',
+                            images: [ret.url]
+                        });
+                    } else {
+                        inShare.shareImgsTo({
+                            imgPaths: ret.url,
+                            sendPattern: 'ONLY',
+                            app: 'wxCircle',
+                        }, function(ret, err) {
+                            if (ret.status) {
+                                // alert(JSON.stringify(ret));
+                            } else {
+                                // alert(ret.errorMessage);
+                            }
+                        });
+                    }
+                });
+            },
+            makePicture: function() {
+                makePoster();
+            },
+            getData: function() {
+              if(data.type!=0){
+                $common.toast("京东分享赚暂未开放");
+                return;
+              }
+                this.posterSrc = "";
+                var SecondsNumber = new Date().getSeconds();
+                $common.progress("图片生成中");
+                $common.request('GetGoodsDetailOrTkl', {
+                    data: {
+                        values: {
+                            goodsId: data.GoodsId,
+                            goodsType:data.type,
+                            ToKen: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    // console.log(JSON.stringify(data.GoodsId))
+                    console.log(JSON.stringify(ret))
+                    if (ret.StateCode == 1) {
+                        goods.shareTxt = ret.list[0].Remark;
+                        var imgUrl = ret.list[0].ImgUrl.replace("/800x800","")
+                        makeSharePic.makePicture({
+                            imgUrl: ret.list[0].ImgUrl,
+                            qrCode: ret.list[0].Url + ret.list[0].Tkl.replace("￥", ""),
+                            expressType: '包邮',
+                            goodTitle: "          " + ret.list[0].GoodsName,
+                            nowPriceStatus: '现价 ：￥' + ret.list[0].GoodsPrice,
+                            discountType: '券',
+                            discountPrice: ret.list[0].ActMoney + '元',
+                            finalPriceType: '券后价 ',
+                            finalPrice: ret.list[0].LastPrice,
+                            insertImage: false,
+                            erWeiMaErrorL: "M"
+                        }, function(ret1, err) {
+                            if (ret1.status) {
+                                goods.posterSrc = ret1.filePath;
+                                goods.poster = true;
+                            } else {
+                                $common.toast("生成海报失败，请重试！")
+                                    //alert(err.message);
+                            }
+                            api.hideProgress();
+
+                        });
+                    } else {
+                        $common.toast(ret.Message)
+                        api.hideProgress();
+
+                    }
+                });
+            }
+        },
+        created: function() {
+
+
+        },
+        watch: {
+            'tkl': function() {
+                // var txt = $(".shareTxt").val();
+                // txt.replace("淘口令","券后价")
+                // goods.shareTxt.replace('淘口令'，'9999')
+            }
+        }
+    })
+</script>
+
+</html>

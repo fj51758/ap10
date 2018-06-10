@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>端API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/swiper-3.3.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/tab.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content" id="main">
+        <section class="aui-grid aui-margin-b-15">
+            <ul class="aui-list aui-media-list">
+                <template v-for="val in list">
+                <li class="aui-list-item aui-list-item-middle" v-on:click="OpenXiaXiaji(val)" tapmode="tapmode">
+        <div class="aui-list-item-inner">
+  <div class="aui-list-item-text">
+
+  <div class="aui-list-item-title aui-font-size-16 " >
+  <span>提现金额：<span class="aui-text-danger">{{val.Amout}}</span>元
+  </div>
+  <div class="aui-list-item-title aui-font-size-16">
+  <span>提现状态：{{val.iState==1?'已处理':'处理中'}}</span>
+  </div>
+  </div>
+  <div class="aui-list-item-text">
+    <div class="aui-list-item-title aui-font-size-16">
+    <span>支付宝账号：<span class="aui-text-danger">{{val.alipay}}</span>
+    </div>
+
+  </div>
+  <div class="aui-list-item-text">
+    <div class="aui-list-item-text aui-font-size-12">
+        <span> 提现日期：{{val.CreateDateTime}}</span>
+
+    </div>
+  </div>
+
+  </div>
+  </li>
+      </template>
+            </ul>
+            <!-- </div> -->
+        </section>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script>
+    apiready = function() {
+        main.getdata();
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: []
+        },
+        methods: {
+            getdata: function() {
+                $common.progress();
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'GetUserRecoverAmout',
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    console.log(JSON.stringify(ret));
+                    if (ret.error != 2) {
+                        var tdata = JSON.parse(ret.data).Table
+
+
+                        if (tdata.length>0) {
+                          main.list = tdata;
+                        }
+                        else {
+                            $common.toast("暂无数据")
+                        }
+                    }else {
+                        $common.toast(ret.msg)
+                    }
+                      api.hideProgress();
+                })
+            }
+        }
+    });
+</script>

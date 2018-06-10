@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><widget id="A6078861668219" security="false" version="0.0.1">
+
+    <name>淘客圈</name>
+
+    <description>
+
+        Example For APICloud.
+
+    </description>
+
+    <author email="developer@apicloud.com" href="http://www.apicloud.com">
+
+        Developer
+
+    </author>
+
+    <content src="index.html"/>
+
+    <access origin="*"/>
+    <preference name="appCertificateVerify" value="false"/>
+
+<preference name="urlScheme" value="yunfadan"/>
+    <preference name="pageBounce" value="false"/>
+    <preference name="appBackground" value="rgba(0,0,0,0.0)"/>
+
+    <preference name="windowBackground" value="rgba(0,0,0,0.0)"/>
+
+    <preference name="frameBackgroundColor" value="rgba(0,0,0,0.0)"/>
+
+    <preference name="hScrollBarEnabled" value="false"/>
+
+    <preference name="vScrollBarEnabled" value="false"/>
+
+    <preference name="autoLaunch" value="true"/>
+
+    <preference name="fullScreen" value="false"/>
+
+    <preference name="autoUpdate" value="true"/>
+
+    <preference name="smartUpdate" value="false"/>
+
+    <preference name="debug" value="false"/>
+
+    <preference name="statusBarAppearance" value="true"/>
+
+    <permission name="readPhoneState"/>
+
+    <permission name="camera"/>
+
+    <permission name="record"/>
+
+    <permission name="location"/>
+
+    <permission name="fileSystem"/>
+
+    <permission name="internet"/>
+
+    <permission name="bootCompleted"/>
+
+    <permission name="hardware"/>
+    <preference name="iOS7StatusBarAppearance" value="true"/>
+    <preference name="customRefreshHeader" value="UIPullRefreshMotive"/>
+    <feature name="UIPullRefreshMotive"/>
+    <feature name="dialogBox"/>
+    <!-- <feature name="mam"/> -->
+    <feature name="clipBoard"/>
+    <feature name="qq">
+        <param name="urlScheme" value="tencent1106876764"/>
+        <param name="apiKey" value="1106876764"/>
+    </feature>
+    <!-- <feature name="wx">
+        <param name="urlScheme" value="wx37c82097bdb1e67c"/>
+        <param name="apiKey" value="wx37c82097bdb1e67c"/>
+        <param name="apiSecret" value="fbeeb73ea81b717271f32fd8dd37af27"/>
+    </feature> -->
+    <feature name="wx">
+         <param name="urlScheme" value="wx37c82097bdb1e67c"/>
+         <param name="apiKey" value="wx37c82097bdb1e67c"/>
+         <param name="apiSecret" value="fbeeb73ea81b717271f32fd8dd37af27"/>
+     </feature>
+    <feature name="ajpush">
+        <param name="app_key" value="1f113e1efdabf76c48ac0c9e"/>
+        <param name="channel" value="developer"/>
+    </feature>
+    <feature name="makeSharePic"/>
+    <feature name="photoBrowser"/>
+    <feature name="shareAction"/>
+    <!-- <feature name="shareTool"/> -->
+    <feature name="inShare"/>
+</widget>

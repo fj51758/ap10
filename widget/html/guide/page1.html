@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>引导页</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        body,
+        html {
+            background: #fff;
+            position: relative;
+        }
+
+        .aui-list .aui-list-item {
+            padding-left: 0
+        }
+
+        input[type='text'] {
+            border: 1px solid #ddd;
+            min-height: 1.6rem;
+        }
+
+        .clear {
+            clear: both;
+            margin-top: 2rem;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .nexBtn {
+            position: absolute;
+            right: 0;
+            bottom: 2rem;
+        }
+
+        .aui-bar-nav {
+            background: #fff;
+            color: #404040;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav" id='header'>
+        <a class="aui-pull-left aui-btn">
+            <!-- <span class="aui-iconfont aui-icon-left"></span>返回 -->
+        </a>
+        <div class="aui-title">新手引导</div>
+    </header>
+    <div id="main">
+        <div class="aui-content-padded">
+            <h1>第一步：转链设置</h1>
+            <div class="aui-content aui-font-size-12 aui-margin-b-10 aui-margin-t-10">请获取您在阿里妈妈设置的PID作为默认转链PID,请完全复制PID，不要带有空格。</div>
+            <ul class="aui-list aui-form-list">
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label aui-text-info aui-font-size-14">
+                            阿里妈妈PID:
+                        </div>
+                        <div class="aui-list-item-input">
+                            <input type="text" placeholder="" class="aui-margin-l-10" v-model="PID">
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="aui-text-info aui-pull-right aui-font-size-14">获取淘宝教程</div>
+            <div class="aui-content aui-font-size-12 aui-margin-b-15 clear">
+                PID获取完毕后，需要配置您的淘宝高佣授权码，获取授权码后系统才能正常转链，高佣授权码只能授权单一应用，重复授权将导致旧授权码失效
+            </div>
+            <div class="center">
+                <div class="aui-btn" onclick="$common.openNewWin('CommonPage',{url:'https://oauth.taobao.com/authorize?response_type=code&view=web&redirect_uri=http%3A%2F%2Fai.vertq.com%2FoatuthTb.ashx&state=5454&client_id=24659577',FrameName:'ChangeLinkSetting'});">获取淘宝授权码</div>
+            </div>
+            <!-- <div class="aui-content-padded"><input type="text" placeholder="淘宝授权码" class="aui-padded-l-5" v-model="tbToken"></div>
+            <div class="aui-content-padded"><input type="text" placeholder="淘宝刷新码" class="aui-padded-l-5" v-model="tbRefreshToKen"></div> -->
+        </div>
+        <div class="nexBtn aui-content-padded">
+            <h1 class="aui-pull-right" v-on:click="next()">下一步</h1></div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/handsome.js"></script>
+<script>
+    apiready = function() {
+        $api.dom('#header').style.background = '#fdfdfd';
+        $api.fixStatusBar($api.dom('#header'));
+    }
+    var main = new Vue({
+            el: '#main',
+            data: {
+                list: [],
+                box: {
+                    // tbToken: '',
+                    // tbRefreshToKen: '',
+                    PID: ''
+                }
+            },
+            methods: {
+                next: function() {
+                    $common.request('0x0001', {
+                        data: {
+                            values: {
+                              jdUserId: $("#jdUserId").val(),/// 京东联盟ID
+                              defaultJdPid: $("#defaultJdPid").val(),/// 京东默认推广位ID
+                              tbToken: $("#tbToKen").val(),/// 京东高佣PAI授权码
+                              tbRefreshToKen: $("#tbRefreshToKen").val(),/// 淘宝刷新码
+                              defaultTbPid: $("#defaultTbPid").val(),/// 淘宝默认推广位PID
+                              tbUserId: $("#tbUserId").val(),/// 淘宝用户ID(可不填)
+                              tklAppKey: $("#tklAppKey").val(), /// 淘口令APIID
+                              tklAppPw: $("#tklAppPw").val(),/// 淘口令API密匙
+                              ApiType: "ChangedLinkConfig",
+                            }
+                        }
+                    }, function(ret, err) {
+
+                        if (ret.error == 1) {
+                             api.execScript({
+                                 name: 'root',
+                                 script: 'SendConfigFun();'
+                             });
+                            $common.toast('操作成功');
+                            $common.openFrame('page2','widget://html/guide/page2.html')
+                        } else {
+                            alert(ret.msg)
+                        }
+                    });
+                }
+            }
+        })
+
+</script>
+</script>

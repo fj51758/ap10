@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>文档</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery-weui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .aui-list-item-label-icon-diy {
+            width: 1.5rem !important;
+            padding-right: 0.25rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 80%;
+        }
+
+        .aui-col-xs-2 {
+            background: #fff;
+            margin: 5px;
+            text-align: center;
+            color: #03a9f4;
+            padding: 5px;
+        }
+
+        .active {
+            background: #03a9f4;
+            color: #fff;
+        }
+
+        .aui-popup-bottom {
+            width: 100%;
+            left: 0;
+            margin-left: 0;
+            bottom: 0;
+        }
+
+        .aui-checkbox {
+            border-radius: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15" id="main">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">群发时间</li>
+            <div class="aui-row">
+                <template v-for="val in TimeList">
+    <div class="aui-col-xs-2" :class="[val.isCheck==1?'active':'']" v-on:click="chooseTime(val)">
+        <div class="aui-grid-label">{{val.text}}</div>
+            </div>
+          </template>
+            </div>
+        </ul>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">消息设置</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        群消息间隔
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="number" style="display:inline;width: 16%;" id="GroupSpan" v-model="box.groupSpan"><input type="text" placeholder="分钟" disabled="disabled" style="display: inline;width: 50%;">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner" onclick="showpopup()">
+                    <div class="aui-list-item-label">
+                        发单顺序
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" readonly='' v-model="box.SendSequence==1?'从上到下':'从下到上'">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label" style="width:10rem;">
+                        不发送产品介绍
+                    </div>
+                    <div class="aui-list-item-input" style="text-align:right;">
+                        <input type="checkbox" class="aui-switch" v-model="box.NotTjRemark" />
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label" style="width:10rem;">
+                        开启平台直播单
+                    </div>
+                    <div class="aui-list-item-input" style="text-align:right;">
+                        <input type="checkbox" class="aui-switch" v-model="box.OpenLiveOrder" />
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label" style="width:10rem;">
+                        开启热销商品
+                    </div>
+                    <div class="aui-list-item-input" style="text-align:right;">
+                        <input type="checkbox" class="aui-switch" v-model="box.OpenExtensionGoods" v-on:change="changeExtensionGoods()" />
+                    </div>
+                </div>
+            </li>
+            <!-- <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        个人CMS
+                    </div>
+                    <div class="aui-list-item-input">
+                        <inp placeholder="领卷方法:点击图片长按->识别2唯码->复制口令到taobao即可购物" v-model="box.lastWord">
+                            </textarea>
+                    </div>
+                </div>
+            </li> -->
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        消息尾巴
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="领卷方法:点击图片长按->识别2唯码->复制口令到taobao即可购物" v-model="box.lastWord"></textarea>
+                    </div>
+                </div>
+            </li>
+            <div class="aui-popup aui-popup-bottom" id="bottom" style="display:none;">
+                <div class="aui-popup-content">
+                    <header class="aui-bar aui-bar-nav aui-bar-light">
+                        <div class="aui-title">发单顺序</div>
+                        <!-- <a class="aui-pull-right aui-btn aui-btn-outlined aui-text-info " @click="closePopup">确定</a> -->
+                    </header>
+                    <ul class="aui-list aui-list-in">
+                        <li class="aui-list-item" @click="addGuideKey(0,1)" tapmode="tapmode">
+                            <div class="aui-list-item-inner">
+                                <div class="aui-list-item-title aui-font-size-14" theIndex="1">从上到下</div>
+                                <div class="aui-list-item-right" style="padding-right: 1rem;"><input type="radio" class="aui-radio" name="1"></div>
+                            </div>
+                        </li>
+                        <li class="aui-list-item" @click="addGuideKey(1,2)" tapmode="tapmode">
+                            <div class="aui-list-item-inner">
+                                <div class="aui-list-item-title aui-font-size-14" theIndex="2">从下到上</div>
+                                <div class="aui-list-item-right" style="padding-right: 1rem;"><input type="radio" class="aui-radio" name="1"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- <div class="aui-list-item-inner aui-list-item-center" style="boder:none;">
+                <div class="aui-btn aui-btn-info " style="width:80%;" v-on:click="Update();">保存</div>
+            </div> -->
+            <div class="aui-content-padded">
+                <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" v-on:click="Update();" tapmode="tapmode">保存</div>
+            </div>
+        </ul>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/zepto.js"></script>
+
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script>
+    apiready = function() {
+        main.getData();
+    }
+    var popup = new auiPopup();
+
+    function showpopup() {
+        popup.show($api.dom("#bottom"));
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: [],
+            TimeList: [],
+            box: {
+                SendOrderStartTime: '00:00',
+                SendOrderEndTime: '01:00',
+                groupSpan: '',
+                messageSpan: 0,
+                imageSpan: 0,
+                lastWord: '',
+                tbMessageModel: "",
+                jdMessageModel: "",
+                NotTjRemark: "",
+                SendOrderEndTimeIsTomorrow: 0,
+                SendSequenceText: 1,
+                SendSequence: 1,
+                OpenLiveOrder: false,
+                OpenExtensionGoods: false
+            }
+        },
+        methods: {
+            closePopup: function() {
+                var obj = $("#bottom").find(".aui-list-item");
+                obj.each(function() {
+                    var checkbox = $(this).find('.aui-radio');
+                    if (checkbox.prop('checked')) {
+                        main.SendSequenceText = $(this).find(".aui-list-item-title").html();
+                        main.SendSequence = $(this).find(".aui-list-item-title").attr("theIndex");
+                    }
+                })
+
+            },
+            changeExtensionGoods: function() {
+               if(main.box.OpenExtensionGoods ==false){
+                 api.confirm({
+                     title: '温馨提示',
+                     msg: '关闭热销商品推荐后，个人CMS入口也将关闭！',
+                     buttons: ['取消', '确定']
+                 }, function(ret, err) {
+                     var index = ret.buttonIndex;
+                     if(index==2){
+                       $common.request('OpenExtensionGoods', {
+                           data: {
+                               values: {
+                                   ToKen: $api.getStorage('iii'),
+                                   ope: main.box.OpenExtensionGoods == true ? 1 : 0
+                               }
+                           }
+                       }, function(ret, err) {
+
+                       });
+                     }else {
+                       main.box.OpenExtensionGoods=true;
+                     }
+
+                 });
+               }else{
+                 $common.request('OpenExtensionGoods', {
+                     data: {
+                         values: {
+                             ToKen: $api.getStorage('iii'),
+                             ope: main.box.OpenExtensionGoods == true ? 1 : 0
+                         }
+                     }
+                 }, function(ret, err) {
+
+                 });
+               }
+
+
+            },
+            addGuideKey: function(index, val) {
+                // var checkbox = $(el).find('.aui-checkbox');
+                $('.aui-radio').eq(index).prop('checked', true).siblings().prop('checked', false);
+                main.box.SendSequence = val;
+                popup.hide($api.dom("#bottom"));
+                // if (checkbox.prop('checked')) {
+                //     checkbox.prop('checked', false)
+                // } else {
+                //     checkbox.prop('checked', true)
+                // }
+            },
+            chooseTime: function(val) {
+                val.isCheck = !val.isCheck;
+            },
+            Update: function() {
+
+                if ($("#GroupSpan").val() < 10) {
+                    alert("群发间隔必须大于10分钟");
+                    return;
+                }
+                var newlist = main.TimeList.map(function(item) {
+                    if (item.isCheck == 1) {
+                        return item.val
+                    }
+                })
+
+                function bouncer(arr) {
+                    // Don't show a false ID to this bouncer.
+                    return arr.filter(function(val) {
+                        return !(val == null);
+                    });
+                }
+                var aa = bouncer(newlist).join(",");
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: "UpdateUsersSendTime",
+                            setTimes: aa,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error == 1) {
+                        $common.toast('操作成功');
+                    } else {
+                        alert("发送时间" + ret.msg)
+                    }
+                });
+
+
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            SendOrderStartTime: main.box.SendOrderStartTime,
+                            SendOrderEndTime: main.box.SendOrderEndTime,
+                            groupSpan: main.box.groupSpan,
+                            imageSpan: main.box.imageSpan,
+                            messageSpan: main.box.messageSpan,
+                            lastWord: main.box.lastWord,
+                            tbMessageModel: main.box.tbMessageModel,
+                            jdMessageModel: main.box.jdMessageModel,
+                            ApiType: "GroupSendConfig",
+                            NotTjRemark: main.box.NotTjRemark,
+                            SendOrderEndTimeIsTomorrow: main.box.SendOrderEndTimeIsTomorrow,
+                            SendSequence: main.box.SendSequence,
+                            OpenLiveOrder: main.box.OpenLiveOrder
+                                //  uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error == 1) {
+                        api.execScript({
+                            name: 'root',
+                            script: 'SendConfigFun();'
+                        });
+
+                        $common.toast('操作成功');
+                    } else {
+                        alert(ret.msg)
+                    }
+                });
+            },
+            getData: function(index) {
+                    var arr = [];
+                    for (i = 0; i < 24; i++) {
+                        var k = i > 9 ? i : '0' + i
+                        arr.push({
+                            text: k,
+                            val: i,
+                            isCheck: 0
+                        })
+                    }
+                    $common.request('0x0001', {
+                        data: {
+                            values: {
+                                ApiType: 'GetSelectUserSendTime',
+                                type: "",
+                                uxxx1__1: $api.getStorage('iii')
+                            }
+                        }
+                    }, function(ret, err) {
+                        if (ret.error != 2) {
+                            var ret = JSON.parse(ret.data).Table;
+                            for (var i = 0; i < arr.length; i++) {
+                                for (x in ret) {
+                                    if (ret[x].Hour == arr[i].val) {
+                                        arr[i].isCheck = 1;
+                                    }
+                                }
+                            }
+                            main.TimeList = arr
+                        }
+
+                        //  console.log(JSON.stringify(arr))
+                    });
+                    // var arrayOfSquares = arr.map(function(item) {
+                    //   for (i in ret){
+                    //     if(ret[i].Hour == item.val){
+                    //       item.isCheck=1
+                    //     }
+                    //   }
+                    //     return arr;
+                    // });
+
+                    // main.TimeList = arrayOfSquares;
+
+
+                    if ($api.getStorage("sendconfig") != undefined) {
+                        var b = $api.getStorage("sendconfig");
+                        // main.list = b.Table;
+                        // console.log(JSON.stringify(main.list))
+                        main.box.groupSpan = b.Table[0].GroupSpan;
+                        main.box.lastWord = b.Table[0].LastWord == null ? " " : b.Table[0].LastWord;
+                        main.box.tbMessageModel = b.Table[0].TbMessageModel;
+                        main.box.jdMessageModel = b.Table[0].JdMessageModel;
+                        main.box.NotTjRemark = b.Table[0].NotTjRemark == null ? false : b.Table[0].NotTjRemark;
+                        main.box.SendSequence = b.Table[0].SendSequence == null ? false : b.Table[0].SendSequence;
+                        main.box.SendOrderEndTimeIsTomorrow = b.Table[0].SendOrderEndTimeIsTomorrow;
+                        main.box.OpenLiveOrder = b.Table[0].OpenLiveOrder == null ? false : b.Table[0].OpenLiveOrder;
+                        main.box.OpenExtensionGoods = b.Table[0].OpenExtensionGoods == null ? false : b.Table[0].OpenExtensionGoods;
+
+                    } else {
+                        {
+                            $api.toast("提示", ret.msg);
+                        }
+                    }
+                }
+                // $common.request('0x0001', {
+                //     data: {
+                //         values: {
+                //             ApiType: 'GroupSendConfig',
+                //             type: 'get',
+                //             uxxx1__1: $api.getStorage('iii')
+                //         }
+                //     }
+                // }, function(ret, err) {
+                //
+                //     // alert(JSON.stringify(ret))
+                //     if (ret.error != 2) {
+                //         var b = JSON.parse(ret.data);
+                //         var newSendOrderEndTime = b.Table[0].SendOrderEndTime + "";
+                //         var newSendOrderStartTime = b.Table[0].SendOrderStartTime + "";
+                //         if (b.Table[0].SendOrderEndTimeIsTomorrow == 1) {
+                //             $("#SendOrderEndTime").val("隔天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));
+                //
+                //         } else {
+                //             $("#SendOrderEndTime").val("每天 " + newSendOrderEndTime.substr(0, newSendOrderEndTime.length - 3));
+                //
+                //         }
+                //         //var now = new String(time);
+                //         //return now.substr(0, now.length - 3);
+                //         $("#SendOrderStartTime").val("每天 " + newSendOrderStartTime.substr(0, newSendOrderStartTime.length - 3));
+                //         $("#GroupSpan").val(b.Table[0].GroupSpan);
+                //         $("#ImageSpan").val(b.Table[0].ImageSpan);
+                //         $("#MessageSpan").val((b.Table[0].MessageSpan) / 1000);
+                //         $("#LastWord").val((b.Table[0].LastWord));
+                //         TbMessageModel = b.Table[0].TbMessageModel;
+                //         JdMessageModel = b.Table[0].JdMessageModel;
+                //         $("#SendModel").attr("checked", b.Table[0].NotTjRemark);
+                //
+                //         //if (b.Table[0].NotTjRemark == "0") {
+                //         //    $("#SendModel").val("二维码+文案");
+                //         //}
+                //         //else if (b.Table[0].NotTjRemark == "1") {
+                //         //    $("#SendModel").val("纯二维码图片");
+                //         //} else {
+                //         //    $("#SendModel").val("二维码+文案");
+                //         //}
+                //
+                //     } else {
+                //         {
+                //             $api.toast("提示", ret.error, 1000);
+                //         }
+                //     }
+                // });
+        },
+        more: function() {
+
+            $("#modal").addClass('show_column').css('top', $("#head").height());
+            $("body").addClass('overflow');
+        }
+
+    })
+</script>

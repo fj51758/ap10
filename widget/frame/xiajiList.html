@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>消费提成</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui-slide.css" />
+    <style>
+        .userItem {
+            background: #fff;
+            padding: 0.3rem 2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .userItem .aui-list-item-inner {
+            min-height: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='main'>
+        <ul class="aui-list aui-media-list">
+            <template v-for="val in list">
+              <li class="aui-list-item aui-list-item-middle">
+      <div class="aui-list-item-inner">
+<div class="aui-list-item-text">
+<div class="aui-list-item-title aui-font-size-16">
+<span>账户：{{val.UserName}}</span>
+</div>
+<div class="aui-list-item-title aui-font-size-16 " >
+<span>姓名：{{val.PersonName}}</span>
+</div>
+
+</div>
+<div class="aui-list-item-text">
+<div class="aui-list-item-title aui-font-size-16">
+<span>本月消费：<span class="aui-text-danger">{{val.thisMonthSumConsumeAmout}}</span>元
+</div>
+<!-- <div class="aui-list-item-title aui-font-size-16 " >
+<span>本月下级消费：<span class="aui-text-danger">{{val.thisMonthSumConsumeAmout_Xj}}</span>元
+</div> -->
+
+</div>
+<div class="aui-list-item-text">
+<!-- <div class="aui-list-item-title aui-font-size-16">
+<span>下级数量：{{val.XjUserSumCount}}</span>
+</div> -->
+<!-- <div class="aui-list-item-title aui-font-size-16 " >
+<span>本月消费提成：<span class="aui-text-danger">{{val.ThisMonthSumCommssion}}</span>元
+</div> -->
+
+</div>
+<div class="aui-list-item-text">
+  <div class="aui-list-item-text aui-font-size-12">
+      <span> 注册日期：{{val.RegDateTimeStr}}</span>
+
+  </div>
+</div>
+
+</div>
+</li>
+    </template>
+        </ul>
+
+    </div>
+</body>
+
+</html>
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script>
+    apiready = function() {
+        main.getData();
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: [],
+            EjCommssion: '',
+            SjCommssion: '',
+            allCount: '',
+            sumCommission: '',
+            MonthConsumeAmout: '',
+            DaiLiCommission: ''
+        },
+        methods: {
+            OpenXiaXiaji: function(val) {
+              $common.openWin('fourthHead',{title:val.PersonName+'的下级明细',key:3,FrameName:'xiaxiajiList',UserId:val.UserId});
+            },
+            addKey: function(el) {
+                sign.CheckoutCg = sign.CheckoutCg + $(el).html()
+            },
+            getData: function(index) {
+                $common.progress();
+                $common.request('GetDailiUserList', {
+                    data: {
+                        values: {
+                            ToKen: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    console.log(JSON.stringify(ret));
+                    if (ret.StateCode == 1) {
+                        if (ret.list.length > 0) {
+                            main.list = ret.list;
+                        } else {
+                            $common.toast('暂无数据');
+                        }
+                        //console.log(JSON.stringify(goods.list ));
+                        api.hideProgress();
+
+                    } else {
+                        $common.toast(ret.msg);
+                    }
+                });
+
+                // });
+            },
+        }
+    })
+</script>

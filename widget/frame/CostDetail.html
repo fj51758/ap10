@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>云发单</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .aui-list-item-right-diy {
+            margin-top: 1.2rem !important;
+            color: #039be5 !important;
+            font-size: 0.8rem !important;
+            padding-right: 1rem !important;
+        }
+
+        .aui-list-item-arrow:before {
+            width: 0.5rem;
+            height: 0.5rem;
+        }
+
+        .aui-list-item-label-icon-diy {
+            width: 3rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 70%;
+        }
+
+        .aui-list-in {
+            margin-bottom: 20px;
+        }
+
+        .aui-list {
+            font-size: 0.7rem !important;
+        }
+
+        .Balance {
+            color: #03a9f4;
+            font-size: 1rem;
+        }
+
+        .aui-popup-bottom {
+            width: 100%;
+            left: 0;
+            margin-left: 0;
+            bottom: 0;
+        }
+
+        .popup.aui-list .aui-list-item-inner {
+            justify-content: center;
+            -webkit-justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div class="aui-content" id="main">
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title" style="font-size: 0.8rem;">账户余额: &nbsp;<b id="Balance" class="Balance">{{Balance}}</b>&nbsp;元</div>
+                        </div>
+                        <div class="aui-list-item-text aui-ellipsis-2">
+                            今日预消费{{imoney}}元&nbsp;本月提成:{{sumCommission}}元
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-form-list aui-margin-t-15">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        查询类型：
+                    </div>
+                    <div class="aui-list-item-input">
+                        <label><input class="aui-radio" type="radio" name="demo1" checked v-on:click="checkedtype(0)"> 消费</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label><input class="aui-radio" type="radio" name="demo1" v-on:click="checkedtype(1)"> 充值</label>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        开始时间：
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="date" id="beginDate" placeholder="请选择开始时间"  v-model="beginDate" style="padding-top: 0.5rem;">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        结束时间：
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="date" id="endDate" placeholder="请选择结束时间"  v-model="endDate" style="padding-top: 0.5rem;">
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+        <div class="btn_login aui-btn aui-btn-info aui-font-size-16" tapmode="tapmode" v-on:click="sure()"> 查询</div>
+        <div class="aui-popup aui-popup-bottom" id="bottom" style="height:80%;overflow:scroll;">
+            <div class="aui-popup-content" style="height:100%;overflow: scroll; ">
+                <ul class="aui-list aui-list-in popup"  style="height:100%;overflow: scroll; ">
+                    <li class="aui-list-item" style="color: #03a9f4;">
+                        <div class="aui-list-item-inner" style="padding-left: 3rem;" v-on:click="ChangeRobot()">明细列表</div><div class="aui-list-item-inner aui-text-warning" style="float: right;width:3rem;" onclick="closePopup()" >关闭</div>
+                    </li>
+                    <div style="overflow: scroll; height: 100%;">
+                    <template v-if="(type==0)">
+                      <li class="aui-list-item">
+                          <div class="aui-list-item-inner" >日期</div>
+                            <div class="aui-list-item-inner" >类型</div>
+                              <div class="aui-list-item-inner" >扣费</div>
+                                <div class="aui-list-item-inner" >余额</div>
+                      </li>
+                  <template v-for="val in list">
+
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner" >{{val.CreateDateTime}}</div>
+                          <div class="aui-list-item-inner" >{{val.Remark}}</div>
+                            <div class="aui-list-item-inner" >{{val.Amout}}</div>
+                        <div class="aui-list-item-inner" >{{val.Balance}}</div>
+                    </li>
+                      </div>
+                  </template>
+                  </template>
+                  <template v-if="(type==1)">
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner" >日期</div>
+                          <div class="aui-list-item-inner" >充值金额</div>
+                              <div class="aui-list-item-inner" >余额</div>
+                    </li>
+                <template v-for="val in list">
+                  <li class="aui-list-item">
+                      <div class="aui-list-item-inner" >{{val.CreateDateTime}}</div>
+                          <div class="aui-list-item-inner" >{{val.Amout}}</div>
+                      <div class="aui-list-item-inner" >{{val.Balance}}</div>
+                  </li>
+                    </div>
+                </template>
+                </template>
+                </ul>
+            </div>
+        </div>
+    </div> -->
+    <div class="aui-content" id="main">
+        <section class="aui-grid aui-margin-b-15">
+            <ul class="aui-list aui-media-list">
+                <li class="aui-list-item">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title" style="font-size: 0.8rem;">账户余额: &nbsp;<b id="Balance" class="Balance">{{Balance}}</b>&nbsp;元</div>
+                            </div>
+                            <div class="aui-list-item-text aui-ellipsis-2">
+                                今日预消费{{imoney}}元&nbsp;&nbsp;&nbsp;本月预估收入:{{sumCommission}}元
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <ul class="aui-list aui-media-list">
+                <li class="aui-list-header">
+                    {{beginDate}}至{{endDate}}消费记录
+                </li>
+
+                <template v-for="val in list">
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <!-- <div class="aui-list-item-media" style="width: 3rem;">
+                            </div> -->
+                        <div class="aui-list-item-inner">
+                              <template v-if="val.Type==1">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">
+                                    <span>开启群{{val.WxGroupSum}}个</span>
+                          </div>
+                          <div class="aui-list-item-title aui-font-size-16 aui-text-danger" >
+                      <span> -{{val.Amout.toFixed(2)}}</span>
+                      </div>
+
+                            </div>
+                     </template>
+                <template v-if="val.Type==2">
+                   <div class="aui-list-item-text">
+                       <div class="aui-list-item-title aui-font-size-16">
+                           <span>支付宝充值</span>
+                 </div>
+                 <div class="aui-list-item-title aui-font-size-16 aui-text-info" >
+             <span> +{{val.Amout.toFixed(2)}}</span>
+             </div>
+
+                   </div>
+            </template>
+                <template v-if="val.Type==3">
+          <div class="aui-list-item-text">
+              <div class="aui-list-item-title aui-font-size-16">
+                  <span>新用户赠送</span>
+        </div>
+        <div class="aui-list-item-title aui-font-size-16 aui-text-info" >
+    <span> +{{val.Amout.toFixed(2)}}</span>
+    </div>
+
+          </div>
+   </template>
+   <template  v-if="val.Type==4">
+<div class="aui-list-item-text">
+ <div class="aui-list-item-title aui-font-size-16">
+     <span>{{val.Remark}}</span>
+</div>
+<div class="aui-list-item-title aui-font-size-16 aui-text-info" >
+<span> -{{val.Amout.toFixed(2)}}</span>
+</div>
+
+</div>
+</template>
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-text aui-font-size-12">
+                        <span> 日期：{{val.CreateDateTimeStr}}</span>
+
+                    </div>
+                    <div class="aui-list-item-text aui-font-size-12">
+                        <span> 余额：{{val.Balance}}</span>
+                    </div>
+                </div>
+
+    </div>
+    </div>
+    </li>
+    </template>
+    </ul>
+    <!-- </div> -->
+    </section>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script>
+    var date = new Date();
+    var oneday = 1000 * 60 * 60 * 24;
+    var lastMonday = new Date(date - oneday * (date.getDay() + 6));
+    var dateString = date.getFullYear() + "-" + (setTime(date).month) + "-" + (setTime(date).day); //今天
+    var dateString2 = lastMonday.getFullYear() + "-" + (setTime(lastMonday).month) + "-" + (setTime(lastMonday).day); //上周一
+    //格式化日期
+    function setTime(d) {
+        //格式化日，如果小于9，前面补0
+        var day = ("0" + d.getDate()).slice(-2);
+        //格式化月，如果小于9，前面补0
+        var month = ("0" + (d.getMonth() + 1)).slice(-2);
+        return {
+            day: day,
+            month: month
+        }
+    }
+    // var popup = new auiPopup();
+    //
+    // function closePopup() {
+    //     popup.hide($api.dom("#bottom"))
+    // }
+    //     var calendar = api.require('calendar');
+    // calendar.open({
+    //     x: 100,
+    //     y: 100,
+    //     width: 300,
+    //     height: 300}, function(ret, err) {
+    //     var date = ret.date;
+    // });
+    apiready = function() {
+        main.getdata();
+    }
+
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: [],
+            sumCommission: "",
+            Balance: "",
+            imoney: "",
+            beginDate: dateString2,
+            endDate: dateString,
+            pageNo: 1,
+            pageSize: 1000,
+            type: 0 //0消费 1充值
+        },
+        methods: {
+            checkedtype: function(i) {
+                main.type = i
+            },
+            sure: function() {
+                //  popup.show($api.dom("#bottom"))
+                if (main.beginDate == "" || main.endDate == "") {
+                    alert("请选择时间");
+                    return;
+                }
+                if (main.type == 0) {
+                    $common.request('0x0001', {
+                        data: {
+                            values: {
+                                ApiType: 'ConsumeAmoutLog',
+                                beginTime: main.beginDate,
+                                endTime: main.endDate,
+                                page: main.pageNo,
+                                pageSize: main.pageSize,
+                                uxxx1__1: $api.getStorage('iii')
+                            }
+                        }
+                    }, function(ret, err) {
+                        main.list = ret.Table;
+                        //  console.log(JSON.stringify(main.list));
+                        popup.show($api.dom("#bottom"))
+                    })
+                } else {
+                    $common.request('0x0001', {
+                        data: {
+                            values: {
+                                ApiType: 'GetReCharge',
+                                beginTime: main.beginDate,
+                                endTime: main.endDate,
+                                page: main.pageNo,
+                                pageSize: main.pageSize,
+                                uxxx1__1: $api.getStorage('iii')
+                            }
+                        }
+                    }, function(ret, err) {
+
+                        if (ret.Table.length > 0) {
+                            main.list = ret.Table;
+                            popup.show($api.dom("#bottom"))
+                        } else {
+                            $common.toast("暂无数据");
+                        }
+                        console.log(JSON.stringify(main.list));
+                    })
+                }
+
+            },
+            getdata: function() {
+                var Usersconfig = $api.getStorage("Usersconfig");
+                var GetBalance = $api.getStorage("GetBalance");
+                if (Usersconfig != undefined) {
+                    main.Balance = Usersconfig.Balance;
+                }
+                if (GetBalance != undefined) {
+                    main.imoney = GetBalance.imoney == null ? 0 : GetBalance.imoney;
+                }
+                var ThisOrLastInCome = $api.getStorage('ThisOrLastInCome');
+                if(ThisOrLastInCome !=undefined){
+                  main.sumCommission = ThisOrLastInCome.ThisMonthSumCommssion == null ? 0 : ThisOrLastInCome.ThisMonthSumCommssion.toFixed(2);
+                }
+                $common.progress();
+                $common.request('GetUserConsumeAndRecharge', {
+                    data: {
+                        values: {
+                            Token: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    api.hideProgress();
+                    if (ret.StateCode == 1) {
+                        main.list = ret.list;
+                    } else {
+                        $common.toast("暂无数据")
+                    }
+                })
+            }
+        },
+        created: function() {}
+    });
+</script>

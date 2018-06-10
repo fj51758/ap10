@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>端API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content" id="main">
+        <ul class="aui-list aui-list-in">
+
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    应用版本
+                </div>
+                <div class="aui-list-item-inner" id="Version">
+
+                </div>
+            </li>
+            <!-- <li class="aui-list-item" tapmode="tapmode" onclick="clear2()">
+                <div class="aui-list-item-inner">
+                    清除缓存
+                </div>
+            </li> -->
+        </ul>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script>
+    apiready = function() {
+        $api.html($api.dom("#Version"), api.appVersion);
+    }
+
+    function clear2() {
+        alert("1")
+        $api.rmStorage('sendconfig')
+    }
+</script>

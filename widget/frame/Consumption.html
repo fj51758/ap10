@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>消费提成</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui-slide.css" />
+    <style>
+        body,
+        html {
+            background: #eee
+        }
+
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .gray {
+            color: #999 !important;
+        }
+
+        .bold {
+            font-weight: bolder;
+        }
+
+        .black {
+            color: #000 !important;
+        }
+
+        .aui-searchbar {
+            position: relative;
+            background: rgba(0, 0, 0, 0.2)
+        }
+
+        .userItem {
+            background: #fff;
+            padding: 0.3rem 2rem;
+            margin-top: 0.3rem;
+        }
+
+        .userItem .aui-list-item-inner {
+            min-height: 1.2rem;
+        }
+
+        .Rbtn {
+            width: 100%;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            line-height: 2rem;
+            background: #03a9f4;
+            color: #fff;
+        }
+
+        .aui-row-diy {
+            background: #fff;
+        }
+
+        .aui-row-diy .aui-col-xs-6 {
+            margin: 0.5em 0;
+            padding: 0.5rem 0;
+            text-align: left;
+            padding-left: 0.7rem;
+        }
+
+        .aui-row-diy .aui-col-xs-4 {
+            text-align: left;
+        }
+
+        .aui-list:before {
+            background-color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='main' v-cloak>
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item gradient" style=" position: relative;padding: 0.2rem 0 0.2rem 0.75rem;">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner" onclick="$common.openWin('thirdHead',{title:'去提现',key:2,FrameName:'ApplyWithdraw'});" tapmode="tapmode">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-14" style="line-height:1.5rem;color:#fff;" id="PersonName">可提现金额</div>
+                            <div class="aui-list-item-title aui-font-size-14" style="line-height:1.5rem;color:#fff;">提成比例：{{CommssionRate}}%</div>
+
+                            <div class="aui-list-item-title aui-font-size-14" style="line-height:1.5rem;color:#fff; width:3rem;"></div>
+
+                        </div>
+                        <div class="aui-list-item-text" style="color:#fff;">
+                            <span><span style="font-size:1.2rem;">{{DaiLiCommission}}</span> 元</span>
+                            <span><span style="aui-font-size-14">本月下级消费</span>： {{ThisMonthSum}}元</span>
+                            <div class="aui-btn aui-btn-info" style="font-size: 0.6rem !important;background-color: transparent !important;border: 1px solid;  border-radius: 10px;width: 3rem;line-height: 0.7rem;">提现</div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <section class="aui-grid" style="background-color: transparent;">
+                <div class="aui-row aui-row-diy">
+                    <div class="aui-col-xs-6" style="border-right: 1px solid #ccc;">
+                        <div class="aui-font-size-14 aui-text-default2">上月预估收入</div>
+                        <div class="aui-font-size-20" style="line-height:1.6rem;">￥<b>{{LastMonthSumCommssion}}</b></div>
+                        <div class="aui-font-size-14 aui-text-success2">已结算</div>
+                    </div>
+                    <div class="aui-col-xs-6">
+                        <div class="aui-font-size-14 aui-text-default2">本月预估收入</div>
+                        <div class="aui-font-size-20" style="line-height:1.6rem;">￥<b>{{ThisMonthSumCommssion}}</b></div>
+                        <div class="aui-font-size-14 aui-text-warning2">待结算</div>
+                    </div>
+                </div>
+                <div class="aui-tips" style="padding: 0;  background: #f7f7f7;  color: #8a8a8a;   line-height: inherit; height:auto;    padding: 5px 0;">
+                    <div class="aui-tips-title aui-font-size-12">每月1号结算上月预估收入，本月预估收入则在下月1号结算。</div>
+                </div>
+            </section>
+        </ul>
+
+        <section class="aui-grid" style="background-color: transparent;border-bottom: 1px solid #dddddd;border-top: 1px solid #dddddd;">
+            <div class="aui-row aui-row-diy">
+                <template v-for="val in data2List">
+                <div class="aui-col-xs-6" style="border-right: 1px solid #ccc;padding:0 0 0 0.7rem;">
+                    <template v-if="val.EndMoney>999999">
+                    <div class="aui-font-size-14 aui-text-info">下级月消费：<span>{{val.StartMoney}}元以上</span></div>
+  </template>
+                <template v-else>
+  <div class="aui-font-size-14 aui-text-info">下级月消费：<span>{{val.StartMoney}}-{{val.EndMoney}}元</span></div>
+</template>
+                <div class="aui-font-size-14 aui-text-warning">提成比例:{{val.Rex}}%</div>
+            </div>
+            </template>
+    </div>
+    <div class="aui-tips" style="padding: 0; text-align:center; background: #f7f7f7;  color: #8a8a8a;   line-height: inherit; height:auto;padding: 5px 0;" onclick="OpenUrl()">
+        <div class="aui-tips-title aui-font-size-12 aui-text-danger" style="margin:0 auto">☆玩转云发单推广赚钱>>>>>>>>>>点击查看☆</div>
+    </div>
+    </section>
+    <!-- <div class="aui-content aui-font-size-12 aui-content-padded aui-text-danger">注意：业绩就是你邀请的用户所消费的金额，佣金就是你获得的提成，提现进程可到资费中心查看。</div> -->
+    <div class="aui-card-list aui-margin-t-15">
+
+        <div class="aui-card-list-header" onclick="$common.openWin('thirdHead',{title:'下级明细',key:3,FrameName:'xiajiList'});" tapmode="tapmode">
+            <div><i class="aui-iconfont aui-icon-my aui-text-info"></i><span>下级明细</span></div>
+            <i class="aui-iconfont aui-icon-right"></i>
+        </div>
+        <div class="aui-card-list-content">
+            <section class="aui-grid" style="border-top: 1px solid #dddddd;">
+                <div class="aui-row aui-row-diy">
+                    <div class="aui-col-xs-6" style="text-align:center;">
+                        <div class="aui-font-size-16 " :class="[selected==1?'aui-text-warning2':'']" @click="chooseTime(1,1)">今日</div>
+                    </div>
+                    <div class="aui-col-xs-6" style="text-align:center;">
+                        <div class="aui-font-size-16" :class="[selected==2?'aui-text-warning2':'']" @click="chooseTime(2,2)">昨日</div>
+                    </div>
+                </div>
+            </section>
+            <ul class="aui-list aui-media-list">
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-14">预估收入:￥<span class="aui-font-size-16">{{DaySumCommssion111}}</span></div>
+                            </div>
+                            <div class="aui-list-item-text">
+                                <section class="aui-grid">
+                                    <div class="aui-row aui-row-diy">
+                                        <div class="aui-col-xs-4">
+                                            <div class="aui-font-size-14">下级数量</div>
+                                            <div class="aui-font-size-14">{{DayCount111}}</div>
+                                        </div>
+                                        <!-- <div class="aui-col-xs-4">
+                                    <div class="aui-font-size-14">下下级数量</div>
+                                    <div class="aui-font-size-14 ">{{DayCount_Sum111}}</div>
+                                </div> -->
+                                        <div class="aui-col-xs-4">
+                                            <div class="aui-font-size-14">总消费</div>
+                                            <div class="aui-font-size-14">￥{{DaySumConsumeAmout_Xj_Xj111}}</div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="aui-card-list aui-margin-t-5">
+        <ul class="aui-list aui-form-list">
+            <template v-for="val in list">
+            <li class="userItem aui-font-size-12">
+                <div class="aui-list-item-inner">
+                    <div class="aui-col-xs-6">账户：{{val.UserName}}</div>
+                    <div class="aui-col-xs-6">姓名：{{val.PersonName}}</div>
+                </div>
+                <div class="aui-list-item-inner">
+                    <div class="aui-col-xs-12">消费：<span class="aui-text-danger">{{val.Performance}}</span>元</div>
+                </div>
+                <div class="aui-list-item-inner">
+                    <div class="aui-col-xs-6">提成：<span class="aui-text-danger">{{val.Commission}}</span>元</div>
+                    <div class="aui-col-xs-6">备注：{{val.Remark}}</div>
+
+                </div>
+            </li>
+          </template>
+        </ul>
+        <div style="height:2rem;"></div>
+        <div class="Rbtn aui-col-xs-12 center aui-btn-info" onclick="$common.openSharePopup()">复制注册链接</div>
+        <div class="aui-popup aui-popup-bottom aui-popup-bottom-share" id="bottom" style="padding:0.8rem;">
+            <div class="aui-popup-content">
+                <ul class="popup">
+                    <section class="aui-grid">
+                        <div class="aui-row">
+                            <div class="aui-col-xs-4" onclick="OpenWx()">
+                                <i class="aui-iconfont"><img src="../image/s_wechat.png" style="width: 2.5rem;"></i>
+                                <div class="aui-grid-label">微信</div>
+                            </div>
+                            <div class="aui-col-xs-4" onclick="OpenQQ()">
+                                <i class="aui-iconfont"><img src="../image/s_qq.png" style="width: 2.5rem;"></i>
+                                <div class="aui-grid-label">QQ</div>
+                            </div>
+                            <div class="aui-col-xs-4">
+                                <i class="aui-iconfont" onclick="ClipUrl()"><img src="../image/s_copy.png" style="width: 2.5rem;"></i>
+                                <div class="aui-grid-label">复制链接</div>
+                            </div>
+                        </div>
+                    </section>
+                </ul>
+            </div>
+            <div class="aui-btn aui-btn-block aui-btn-m" style="background: #fff;  margin-top: 0.3rem;  color: #ccc;" onclick="$common.closeSharePopup()">取消</div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script type="text/javascript">
+    var popup = new auiPopup();
+    // var slide = new auiSlide({
+    //     container: document.getElementById("aui-slide2"), //容器
+    //     "height": 120,
+    //     "speed": 300,
+    //     "autoPlay": 0, //自动播放
+    //     "pageShow": true,
+    //     "loop": true,
+    //     "pageStyle": 'dot',
+    //     'dotPosition': 'center'
+    // })
+</script>
+
+<script>
+    apiready = function() {
+        GetAppBaseConfig = $api.getStorage('GetAppBaseConfig');
+        main.getData();
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#ffffff',
+            images: ['widget://image/refresh1.png', 'widget://image/refresh2.png', 'widget://image/refresh1.png'],
+            tips: { //（可选项）JSON 对象；整个下拉及加载过程的文字提示；不传则不显示文字区域
+                pull: '下拉刷新', //（可选项）字符串类型；下拉过程（下拉高度未达到阈值前）的文字提示；不传则不显示该时段的文字提示
+                threshold: '松开立即刷新', //（可选项）字符串类型；下拉过程（下拉高度达到或超过阈值）的文字提示；不传则不显示该时段的文字提示
+                load: '正在刷新' //（可选项）字符串类型；加载状态的文字提示；不传则不显示该时段的文字提示
+            }
+        }, function(ret, err) {
+            //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+            main.getData();
+            api.refreshHeaderLoadDone()
+        });
+        userId = $api.getStorage('Usersconfig').userId;
+        shareUrl = $common.RegisterUrl + userId;
+        shareTitle = $common.AppName + "注册链接";
+        shareDescription = $common.AppName + "是一款不怕封号的发单软件,注册成功即送5元消费额！";
+        shareImg = $common.AppLogo;
+    }
+
+    function OpenUrl() {
+
+        $common.openWin('thirdHead', {
+            title: '玩转云发单推广赚钱',
+            key: 'OutUrl',
+            FrameName: GetAppBaseConfig.YunFaDanTuiGuangJS
+        });
+    }
+
+    function OpenWx() {
+        $common.ClipText(shareDescription+"\n"+shareUrl, "复制成功,请粘贴发送给好友即可注册")
+        setTimeout(function() {
+            window.location.href = "weixin://";
+        }, 500)
+    }
+
+    function OpenQQ() {
+        $common.ClipText(shareUrl, "复制成功,请粘贴发送给好友即可注册")
+        $common.shareQQ(shareUrl, shareTitle, "QFriend", shareDescription, shareImg, function(ret) {
+            if (ret.status == true) {
+                u.toast('分享成功');
+            }
+        })
+    }
+
+    function ClipUrl() {
+        $common.ClipText(shareUrl, "复制成功,请粘贴发送给好友即可注册")
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: [],
+            EjCommssion: '',
+            SjCommssion: '',
+            allCount: '',
+            sumCommission: '',
+            MonthConsumeAmout: '',
+            DaiLiCommission: '',
+            selected: 1,
+            thisMonthCommssion: '', //本月下级提成
+            thisMonthCommssion_Xj: '', //本月下下级提成
+            LastMonthSumCommssion: '', //本月总佣金
+            ThisMonthSumCommssion: '', //上月总佣金
+            DayCount: '', //今日下级数量
+            DayCount_Sum: '', //今日下下级数量
+            DaySumConsumeAmout_Xj_Xj: '', // 今日总消费
+            DaySumCommssion: '', //今日总佣金(包含下级下下级)
+            YesterDayCount: '', //昨日下级数量
+            YesterDayCount_Sum: '', //昨日下下级数量
+            YesterDaySumConsumeAmout_Xj_Xj: '', // 昨日总消费
+            YesterDaySumCommssion: '', //昨日总佣金(包含下级下下级)
+            DayCount111: '', //今日下级数量
+            DayCount_Sum111: '', //今日下下级数量
+            DaySumConsumeAmout_Xj_Xj111: '', // 今日总消费
+            DaySumCommssion111: '', //今日总佣金(包含下级下下级)
+            data2List: [],
+            CommssionRate: "",
+            ThisMonthConsume: "",
+            ThisMonthSum: ""
+        },
+        methods: {
+            chooseTime: function(index, i) {
+                this.selected = index;
+                if (index == 1) {
+                    main.DayCount111 = main.DayCount;
+                    main.DayCount_Sum111 = main.DayCount_Sum;
+                    main.DaySumConsumeAmout_Xj_Xj111 = main.DaySumConsumeAmout_Xj_Xj;
+                    main.DaySumCommssion111 = main.DaySumCommssion;
+
+                } else {
+                    main.DayCount111 = main.YesterDayCount;
+                    main.DayCount_Sum111 = main.YesterDayCount_Sum;
+                    main.DaySumConsumeAmout_Xj_Xj111 = main.YesterDaySumConsumeAmout_Xj_Xj;
+                    main.DaySumCommssion111 = main.YesterDaySumCommssion;
+                }
+            },
+            ClipWeChat: function() {
+                popup.show($api.dom("#bottom"))
+            },
+            addKey: function(el) {
+                sign.CheckoutCg = sign.CheckoutCg + $(el).html()
+            },
+            update: function(index) {
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            checkoutCg: sign.CheckoutCg, ///签到成功模板
+                            checkoutSb: sign.CheckoutSb, ///签到失败
+                            userCheckOrder: sign.UserCheckOrder,
+                            checkOutMoneyMax: sign.CheckOutMoneyMax, ///签到最大金额
+                            checkOutMoney: sign.CheckOutMoney, ///签到最小金额
+                            ApiType: "jifenConfig"
+                        }
+                    }
+                }, function(ret) {
+                    if (ret.error == 1) {
+                        api.execScript({
+                            name: 'root',
+                            script: 'SendConfigFun();'
+                        });
+                        $common.toast('操作成功');
+                    } else {
+                        alert(ret.msg)
+                    }
+                });
+            },
+            getData: function(index) {
+                $common.request('ThisOrLastInCome', {
+                    data: {
+                        values: {
+                            ToKen: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.StateCode == 1) {
+                        console.log(JSON.stringify(ret))
+                        main.LastMonthSumCommssion = ret.list.LastMonthSumCommssion;
+                        main.ThisMonthSumCommssion = ret.list.ThisMonthSumCommssion;
+                        main.thisMonthCommssion = ret.list.thisMonthCommssion;
+                        main.thisMonthCommssion_Xj = ret.list.thisMonthCommssion_Xj;
+                        main.DayCount = ret.list.DayCount;
+                        main.DayCount_Sum = ret.list.DayCount_Sum;
+                        main.DaySumConsumeAmout_Xj_Xj = ret.list.DaySumConsumeAmout_Xj_Xj;
+                        main.DaySumCommssion = ret.list.DaySumCommssion;
+                        main.DayCount111 = ret.list.DayCount;
+                        main.DayCount_Sum111 = ret.list.DayCount_Sum;
+                        main.DaySumConsumeAmout_Xj_Xj111 = ret.list.DaySumConsumeAmout_Xj_Xj;
+                        main.DaySumCommssion111 = ret.list.DaySumCommssion;
+                        main.YesterDayCount = ret.list.YesterDayCount;
+                        main.YesterDayCount_Sum = ret.list.YesterDayCount_Sum;
+                        main.YesterDaySumConsumeAmout_Xj_Xj = ret.list.YesterDaySumConsumeAmout_Xj_Xj;
+                        main.YesterDaySumCommssion = ret.list.YesterDaySumCommssion;
+                        main.ThisMonthSum = ret.list.ThisMonthSum;
+                        main.data2List = ret.list.MoneyItems;
+                        main.CommssionRate = ret.list.ParentRex;
+                        api.hideProgress();
+                    } else {
+                        $common.toast("暂无数据")
+                    }
+                })
+
+
+
+                if ($api.getStorage('Usersconfig') != undefined) {
+                    main.DaiLiCommission = $api.getStorage('Usersconfig').DaiLiCommission == null ? 0 : $api.getStorage('Usersconfig').DaiLiCommission;
+                }
+                $common.progress();
+                // $common.request('0x0001', {
+                //     data: {
+                //         values: {
+                //             ApiType: 'GetMySoftwareAgentsData',
+                //             uxxx1__1: $api.getStorage('iii')
+                //         }
+                //     }
+                // }, function(ret, err) {
+                //      console.log(JSON.stringify(ret))
+                //     if (ret.error == 1) {
+                //         var tdata1 = JSON.parse(ret.data).Table;
+                //         var tdata2 = JSON.parse(ret.data2).Table;
+                //         var tdata3 = JSON.parse(ret.data3).Table;
+                //         if (tdata1.length > 0) {
+                //             main.list = tdata1;
+                //         }else {
+                //           $common.toast("暂无下级,继续努力吧！")
+                //         }
+                //         main.LastMonthSumCommssion = tdata3[0].LastMonthCommmsion;
+                //         main.ThisMonthSumCommssion = tdata3[0].ThisMonthCommmsion;
+                //         main.ThisMonthConsume = tdata3[0].ThisMonthConsume == null?0:tdata3[0].ThisMonthConsume;
+                //         main.data2List = tdata2;
+                //         main.CommssionRate  =tdata2[0].Discount;
+                //         api.hideProgress();
+                //     }
+                // });
+
+            }
+        }
+    })
+</script>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>开发</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        body,
+        html {
+            background: #eee;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .gray {
+            color: #999;
+        }
+
+        .content {
+            background: #fff;
+            padding: 0.75rem;
+        }
+
+        .item {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: flex-start;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .link {
+            background: #fff;
+            border-top: 1px solid #ddd;
+            line-height: 2rem;
+        }
+
+        .pic {
+            width: 9rem;
+            margin-right: 0.5rem;
+        }
+
+        .pic img {
+            width: 100%;
+        }
+
+        .aui-btn {
+            line-height: 0.8rem;
+            margin-top: 0.4rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main">
+        <div class="aui-content aui-font-size-12 aui-content-padded center">淘客圈云发单与合作伙伴工具更配哦</div>
+        <section class="aui-margin-b-15">
+            <div class="content">
+                <h3 class="center aui-margin-b-10">QQ采集器</h2>
+          <div class="item">
+            <div class="pic"><img src="../image/cjq.png" alt=""></div>
+            <div>
+              <p class="aui-font-size-12">QQ个人采集器</p>
+              <p class="aui-font-size-12">让淘客更灵活分享优质商品</p>
+            </div>
+          </div>
+        </div>
+        <div class="link aui-font-size-12 aui-padded-l-10 aui-padded-r-10">
+          本软件为PC版本，请复制链接至PC端下载
+          <div class="aui-btn aui-btn-info aui-pull-right" onclick="openSharePopup(0)" tapmode="tapmode">复制下载链接</div>
+        </div>
+      </section>
+
+      <section class="aui-margin-b-15">
+        <div class="content">
+          <h3 class="center aui-margin-b-10">可道代理系统/分佣系统</h2>
+          <div class="item">
+            <div class="pic"><img src="../image/kd.png" alt=""></div>
+            <div>
+              <p class="aui-font-size-12">代理查询订单</p>
+              <p class="aui-font-size-12">多级代理分佣</p>
+              <p class="aui-font-size-12">可提现/查看代理报表</p>
+            </div>
+          </div>
+        </div>
+        <div class="link aui-font-size-12 aui-padded-l-10 aui-padded-r-10">
+          本软件为PC版本，请复制链接至PC端下载
+          <div class="aui-btn aui-btn-info aui-pull-right" onclick="openSharePopup(1)" tapmode="tapmode">复制下载链接</div>
+        </div>
+      </section>
+      <div class="aui-popup aui-popup-bottom aui-popup-bottom-share " id="bottom" style="padding:0.8rem;">
+          <div class="aui-popup-content">
+              <ul class="popup">
+                  <section class="aui-grid">
+                      <div class="aui-row">
+                          <div class="aui-col-xs-4" onclick="OpenWx()">
+                              <i class="aui-iconfont"><img src="../image/s_wechat.png" style="width: 2.5rem;"></i>
+                              <div class="aui-grid-label">微信</div>
+                          </div>
+                          <div class="aui-col-xs-4" onclick="OpenQQ()">
+                              <i class="aui-iconfont"><img src="../image/s_qq.png" style="width: 2.5rem;"></i>
+                              <div class="aui-grid-label">QQ</div>
+                          </div>
+                          <div class="aui-col-xs-4">
+                              <i class="aui-iconfont" onclick="ClipUrl()"><img src="../image/s_copy.png" style="width: 2.5rem;"></i>
+                              <div class="aui-grid-label">复制链接</div>
+                          </div>
+                      </div>
+                  </section>
+              </ul>
+          </div>
+          <div class="aui-btn aui-btn-block aui-btn-m" style="background: #fff;  margin-top: 0.3rem;  color: #ccc;" onclick="$common.closeSharePopup()">取消</div>
+      </div>
+  </div>
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-popup.js"></script>
+<script>
+apiready=function(){
+  GetAppBaseConfig = $api.getStorage('GetAppBaseConfig');
+}
+var popup = new auiPopup();
+ function openSharePopup(i) {
+   switch (i) {
+     case 0:
+     shareUrl = GetAppBaseConfig.QQCaiJiDownloadLink;
+     shareTitle = "千相魔方个人采集器";
+     shareDescription = "让淘客更灵活分享优质商品,请用电脑打开并下载！";
+     shareImg = $common.AppLogo;
+       break;
+       case 1:
+       shareUrl =  GetAppBaseConfig.FenYongDownLoadLink;
+       shareTitle = "可道代理系统/分佣系统";
+       shareDescription = "代理查询订单/多级代理分佣/可提现/查看代理报表";
+       shareImg = $common.AppLogo;
+         break;
+     default:
+
+   }
+  // $common.ClipText(shareUrl, "复制成功,请用电脑打开浏览")
+     popup.show($api.dom("#bottom"))
+ }
+ function OpenWx() {
+   $common.ClipText(shareUrl, "复制成功");
+   setTimeout(function(){
+     window.location.href="weixin://";
+   },500)
+
+    //  $common.shareWx(shareUrl, shareTitle, "QFriend", shareDescription, shareImg, function(ret) {
+    //    alert(JSON.stringify(ret))
+    //      if (ret.status == true) {
+    //          u.toast('分享成功');
+    //      }
+    //  })
+ }
+ function OpenQQ() {
+   $common.ClipText(shareUrl, "复制成功");
+   setTimeout(function(){
+     window.location.href="mqq://";
+   },500)
+    //  $common.shareQQ(shareUrl, shareTitle, "QFriend", shareDescription, shareImg, function(ret,err) {
+    //      if (ret.status == true) {
+    //          u.toast('分享成功');
+    //      }
+    //  })
+ }
+
+ function ClipUrl() {
+   $common.ClipText(shareUrl, "复制成功,请用电脑打开浏览")
+ }
+</script>

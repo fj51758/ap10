@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>云发单</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery-weui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/weui.min.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+
+        .aui-list-item-right-diy {
+            margin-top: 1.2rem !important;
+            font-size: 0.8rem !important;
+            padding-right: 1rem !important;
+        }
+
+        .aui-list-item-arrow:before {
+            width: 0.5rem;
+            height: 0.5rem;
+        }
+
+        .aui-list-item-arrow-diy::before {
+            top: 3.8rem;
+        }
+
+        .aui-list-item-label-icon-diy {
+            width: 3rem !important;
+        }
+
+        .aui-list-item-label-icon-diy img {
+            width: 70%;
+        }
+
+        .aui-list-in {
+            margin-top: 20px;
+        }
+
+        .aui-list {
+            font-size: 0.7rem !important;
+        }
+
+        .Balance {
+            color: #03a9f4;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body id="main" v-cloak>
+    <div class="aui-content">
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item gradient">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media">
+                        <img src="../image/head.png" id="LogoUrl" style="width:80%;border-radius:50px;border: 2px solid #fff;">
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-text-white" style="line-height:1.5rem;" id="PersonName">{{PersonName}}</div>
+                            <!-- <div class="aui-list-item-right">账号:<span>13650734764</span></div> -->
+                        </div>
+                        <div class="aui-list-item-text aui-text-white">
+                            <span>账号:<span id="UserName">{{UserName}}</span></span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" onclick="$common.openWin('CommonPage',{title:'充值',key:2,FrameName:'ReCharge'});" tapmode="tapmode">
+                <div class="aui-media-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title" style="font-size: 0.8rem;">账户余额: &nbsp;<b id="Balance" class="Balance">{{Balance}}</b>&nbsp;元</div>
+                            <div class="aui-list-item-right aui-list-item-right-diy aui-text-info">去充值</div>
+                        </div>
+                        <div class="aui-list-item-text aui-ellipsis-2">
+                            今日预消费{{imoney}}元&nbsp;&nbsp;&nbsp;本月预估收入:{{sumCommission}}元
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" onclick="$common.openWin('CommonPage',{title:'购买月卡',key:2,FrameName:'BuyMonthCard'});" tapmode="tapmode">
+                <div class="aui-media-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title" style="font-size: 0.8rem;">月卡剩余天数: &nbsp;<b class="Balance">{{MonthCardDays}}</b></div>
+                            <div class="aui-list-item-right aui-text-info" style="font-size:0.8rem;padding-right: 0.95rem;">购买月卡</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" onclick="$common.openWin('CommonPage',{title:'去提现',key:2,FrameName:'ApplyWithdraw'});" tapmode="tapmode">
+                <div class="aui-media-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title" style="font-size: 0.8rem;">可提现金额: &nbsp;<b class="Balance">{{DaiLiCommission}}</b>&nbsp;元</div>
+                            <div class="aui-list-item-right aui-text-info" style="font-size:0.8rem;padding-right: 0.95rem;">去提现</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <template v-for="val in list">
+            <div class="aui-tips aui-margin-t-15 aui-bg-warning" style="line-height:0.9rem;">
+                <i class="aui-iconfont aui-icon-info"></i>
+                <div class="aui-tips-title">{{val.ErrorMsg }}</div>
+                  <i class="aui-iconfont aui-icon-close1"></i>
+            </div>
+          </template>
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/SendState.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    <span>发单状态：<span class="aui-text-danger">{{OpenSendText}}</span></span>
+                    <div class="aui-list-item-input" style="width:30%;">
+                        <input type="checkbox" class="aui-switch" v-model="IsOpenSend" @change="isOpen()" tapmode="tapmode">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/newMessage.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    <span>群消息通知：<span class="aui-text-danger">{{OpenGroupMessageText}}</span></span>
+                    <div class="aui-list-item-input" style="width:30%;">
+                        <input type="checkbox" class="aui-switch" v-model="InGroupMsgBroadcast" @change="isOpenMessge()" tapmode="tapmode">
+                    </div>
+                </div>
+            </li>
+            <!-- <li class="aui-list-item aui-list-item-arrow">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/groups.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;" onclick="$common.openWin('CommonPage',{title:'发单群数量',key:3,FrameName:'GroupLsit'});" tapmode="tapmode">
+                    <span>我的微信群:    今日开启群数:({{FadanGroupCounts}})</span>
+                </div>
+                <div class="aui-list-item-inner">
+<span>我的微信群:    今日开启群数:({{FadanGroupCounts}})</span>
+</div>
+            </li> -->
+
+        </ul>
+        <ul class="aui-list aui-media-list aui-margin-t-15">
+            <li class="aui-list-item aui-list-item-arrow aui-list-item-arrow-diy">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                        <img src="../image/groups.png">
+                    </div>
+                    <div class="aui-list-item-inner" style="padding-top:0.55rem;">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title" style="font-size:0.7rem;" onclick="$common.openWin('CommonPage',{title:'我的微信群',key:3,FrameName:'GroupLsit'});">我的微信群(<span>{{GroupCounts}}</span>):</div>
+                            <div class="aui-list-item-right aui-font-size-14" onclick="$common.openWin('CommonPage',{title:'群回收站',key:3,FrameName:'DeletedGroups'});"><span class="aui-iconfont aui-icon-trash aui-font-size-16" style="line-height: 0.9rem; height: 0.9rem;"></span><span class="aui-margin-l-5">回收站:({{DeleteGroupCounts}})<span></div>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="$common.openWin('CommonPage',{title:'我的微信群',key:3,FrameName:'GroupLsit'});" tapmode="tapmode">
+                <div class="aui-info" style="padding:0.5rem 0 0.2rem 0;border-top: 1px dashed #dddddd;">
+                    <div class="aui-info-item">
+                        <span class="aui-margin-l-5">今日需扣费群数<span class="aui-margin-l-5 aui-text-info">{{DayFadanGroupCounts}}<span></span>
+                            </div>
+                        </div>
+                        <div class="aui-info" style="padding:0 0 0.5rem">
+                            <span class="aui-margin-l-5">月卡每日抵消群数:  <span class="aui-margin-l-5 aui-text-info">{{MonthCardGroupCount}}<span></span>
+                        </div>
+                        <div class="aui-info" style="padding:0 0 0.5rem">
+                            <span class="aui-margin-l-5">当前开启群发:  <span class="aui-margin-l-5 aui-text-info">{{OpenGroupCounts}}<span></span>
+                        </div>
+
+                    </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openWin('CommonPage',{title:'机器人列表',key:3,FrameName:'RobotLsit'});" tapmode="tapmode">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/add.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;" tapmode="tapmode">
+                    获取机器人
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openWin('CommonPage',{title:'',key:3,FrameName:'WaitSending'});" tapmode="tapmode">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/WaitSend.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    待发商品
+                </div>
+            </li>
+            <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openWin('CommonPage',{title:'发送中的商品',key:3,FrameName:'SendingGoods'});" tapmode="tapmode">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/sending.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    发送中的商品
+                </div>
+            </li>
+
+        </ul>
+        <ul class="aui-list aui-list-in">
+            <!-- <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openWin('CommonPage',{title:'推广赚钱',key:3,FrameName:'Consumption'});" tapmode="tapmode">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/share.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    推广云发单赚提成
+                </div>
+            </li> -->
+            <!-- <li class="aui-list-item  aui-list-item-arrow" onclick="$common.openNewWin('guide',{url:'widget://html/guide/guide.html'})">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/guide.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    新手引导
+                </div>
+            </li> -->
+            <li class="aui-list-item  aui-list-item-arrow" onclick="OpenUrl()">
+                <div class="aui-list-item-label-icon aui-list-item-label-icon-diy">
+                    <img src="../image/help.png">
+                </div>
+                <div class="aui-list-item-inner" style="text-align:right;">
+                    操作指南
+                </div>
+            </li>
+        </ul>
+        </div>
+        <div class="weui-mask weui-mask--visible" id="GuideDialogMask" style="opacity:0;display:none"></div>
+        <div class="weui-dialog weui-dialog--visible" id="GuideDialog" style="opacity:0;display:none">
+            <div class="weui-dialog__hd"><strong class="weui-dialog__title">{{GuideTitle}}</strong></div>
+            <div class="weui-dialog__bd">{{GuideText}}</div>
+            <div class="weui-dialog__bd">
+                <div class="weui-panel weui-panel_access" style="text-align:left;">
+                    <template v-for="val in GuideStep">
+                    <div class="weui-panel__ft">
+                        <a href="javascript:void(0);"  class="weui-cell weui-cell_access weui-cell_link" v-on:click="GuideListStep(val)" tapmode="tapmode">
+                            <div class="weui-cell__bd">{{val.text}}</div>
+                            <span class="weui-cell__ft"></span>
+                        </a>
+                    </div>
+                  </template>
+                </div>
+            </div>
+            <div class="weui-dialog__ft">
+                <a href="javascript:;" class="weui-dialog__btn " onclick="closeGuide()">设置好了！开始发单吧</a>
+            </div>
+        </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script>
+    function closeGuide() {
+        document.getElementById("GuideDialog").style.opacity = 0;
+        document.getElementById("GuideDialog").style.display = "none";
+        document.getElementById("GuideDialogMask").style.opacity = 0;
+        document.getElementById("GuideDialogMask").style.display = "none";
+    }
+
+    function openGuide() {
+        document.getElementById("GuideDialog").style.opacity = 1;
+        document.getElementById("GuideDialog").style.display = "block";
+        document.getElementById("GuideDialogMask").style.opacity = 1;
+        document.getElementById("GuideDialogMask").style.display = "block";
+    }
+    var dialog = new auiDialog({});
+    // dialog.discount({
+    //     title: "",
+    //     msg: "http://ccoa.oss-cn-hangzhou.aliyuncs.com/dialog.png",
+    //     discount:true,
+    //     buttons: [''],
+    //     closeImg:'../image/dialog-close.png'
+    // }, function(ret) {})
+    var iint = 0;
+    apiready = function() {
+        ajpush = api.require('ajpush');
+        sendconfig = $api.getStorage('sendconfig');
+        if (sendconfig == undefined) {
+            openGuide();
+        }
+        GetAppBaseConfig = $api.getStorage('GetAppBaseConfig');
+
+        if (GetAppBaseConfig != undefined && GetAppBaseConfig.AppGongGao != "") {
+            var discount = true;
+            var title = "";
+            var msg = GetAppBaseConfig.AppGongGao;
+            var buttons = [''];
+            var closeImg = '../image/dialog-close.png';
+            if (GetAppBaseConfig.AppGongGao.indexOf("png") == -1) {
+                discount = false;
+                var title = "新公告来啦！";
+                var buttons = ['确定'];
+                var closeImg = "";
+            }
+            // dialog.alert({
+            //     title: "新公告来啦！",
+            //     msg: GetAppBaseConfig.AppGongGao,
+            //     buttons: ['确定']
+            // }, function(ret) {
+            // })
+            dialog.discount({
+                title: title,
+                msg: msg,
+                discount: discount,
+                buttons: buttons,
+                closeImg: closeImg
+            }, function(ret) {})
+        }
+        main.getdata();
+        main.getlog();
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#ffffff',
+            images: ['widget://image/refresh1.png', 'widget://image/refresh2.png', 'widget://image/refresh1.png'],
+            tips: { //（可选项）JSON 对象；整个下拉及加载过程的文字提示；不传则不显示文字区域
+                pull: '下拉刷新', //（可选项）字符串类型；下拉过程（下拉高度未达到阈值前）的文字提示；不传则不显示该时段的文字提示
+                threshold: '松开立即刷新', //（可选项）字符串类型；下拉过程（下拉高度达到或超过阈值）的文字提示；不传则不显示该时段的文字提示
+                load: '正在刷新' //（可选项）字符串类型；加载状态的文字提示；不传则不显示该时段的文字提示
+            }
+        }, function(ret, err) {
+            //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+            main.getdata();
+            api.refreshHeaderLoadDone()
+        });
+    }
+
+    function OpenUrl() {
+        $common.openWin('CommonPage', {
+            title: '帮助中心',
+            key: 3,
+            FrameName: GetAppBaseConfig.HelpCenter
+        });
+        // $common.openNewWin('帮助中心',{url:'http://help.t-ke.cn/web/#/1?page_id=2'})
+        // api.openWin({
+        //     name: '帮助中心',
+        //     url: "http://help.t-ke.cn/web/#/1?page_id=2",
+        //     pageParam: {
+        //         name: 'test'
+        //     },
+        //     bgColor:"#fff"
+        // });
+
+    }
+    var main = new Vue({
+        el: '#main',
+        data: {
+            list: [],
+            Balance: "",
+            UserName: "",
+            PersonName: "",
+            LogoUrl: "",
+            sumCommission: 0,
+            imoney: 0,
+            IsOpenSend: false,
+            OpenSendText: "",
+            OpenGroupMessageText: "",
+            InGroupMsgBroadcast: false,
+            FadanGroupCounts: "",
+            DayFadanGroupCounts: "",
+            OpenGroupCounts: "",
+            GroupCounts: "",
+            DeleteGroupCounts: "",
+            DaiLiCommission: "", //可提现金额
+            GuideText: '使用' + $common.AppName + ',需先点击以下步骤进行设置才可正常发单',
+            GuideTitle: '欢迎来到' + $common.AppName,
+            GuideStep: [{
+                text: '1、点击此处授权淘宝高佣',
+                index: 0
+            }, {
+                text: '2、设置默认推广位',
+                index: 1
+            }, {
+                text: '3、获取机器人发单号',
+                index: 2
+            }],
+            MonthCardDays:"",
+            MonthCardGroupCount:0
+        },
+        methods: {
+            isOpenMessge: function() {
+                var bottomtext = ['了解功能', '我要开启']
+                var alertTitle = "确定开启群通知吗"
+                var alertMsg = "这个是一个可以让你淘客收益更多的功能哦"
+                if (main.InGroupMsgBroadcast == 0) {
+                    bottomtext = ['了解功能', '确定关闭']
+                    alertTitle = "确定要关闭群通知吗"
+                    alertMsg = "关闭群通知后将无法收到微信群聊天消息"
+                }
+                dialog.alert({
+                    title: alertTitle,
+                    msg: alertMsg,
+                    buttons: bottomtext
+                }, function(ret) {
+                    if (ret.buttonIndex == 2) {
+                        $common.request('SetUserWecharMessage', {
+                            data: {
+                                values: {
+                                    ToKen: $api.getStorage('iii'),
+                                    State: main.InGroupMsgBroadcast == false ? 1 : 0
+                                }
+                            }
+                        }, function(ret, err) {
+                            //   console.log(!main.InGroupMsgBroadcast)
+                            //   console.log(JSON.stringify(ret))
+                            //  console.log($api.getStorage('iii'));
+                            if (ret.StateCode == 1) {
+                                $common.toast('操作成功');
+                                main.OpenGroupMessageText = main.InGroupMsgBroadcast == 1 ? "已启动" : "未启动"
+                            } else {
+                                $common.toast(ret.Message);
+                                main.InGroupMsgBroadcast = !main.InGroupMsgBroadcast
+                            }
+                        });
+                    } else {
+                        $common.openWin('CommonPage', {
+                            title: '群消息通知介绍',
+                            key: 'openNew',
+                            FrameName: 'http://help.t-ke.cn/web/#/2?page_id=73'
+                        });
+                    }
+                })
+
+            },
+            isOpen: function() {
+                var is = (main.IsOpenSend == false) ? '0' : '1';
+
+                if (main.Balance <= 0 && is == '1') {
+                    alert("余额需大于0元才可开启发单");
+                    main.IsOpenSend = !main.IsOpenSend
+                    return;
+                }
+                main.OpenSendText = is == 1 ? "已启动" : "未启动"
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'IsStartGroupSendForDaiFa',
+                            GroupSendtype: is,
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    //alert(JSON.stringify(ret))
+                    //console.log(JSON.stringify(ret));
+                    if (ret.error == 1) {
+                        $common.toast('操作成功');
+                        main.OpenSendText = is == 1 ? "已启动" : "未启动"
+                    } else {
+                        $common.toast(ret.msg);
+                        main.IsOpenSend = !main.IsOpenSend
+                    }
+                });
+            },
+            GuideListStep: function(val) {
+                if (val.index == 0) {
+                    if (api.systemType == 'ios') {
+                        api.openApp({
+                            iosUrl: $common.TaoBaoAuthorize(),
+                            appParam: {
+                                appParam: 'app参数'
+                            }
+                        });
+                    } else {
+                        api.openApp({
+                            androidPkg: 'android.intent.action.VIEW',
+                            mimeType: 'text/html',
+                            uri: $common.TaoBaoAuthorize()
+                        }, function(ret, err) {
+                            if (ret) {} else {}
+                        });
+                    }
+                }
+                if (val.index == 1) {
+                    $common.openWin('CommonPage', {
+                        title: '转链设置',
+                        key: 3,
+                        FrameName: 'ChangeLinkSetting'
+                    });
+                }
+                if (val.index == 2) {
+                    $common.openWin('CommonPage', {
+                        title: '机器人列表',
+                        key: 3,
+                        FrameName: 'RobotLsit'
+                    });
+                }
+            },
+            getlog: function() {
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'GetUserShowError',
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error != 2) {
+                        if (ret.data != "") {
+                            var tdata = JSON.parse(ret.data).Table;
+                            main.list = tdata;
+                        } else {
+                            main.list = []
+                        }
+                        setTimeout("main.getlog()", 3000)
+                    }
+                });
+                // if($api.getStorage('LogList')!=undefined){
+                //    main.list = $api.getStorage('LogList');
+                // }
+            },
+            getdata: function() {
+                $common.progress();
+                $common.request('GetNowMonthCardInfo', {
+                    data: {
+                        values: {
+                            ToKen: $api.getStorage('iii'),
+                            ope: 0
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.StateCode == 1) {
+                    if(ret.list!=null){
+                    main.MonthCardDays = ret.list[0].surplusCount;
+                    main.MonthCardGroupCount = ret.list[0].GroupCount;
+                  }else {
+                      main.MonthCardDays ="无生效月卡"
+                  }
+                    }
+                })
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'GroupSendConfig',
+                            type: 'get',
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    // alert(JSON.stringify(ret))
+                    if (ret.error != 2) {
+                        var tdata = JSON.parse(ret.data);
+                        main.IsOpenSend = tdata.Table[0].IsOpenSend;
+                        main.OpenSendText = tdata.Table[0].IsOpenSend == 1 ? "已启动" : "未启动"
+                        main.InGroupMsgBroadcast = tdata.Table[0].OpenWecharMessage;
+                        main.OpenGroupMessageText = tdata.Table[0].OpenWecharMessage == 1 ? "已启动" : "未启动"
+                        $api.setStorage('sendconfig', JSON.parse(ret.data));
+                        // console.log(JSON.stringify(tdata));
+                    } else {
+                        {
+                            $api.toast("提示", "未登录");
+                        }
+                    }
+                });
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'App_GetBelongInfoByUsers',
+                            iiiKey: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    // console.log(JSON.stringify(ret))
+                    if (ret.error == 0) {
+                        var tdata = JSON.parse(ret.data).Table[0];
+                        main.Balance = tdata.Balance;
+                        main.UserName = tdata.UserName;
+                        main.PersonName = tdata.PersonName;
+                        main.LogoUrl = tdata.LogoUrl;
+                        main.FadanGroupCounts = tdata.FadanGroupCounts;
+                        main.DayFadanGroupCounts = tdata.DayFadanGroupCounts;
+                        main.OpenGroupCounts = tdata.OpenGroupCounts;
+                        main.GroupCounts = tdata.GroupCounts;
+                        main.DeleteGroupCounts = tdata.DeleteGroupCounts;
+                        main.DaiLiCommission = tdata.DaiLiCommission == null ? 0 : tdata.DaiLiCommission;
+                        //  console.log(JSON.stringify(tdata))
+                        $api.setStorage('Usersconfig', tdata);
+                        var param = {
+                            alias: "tkq" + main.UserName,
+                            tags: [main.UserName]
+                        };
+                        ajpush.bindAliasAndTags(param, function(ret) {
+                            var statusCode = ret.statusCode;
+                        });
+                    }
+                });
+                var ThisOrLastInCome = $api.getStorage('ThisOrLastInCome');
+                if (ThisOrLastInCome != undefined) {
+                    main.sumCommission = ThisOrLastInCome.ThisMonthSumCommssion == null ? 0 : ThisOrLastInCome.ThisMonthSumCommssion.toFixed(2);
+                }
+                // $common.request('0x0001', {
+                //     data: {
+                //         values: {
+                //             ApiType: 'GetUsersSumDaiLi',
+                //             uxxx1__1: $api.getStorage('iii')
+                //         }
+                //     }
+                // }, function(ret, err) {
+                //     if (ret.error == 1) {
+                //         var tdata = JSON.parse(ret.data);
+                //         // console.log(JSON.stringify(tdata));
+                //         main.sumCommission = tdata.sumCommission == null ? 0 : tdata.sumCommission.toFixed(2);
+                //         $api.setStorage('sumCommission', main.sumCommission);
+                //         $api.setStorage('MonthConsumeAmout', tdata.MonthConsumeAmout);
+                //         api.hideProgress();
+                //     }
+                // });
+                $common.request('0x0001', {
+                    data: {
+                        values: {
+                            ApiType: 'GetBalance',
+                            uxxx1__1: $api.getStorage('iii')
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.error != 2) {
+                        //  alert(JSON.stringify(ret))
+                        var tdata = ret.Table[0];
+                        main.imoney = tdata.imoney == null ? 0 : tdata.imoney;
+                        $api.setStorage('GetBalance', tdata);
+                        // $api.setStorage('imoney', tdata.imoney);
+                    }
+                });
+                api.hideProgress();
+
+            }
+        }
+    });
+
+    // function ABC() {
+    //
+    //     browser.openView({
+    //         url: 'https://login.taobao.com/member/login.jhtml?style=mini&newMini2=false&from=alimama&redirectURL=http%3A%2F%2Flogin.taobao.com%2Fmember%2Ftaobaoke%2Flogin.htm%3Fis_login%3d1&full_redirect=true&disableQuickLogin=false',
+    //         rect: {
+    //             x: 0,
+    //             y: 64,
+    //             w: 'auto',
+    //             h: 'auto'
+    //         }
+    //     }, function(ret, err) {
+    //         switch (ret.state) {
+    //             case 0:
+    //                 break;
+    //             case 1:
+    //                 break;
+    //             case 2:
+    //
+    //             // function thecas(){
+    //             //   alert(getCookie("_tb_token_"))
+    //             // }
+    //                 if (ret.url == "https://www.alimama.com/index.htm") {
+    //                   function getCookie(name) {
+    //                       var arr = document.cookie.split("; ");
+    //                       for (var i = 0, len = arr.length; i < len; i++) {
+    //                           var item = arr[i].split("=");
+    //                           if (item[0] == name) {
+    //                               return item[1];
+    //                           }
+    //                       }
+    //                       return "";
+    //                   }
+    //                   var theCookie = getCookie("_tb_token_");
+    //                     alert(JSON.stringify(ret));
+    //                     browser.loadScript({
+    //                          script: 'alert(theCookie);'
+    //                     });
+    //                 }
+    //
+    //                 break;
+    //             case 3:
+    //                 break;
+    //             case 4:
+    //                 break;
+    //             default:
+    //                 break;
+    //         }
+    //     })
+    // }
+</script>
